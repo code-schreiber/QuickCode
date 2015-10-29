@@ -1,4 +1,4 @@
-package com.example.sguillen.mywearapplication;
+package com.example.sguillen.mywearapplication.view.main;
 
 import android.app.Activity;
 
@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.sguillen.mywearapplication.NavigationDrawerFragment;
+import com.example.sguillen.mywearapplication.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -93,6 +95,11 @@ public class MainActivity extends Activity implements
         fragmentManager.beginTransaction()
                 .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
                 .commit();
+    }
+
+    @Override
+    public void onActionBarItemSelected(String s) {
+
     }
 
     public void onSectionAttached(int number) {
@@ -187,7 +194,7 @@ public class MainActivity extends Activity implements
     }
 
     // Create a data map and put data in it
-    private void increaseCounter(int count) {
+    public void increaseCounter(int count) {
         String path = "/count";
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(path);
         // For sending text 100KB of data is 102400 characters
@@ -233,6 +240,7 @@ public class MainActivity extends Activity implements
         }
 
         public PlaceholderFragment() {
+
         }
 
         @Override
@@ -248,7 +256,8 @@ public class MainActivity extends Activity implements
             mLayoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(mLayoutManager);
 
-            String[] myDataset = {"uno", "dos", "three"};
+            String[] myDataset = {"uno", "dos", "three","uno", "dos", "three","uno", "dos", "three"};
+
             mAdapter = new MyCustomAdapter(myDataset);
             mRecyclerView.setAdapter(mAdapter);
 
@@ -267,96 +276,6 @@ public class MainActivity extends Activity implements
         public void onAttach(Activity activity) {
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-        }
-
-
-        private class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
-
-            private String[] mDataset;
-
-            // Provide a reference to the views for each data item
-            // Complex data items may need more than one view per item, and
-            // you provide access to all the views for a data item in a view holder
-            public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {//FIXME make static
-
-
-                private final IMyViewHolderClicks mListener;
-
-                // each data item is just a string in this case
-                public TextView mTextView;
-
-                public ViewHolder(View v, IMyViewHolderClicks listener) {
-                    super(v);
-                    this.mListener = listener;
-                    this.mTextView = (TextView) v.findViewById(R.id.item_list_text_view);
-                }
-
-                @Override
-                public void onClick(View v) {
-                    // TODO make this get triggered
-                    Log.d(TAG, "onClick" + this.mTextView.getText());
-                    boolean a = true;
-                    if (a){
-                        mListener.onTomato(v);
-                    } else {
-                        mListener.onPotato(v);
-                    }
-                }
-
-
-
-            }
-
-
-
-            // Provide a suitable constructor (depends on the kind of dataset)
-            public MyCustomAdapter(String[] myDataset) {
-                mDataset = myDataset;
-            }
-
-            // Create new views (invoked by the layout manager)
-            @Override
-            public MyCustomAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-                // create a new view
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
-                IMyViewHolderClicks listener = new IMyViewHolderClicks() {
-                    @Override
-                    public void onPotato(View caller) {
-                        // Here just as an example
-                    }
-
-                    @Override
-                    public void onTomato(View caller) {
-                        int index = parent.indexOfChild(caller);
-                        View child = parent.getChildAt(index);
-                        // TODO use child, see what type it is
-                        ((MainActivity)getActivity()).increaseCounter(index);
-                    }
-                };
-                ViewHolder vh = new ViewHolder(v, listener);
-                return vh;
-            }
-
-            // Replace the contents of a view (invoked by the layout manager)
-            @Override
-            public void onBindViewHolder(ViewHolder holder, int position) {
-                // - get element from your dataset at this position
-                // - replace the contents of the view with that element
-                holder.mTextView.setText(mDataset[position]);
-            }
-
-            // Return the size of your dataset (invoked by the layout manager)
-            @Override
-            public int getItemCount() {
-                return mDataset.length;
-            }
-
-
-        }
-
-        interface IMyViewHolderClicks {//FIXME make static and put in view holder
-            public void onPotato(View caller);
-            public void onTomato(View callerImage);
         }
 
     }
