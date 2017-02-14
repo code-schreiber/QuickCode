@@ -1,9 +1,10 @@
 package com.example.sguillen.mywearapplication;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.wearable.view.WatchViewStub;
+import android.support.wearable.activity.WearableActivity;
+import android.support.wearable.view.BoxInsetLayout;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -16,16 +17,22 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
-public class MainWearActivity extends Activity implements
+import java.util.Date;
+
+
+public class MainWearActivity extends WearableActivity implements
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private final static String TAG = MainWearActivity.class.getSimpleName();
+    private final static String TAG = "MainWearActivity";
+
 
     private static final String COUNT_KEY = "TODO_FIND_A_WAY_TO_READ_FROM_ONE_SOURCE";
 
+    private BoxInsetLayout mContainerView;
     private TextView mTextView;
+    private TextView mClockView;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -34,20 +41,18 @@ public class MainWearActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_wear);
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
-            }
-        });
+
+        setAmbientEnabled();
+
+        mContainerView = (BoxInsetLayout) findViewById(R.id.activity_main_wear_container);
+        mTextView = (TextView) findViewById(R.id.activity_main_wear_text);
+        mClockView = (TextView) findViewById(R.id.activity_main_wear_clock);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
     }
 
     @Override
@@ -119,5 +124,36 @@ public class MainWearActivity extends Activity implements
         });
     }
 
+    @Override
+    public void onEnterAmbient(Bundle ambientDetails) {
+        super.onEnterAmbient(ambientDetails);
+        updateDisplay();
+    }
+
+    @Override
+    public void onUpdateAmbient() {
+        super.onUpdateAmbient();
+        updateDisplay();
+    }
+
+    @Override
+    public void onExitAmbient() {
+        updateDisplay();
+        super.onExitAmbient();
+    }
+
+    private void updateDisplay() {
+        if (isAmbient()) {
+            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
+            mTextView.setTextColor(getResources().getColor(android.R.color.white));
+            mClockView.setVisibility(View.VISIBLE);
+
+            mClockView.setText(new Date().toString());
+        } else {
+            mContainerView.setBackground(null);
+            mTextView.setTextColor(getResources().getColor(android.R.color.black));
+            mClockView.setVisibility(View.GONE);
+        }
+    }
 
 }
