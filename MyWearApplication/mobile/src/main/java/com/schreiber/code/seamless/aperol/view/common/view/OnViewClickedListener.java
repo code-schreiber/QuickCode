@@ -1,4 +1,4 @@
-package com.example.sguillen.mywearapplication.view.common.view;
+package com.schreiber.code.seamless.aperol.view.common.view;
 
 import android.view.View;
 
