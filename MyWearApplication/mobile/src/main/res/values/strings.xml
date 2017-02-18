@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Seamless Aperol</string>
+    <string name="subtitle">subtitle</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
