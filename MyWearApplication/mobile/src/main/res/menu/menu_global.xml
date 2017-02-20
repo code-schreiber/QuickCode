@@ -6,11 +6,11 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/activity_main_drawer_nav_camera"
+            android:id="@+id/menu_global_camera"
             android:icon="@drawable/ic_menu_camera"
             android:title="Import" />
         <item
-            android:id="@+id/activity_main_drawer_nav_manage"
+            android:id="@+id/menu_global_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="Tools" />
     </group>
@@ -18,11 +18,11 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/activity_main_drawer_nav_share"
+                android:id="@+id/menu_global_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/activity_main_drawer_nav_send"
+                android:id="@+id/menu_global_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
         </menu>
