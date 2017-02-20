@@ -2,6 +2,11 @@ language: android
 jdk: oraclejdk8
 android:
   components:
+    - tools
+    - platform-tools
+    # Workaround to get Android SDK 25 running
+    - tools
+
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
     # - platform-tools
