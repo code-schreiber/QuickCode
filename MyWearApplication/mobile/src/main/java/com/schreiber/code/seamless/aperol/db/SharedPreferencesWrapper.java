@@ -3,6 +3,7 @@ package com.schreiber.code.seamless.aperol.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public final class SharedPreferencesWrapper {
 
@@ -16,7 +17,7 @@ public final class SharedPreferencesWrapper {
     }
 
     public static String getFontStatistic(Context context) {
-        return getSharedPreferences(context).getString(FontStatistic_KEY, "");
+        return getDefaultPreferences(context).getString(FontStatistic_KEY, "");
     }
 
     public static void setFontStatistic(Context context, String fontStatistic) {
@@ -24,22 +25,22 @@ public final class SharedPreferencesWrapper {
     }
 
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
-        getSharedPreferences(context).registerOnSharedPreferenceChangeListener(listener);
+        getDefaultPreferences(context).registerOnSharedPreferenceChangeListener(listener);
     }
 
     public static void unRegisterPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
-        getSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(listener);
+        getDefaultPreferences(context).unregisterOnSharedPreferenceChangeListener(listener);
     }
 
     private static SharedPreferences.Editor getEditor(Context context) {
-        return getSharedPreferences(context).edit();
+        return getDefaultPreferences(context).edit();
     }
 
-    private static SharedPreferences getSharedPreferences(Context context) {
-        return getSharedPreferences(context, PREFERENCES_KEY);
+    private static SharedPreferences getDefaultPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    static SharedPreferences getSharedPreferences(Context context, String preferencesKey) {
+    static SharedPreferences getDefaultPreferences(Context context, String preferencesKey) {
         return context.getSharedPreferences(preferencesKey, Context.MODE_PRIVATE);
     }
 

@@ -28,7 +28,7 @@ public final class OneTimeAction {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        return SharedPreferencesWrapper.getSharedPreferences(context, ONE_TIME_ACTION_PREFERENCES_KEY);
+        return SharedPreferencesWrapper.getDefaultPreferences(context, ONE_TIME_ACTION_PREFERENCES_KEY);
     }
 
 
