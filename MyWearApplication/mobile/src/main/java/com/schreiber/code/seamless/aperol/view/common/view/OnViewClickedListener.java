@@ -1,14 +1,10 @@
 package com.schreiber.code.seamless.aperol.view.common.view;
 
-import android.view.View;
 
+import com.schreiber.code.seamless.aperol.model.ListItem;
 
 public interface OnViewClickedListener {
 
-//    void onViewClicked(View v, int position);
-
-    void onPotato(View caller);
-
-    void onTomato(View callerImage, int position);
+    void onItemClicked(ListItem item);
 
 }

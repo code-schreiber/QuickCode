@@ -68,7 +68,9 @@ public class FontStatisticDialogFragment extends DialogFragment {
         initStatistic(context);
         String fontstatistic = SharedPreferencesWrapper.getFontStatistic(context);
         String currentFontName = TypefaceProvider.getInstance(context).getCurrentFontName();
-        SharedPreferencesWrapper.setFontStatistic(context, fontstatistic.replace(currentFontName, currentFontName + symbol));
+        if (currentFontName != null) {
+            SharedPreferencesWrapper.setFontStatistic(context, fontstatistic.replace(currentFontName, currentFontName + symbol));
+        }
     }
 
     private void initStatistic(Context context) {
