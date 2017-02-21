@@ -1,4 +1,4 @@
-package de.aoksystems.ma.abp.odata.util;
+package com.schreiber.code.seamless.aperol.util.android;
 
 
 import android.app.Activity;

@@ -7,9 +7,7 @@ import android.preference.PreferenceManager;
 
 public final class SharedPreferencesWrapper {
 
-    private static final String PREFERENCES_KEY = "PREFERENCES_KEY";
-
-    private static final String FontStatistic_KEY = "FontStatistic_KEY";
+    private static final String FONT_STATISTIC_KEY = "FONT_STATISTIC_KEY";
 
 
     private SharedPreferencesWrapper() {
@@ -17,11 +15,11 @@ public final class SharedPreferencesWrapper {
     }
 
     public static String getFontStatistic(Context context) {
-        return getDefaultPreferences(context).getString(FontStatistic_KEY, "");
+        return getDefaultPreferences(context).getString(FONT_STATISTIC_KEY, "");
     }
 
     public static void setFontStatistic(Context context, String fontStatistic) {
-        getEditor(context).putString(FontStatistic_KEY, fontStatistic);
+        getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).apply();
     }
 
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
