@@ -6,6 +6,10 @@ import timber.log.Timber;
 
 public class Logger {
 
+    private Logger() {
+        // Hide utility class constructor
+    }
+
     public static void logInfo(String message) {
         if (isMessageOk(message)) {
             Timber.i(message);
