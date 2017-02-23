@@ -4,6 +4,7 @@ package com.schreiber.code.seamless.aperol.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class TypefaceProvider {
         AssetManager assets = context.getAssets();
         initializeTypefaces(assets, FONTS_PATH);
 
-        if (RANDOM_MODE) {
+        if (RANDOM_MODE && !fonts.isEmpty()) {
             for (String s : fonts.keySet()) {
                 allFonts.put(s, fonts.get(s));
             }
@@ -125,7 +126,7 @@ public class TypefaceProvider {
         Logger.logError("No Typeface for " + style + " found in " + fonts);
     }
 
-
+    @Nullable
     public String getCurrentFontName() {
         if (fonts.size() == 1) {
             String key = (String) fonts.keySet().toArray()[0];
