@@ -1,19 +1,18 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.databinding.ItemListBinding;
 import com.schreiber.code.seamless.aperol.model.ListItem;
-import com.schreiber.code.seamless.aperol.view.common.view.OnAdapterItemClickedListener;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
 import java.util.List;
 
-
+// TODO generalize ViewHolder https://medium.com/google-developers/android-data-binding-recyclerview-db7c40d9f0e4
 class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     private List<ListItem> data;
@@ -32,20 +31,15 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     @Override
     public MyCustomAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        // create a new view
-        View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
-        return new ViewHolder(convertView, new OnAdapterItemClickedListener() {
-            @Override
-            public void onAdapterItemClicked(int position) {
-                listener.onItemClicked(data.get(position));
-            }
-        });
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ItemListBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_list, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ListItem item = data.get(position);
-        holder.textView.setText(item.s);
+        holder.bind(item);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -54,23 +48,19 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
         return data.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final OnAdapterItemClickedListener listener;
+        private final ItemListBinding binding;
 
-        private final TextView textView;
-
-        ViewHolder(View convertView, OnAdapterItemClickedListener listener) {
-            super(convertView);
-            this.textView = (TextView) convertView.findViewById(R.id.item_list_text_view);
-            this.listener = listener;
-            convertView.setOnClickListener(this);
+        ViewHolder(ItemListBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
-        @Override
-        public void onClick(View v) {
-            if (listener != null)
-                listener.onAdapterItemClicked(getAdapterPosition());
+        void bind(ListItem item) {
+            binding.setListItem(item);
+            binding.setActionListener(listener);
+            binding.executePendingBindings();
         }
 
     }

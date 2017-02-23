@@ -127,6 +127,9 @@ public class MainActivityFragment extends Fragment implements OnViewClickedListe
         String type = contentResolver.getType(uri);
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         String mimeType = mime.getExtensionFromMimeType(type);
+        if (mimeType == null) {
+            mimeType = "";
+        }
         String size = UriUtils.getSize(contentResolver, uri);
         return ListItem.create(filename, type, mimeType, size, uri);
     }
@@ -138,24 +141,26 @@ public class MainActivityFragment extends Fragment implements OnViewClickedListe
 
     @Override
     public void onItemClicked(ListItem item) {
-        item.mimeType();
-        if (item.type().equals("a type")) {
-            // Handle file
-
-        } else if (item.type().equals("\ntype ")) {
-            // Handle image file
-            Bitmap b = UriUtils.getBitmapFromUri(getActivity().getContentResolver(), item.uri());
-            // TODO show(b);
-        } else if (item.type().equals("\ntype ")) {
-            // Handle PDF file
-            // TODO PDF pdf = getPdfFromUri(item.uri());
-            // TODO show(pdf);
-        } else if (item.type().equals("\ntype ")) {
-            // Handle Text file
-            String text = UriUtils.readTextFromUri(getActivity().getContentResolver(), item.uri());
-            showSnack(text);
-        } else {
-            showSnack("No known type: " + item.type());
+        switch (item.type()) {
+            case "application/pdf":
+                // TODO PDF pdf = getPdfFromUri(item.uri());
+                // TODO show(pdf);
+                break;
+            case "image/png":
+                Bitmap b = UriUtils.getBitmapFromUri(getActivity().getContentResolver(), item.uri());
+                // TODO show(b);
+                break;
+            case "whats the type for text?":// TODO
+                String textContent = UriUtils.readTextFromUri(getActivity().getContentResolver(), item.uri());
+                showSnack(textContent);
+                break;
+            case "application/octet-stream":
+                String text = UriUtils.readTextFromUri(getActivity().getContentResolver(), item.uri());
+                showSnack(text);
+                break;
+            default:
+                showSnack("No known type: " + item.type());
+                break;
         }
     }
 
