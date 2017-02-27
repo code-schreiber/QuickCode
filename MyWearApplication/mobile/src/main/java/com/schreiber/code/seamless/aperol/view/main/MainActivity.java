@@ -1,5 +1,6 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +27,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.util.TypefaceProvider;
+import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
 
@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
-
-    private final static String TAG = "MainActivity";
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -79,6 +77,23 @@ public class MainActivity extends AppCompatActivity implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Fragment mainFragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
+            if (mainFragment != null && mainFragment.isVisible()) {
+                if (mainFragment instanceof MainActivityFragment) {
+                    String intentType = intent.getType();
+                    String type = getContentResolver().getType(intent.getData());
+                    if (!type.equals(intentType)) {
+                        showSnack(type + " not equals " + intentType);// TODO check
+                    }
+                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
+                }
+            }
+        }
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -129,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void onMenuItemSelected(MenuItem item) {
         int id = item.getItemId();
-        showSnack("MenuItem: " + id);
+        showSnack("MenuItem selected: " + item.getTitle());
 
         if (id == R.id.menu_global_camera) {
 
@@ -143,35 +158,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showSnack(String m) {
-        Log.i(TAG, m);
+        Logger.logInfo(m);
         Snackbar.make(findViewById(R.id.app_bar_main_fab), m, Snackbar.LENGTH_SHORT).show();
-    }
-
-    public void onSectionAttached(int number) {
-        Snackbar.make(findViewById(R.id.app_bar_main_fab), "onSectionAttached: " + number, Snackbar.LENGTH_SHORT).show();
-        switch (number) {
-            case 1:
-                Log.i(TAG, getString(R.string.title_section1));
-                break;
-            case 2:
-                Log.i(TAG, getString(R.string.title_section2));
-                break;
-            case 3:
-                Log.i(TAG, getString(R.string.title_section3));
-                break;
-        }
     }
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume ");
+        Logger.logDebug("onResume ");
         super.onResume();
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
+        Logger.logDebug("onPause");
         super.onPause();
         Wearable.DataApi.removeListener(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
@@ -179,28 +179,28 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected " + bundle);
-        Log.d(TAG, "mGoogleApiClient " + mGoogleApiClient);
+        Logger.logDebug("onConnected " + bundle);
+        Logger.logDebug("mGoogleApiClient " + mGoogleApiClient);
         Wearable.DataApi.addListener(mGoogleApiClient, this);
     }
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        Log.d(TAG, dataEventBuffer + " onDataChanged");
+        Logger.logDebug(dataEventBuffer + " onDataChanged");
         for (DataEvent event : dataEventBuffer) {
-            Log.d(TAG, "event.getType() " + event.getType());
+            Logger.logDebug("event.getType() " + event.getType());
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "onConnectionSuspended " + i);
+        Logger.logDebug("onConnectionSuspended " + i);
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "onConnectionFailed " + connectionResult);
+        Logger.logDebug("onConnectionFailed " + connectionResult);
     }
 
     // Create a data map and put data in it
@@ -211,14 +211,14 @@ public class MainActivity extends AppCompatActivity implements
         putDataMapReq.getDataMap().putInt(COUNT_KEY, count);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        Log.d(TAG, count + " putDataItem " + putDataReq);
+        Logger.logDebug(count + " putDataItem " + putDataReq);
         // FIXME devices not connected http://stackoverflow.com/questions/22524760/not-able-to-connect-android-wear-emulator-with-device
 //        React to when it sends the data
 // developer.android.com/training/wearables/data-layer/events.html#Wait
 //        pendingResult.addBatchCallback(new PendingResult.BatchCallback() {
 //            @Override
 //            public void zzs(Status status) {
-//                Log.d(TAG, "zzs " + status);
+//                Logger.logDebug("zzs " + status);
 //            }
 //        });
     }
