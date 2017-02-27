@@ -52,5 +52,4 @@ public class Logger {
         return isMessageOk;
     }
 
-
 }
