@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 
 public class UriUtils {
 
+    public static final String MODE_READ = "r";
+
     private UriUtils() {
         // Hide utility class constructor
     }
@@ -57,7 +59,7 @@ public class UriUtils {
     public static Bitmap getBitmapFromUri(ContentResolver contentResolver, Uri uri) {
         ParcelFileDescriptor parcelFileDescriptor = null;
         try {
-            parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r");
+            parcelFileDescriptor = contentResolver.openFileDescriptor(uri, MODE_READ);
             if (parcelFileDescriptor != null) {
                 FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
                 return BitmapFactory.decodeFileDescriptor(fileDescriptor);
