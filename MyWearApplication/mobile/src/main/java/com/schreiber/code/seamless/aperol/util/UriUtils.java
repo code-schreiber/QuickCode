@@ -134,4 +134,17 @@ public class UriUtils {
     }
 
 
+    public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
+        return "application/pdf".equals(contentResolver.getType(uri));
+    }
+
+    public static boolean isImage(ContentResolver contentResolver, Uri uri) {
+        String type = contentResolver.getType(uri);
+        return !TypeUtils.isEmpty(type) && type.contains("image/");
+    }
+
+    public static boolean isText(ContentResolver contentResolver, Uri uri) {
+        return "text/plain".equals(contentResolver.getType(uri));
+    }
+
 }

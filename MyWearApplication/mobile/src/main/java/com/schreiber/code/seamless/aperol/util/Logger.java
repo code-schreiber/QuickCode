@@ -3,7 +3,7 @@ package com.schreiber.code.seamless.aperol.util;
 
 import timber.log.Timber;
 
-
+// TODO add tags
 public class Logger {
 
     private Logger() {
