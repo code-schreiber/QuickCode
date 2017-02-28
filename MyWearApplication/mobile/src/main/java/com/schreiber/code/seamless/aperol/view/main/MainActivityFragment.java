@@ -9,19 +9,19 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.model.ListItem;
-import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
+import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
@@ -30,17 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivityFragment extends Fragment implements OnViewClickedListener {
+public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private MyCustomAdapter adapter;
 
     private static final int READ_REQUEST_CODE = 111;
-
-    public MainActivityFragment() {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,7 +116,7 @@ public class MainActivityFragment extends Fragment implements OnViewClickedListe
     }
 
     private void showSnack(String m) {
-        Logger.logInfo(m);
+        logInfo(m);
         Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -132,34 +128,28 @@ public class MainActivityFragment extends Fragment implements OnViewClickedListe
     }
 
     void handleFile(Uri uri, String type) {
-        switch (type) {
-            case "application/pdf":
-                showPdf(uri);
-                break;
-            case "image/png":// TODO not only png
-                showImage(uri);
-                break;
-            case "whats the type for text?":// TODO
-                String textContent = UriUtils.readTextFromUri(getActivity().getContentResolver(), uri);
-                showSnack(textContent);
-                break;
-            case "application/octet-stream":
-                String text = UriUtils.readTextFromUri(getActivity().getContentResolver(), uri);
-                showSnack(text);
-                break;
-            default:
-                showSnack("No known type: " + type);
-                break;
+        ContentResolver resolver = getActivity().getContentResolver();
+        if (UriUtils.isPdf(resolver, uri)) {
+            showPdf(uri);
+        } else if (UriUtils.isImage(resolver, uri)) {
+            showImage(uri);
+        } else if (UriUtils.isText(resolver, uri)) {
+            String textContent = UriUtils.readTextFromUri(resolver, uri);
+            Toast.makeText(getActivity(), textContent, Toast.LENGTH_SHORT).show();
+        } else if (type.equals("application/octet-stream")) {
+            String text = UriUtils.readTextFromUri(resolver, uri);
+            Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        } else {
+            showSnack("No known type: " + type);
         }
     }
 
     private void showImage(Uri uri) {
-        Bitmap b = UriUtils.getBitmapFromUri(getActivity().getContentResolver(), uri);
-        // TODO show(b);
+        Bitmap bitmap = UriUtils.getBitmapFromUri(getActivity().getContentResolver(), uri);
+        showDialog(ImageDialogFragment.newInstance(bitmap));
     }
 
     private void showPdf(Uri uri) {
-//        ImageView iv = (ImageView) findViewById(R.id.imageView);
 
         try {
             ParcelFileDescriptor fd = getActivity().getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
@@ -176,40 +166,43 @@ public class MainActivityFragment extends Fragment implements OnViewClickedListe
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             pdfiumCore.renderPageBitmap(pdfDocument, bitmap, pageNum, 0, 0, width, height);
 
-//            iv.setImageBitmap(bitmap);
-
             printInfo(pdfiumCore, pdfDocument);
 
             pdfiumCore.closeDocument(pdfDocument);
+
+            showDialog(ImageDialogFragment.newInstance(bitmap));
         } catch (IOException e) {
-            Logger.logException(e);
+            logException(e);
         }
     }
 
     private void printInfo(PdfiumCore core, PdfDocument doc) {
-//        PdfDocument.Meta meta = core.getDocumentMeta(doc);
-//        Log.e(TAG, "title = " + meta.getTitle());
-//        Log.e(TAG, "author = " + meta.getAuthor());
-//        Log.e(TAG, "subject = " + meta.getSubject());
-//        Log.e(TAG, "keywords = " + meta.getKeywords());
-//        Log.e(TAG, "creator = " + meta.getCreator());
-//        Log.e(TAG, "producer = " + meta.getProducer());
-//        Log.e(TAG, "creationDate = " + meta.getCreationDate());
-//        Log.e(TAG, "modDate = " + meta.getModDate());
-//
-//        printBookmarksTree(core.getTableOfContents(doc), "-");
+        PdfDocument.Meta meta = core.getDocumentMeta(doc);
+        logDebug("title = " + meta.getTitle());
+        logDebug("author = " + meta.getAuthor());
+        logDebug("subject = " + meta.getSubject());
+        logDebug("keywords = " + meta.getKeywords());
+        logDebug("creator = " + meta.getCreator());
+        logDebug("producer = " + meta.getProducer());
+        logDebug("creationDate = " + meta.getCreationDate());
+        logDebug("modDate = " + meta.getModDate());
+
+        printBookmarksTree(core.getTableOfContents(doc), "-");
 
     }
 
     private void printBookmarksTree(List<PdfDocument.Bookmark> tree, String sep) {
-//        for (PdfDocument.Bookmark b : tree) {
-//
-//            Log.e(TAG, String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
-//
-//            if (b.hasChildren()) {
-//                printBookmarksTree(b.getChildren(), sep + "-");
-//            }
-//        }
+        if (tree.isEmpty())
+            logDebug("tree is empty");
+        else
+            for (PdfDocument.Bookmark b : tree) {
+
+                logDebug(String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
+
+                if (b.hasChildren()) {
+                    printBookmarksTree(b.getChildren(), sep + "-");
+                }
+            }
     }
 
 }

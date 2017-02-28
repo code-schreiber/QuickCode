@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,11 +26,10 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -98,9 +96,7 @@ public class MainActivity extends AppCompatActivity implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // TODO show() in base activity
-                FontStatisticDialogFragment dialog = FontStatisticDialogFragment.newInstance();
-                dialog.show(getSupportFragmentManager(), dialog.toString());
+                showDialog(FontStatisticDialogFragment.newInstance());
             }
         }, 1000 * 3);
     }
@@ -158,20 +154,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showSnack(String m) {
-        Logger.logInfo(m);
+        logInfo(m);
         Snackbar.make(findViewById(R.id.app_bar_main_fab), m, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
-        Logger.logDebug("onResume ");
+        logDebug("onResume ");
         super.onResume();
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
-        Logger.logDebug("onPause");
+        logDebug("onPause");
         super.onPause();
         Wearable.DataApi.removeListener(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
@@ -179,28 +175,28 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Logger.logDebug("onConnected " + bundle);
-        Logger.logDebug("mGoogleApiClient " + mGoogleApiClient);
+        logDebug("onConnected " + bundle);
+        logDebug("mGoogleApiClient " + mGoogleApiClient);
         Wearable.DataApi.addListener(mGoogleApiClient, this);
     }
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        Logger.logDebug(dataEventBuffer + " onDataChanged");
+        logDebug(dataEventBuffer + " onDataChanged");
         for (DataEvent event : dataEventBuffer) {
-            Logger.logDebug("event.getType() " + event.getType());
+            logDebug("event.getType() " + event.getType());
         }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Logger.logDebug("onConnectionSuspended " + i);
+        logDebug("onConnectionSuspended " + i);
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Logger.logDebug("onConnectionFailed " + connectionResult);
+        logDebug("onConnectionFailed " + connectionResult);
     }
 
     // Create a data map and put data in it
@@ -211,14 +207,14 @@ public class MainActivity extends AppCompatActivity implements
         putDataMapReq.getDataMap().putInt(COUNT_KEY, count);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        Logger.logDebug(count + " putDataItem " + putDataReq);
+        logDebug(count + " putDataItem " + putDataReq);
         // FIXME devices not connected http://stackoverflow.com/questions/22524760/not-able-to-connect-android-wear-emulator-with-device
 //        React to when it sends the data
 // developer.android.com/training/wearables/data-layer/events.html#Wait
 //        pendingResult.addBatchCallback(new PendingResult.BatchCallback() {
 //            @Override
 //            public void zzs(Status status) {
-//                Logger.logDebug("zzs " + status);
+//                logDebug("zzs " + status);
 //            }
 //        });
     }
