@@ -93,3 +93,5 @@ proguard/
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
 *.iml
+# Don't ignore the code style
+!.idea/codeStyleSettings.xml
