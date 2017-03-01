@@ -1,5 +1,6 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -51,7 +52,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        List<ListItem> data = SharedPreferencesWrapper.getQuestionMark(getActivity());
+        List<ListItem> data = SharedPreferencesWrapper.getListItem(getActivity());
         adapter = new MyCustomAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
@@ -85,7 +86,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
-        if (resultCode == Activity.RESULT_OK)
+        if (resultCode == Activity.RESULT_OK) {
             if (requestCode == READ_REQUEST_CODE) {
                 // The document selected by the user won't be returned in the intent.
                 // Instead, a URI to that document will be contained in the return intent
@@ -95,12 +96,18 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     Uri uri = resultData.getData();
                     if (uri != null) {
                         ListItem item = itemFromUri(uri);
-                        SharedPreferencesWrapper.addQuestionMark(getContext(), item);
-                        adapter.replaceData(SharedPreferencesWrapper.getQuestionMark(getContext()));
+                        SharedPreferencesWrapper.addListItem(getContext(), item);
+                        adapter.replaceData(SharedPreferencesWrapper.getListItem(getContext()));
                     }
-                } else showSnack("resultData: " + resultData);
-            } else showSnack("requestCode: " + requestCode);
-        else showSnack("resultCode: " + resultCode);
+                } else {
+                    showSnack("resultData: " + resultData);
+                }
+            } else {
+                showSnack("requestCode: " + requestCode);
+            }
+        } else {
+            showSnack("resultCode: " + resultCode);
+        }
     }
 
     @NonNull
@@ -124,25 +131,29 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(ListItem item) {
-        Uri uri = item.uri();
+        Uri uri = item.getUri();
         String type = item.type();
         handleFile(uri, type);
     }
 
     void handleFile(Uri uri, String type) {
         ContentResolver resolver = getActivity().getContentResolver();
-        if (UriUtils.isPdf(resolver, uri)) {
-            showPdf(uri);
-        } else if (UriUtils.isImage(resolver, uri)) {
-            showImage(uri);
-        } else if (UriUtils.isText(resolver, uri)) {
-            String textContent = UriUtils.readTextFromUri(resolver, uri);
-            Toast.makeText(getActivity(), textContent, Toast.LENGTH_SHORT).show();
-        } else if (type.equals("application/octet-stream")) {
-            String text = UriUtils.readTextFromUri(resolver, uri);
-            Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        if (UriUtils.fileExists(resolver, uri)) {
+            if (UriUtils.isPdf(resolver, uri)) {
+                showPdf(uri);
+            } else if (UriUtils.isImage(resolver, uri)) {
+                showImage(uri);
+            } else if (UriUtils.isText(resolver, uri)) {
+                String textContent = UriUtils.readTextFromUri(resolver, uri);
+                Toast.makeText(getActivity(), textContent, Toast.LENGTH_SHORT).show();
+            } else if (type.equals("application/octet-stream")) {
+                String text = UriUtils.readTextFromUri(resolver, uri);
+                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+            } else {
+                showSnack("No known type: " + type);
+            }
         } else {
-            showSnack("No known type: " + type);
+            showSnack("File doesn't exist: " + uri);
         }
     }
 
@@ -194,9 +205,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     private void printBookmarksTree(List<PdfDocument.Bookmark> tree, String sep) {
-        if (tree.isEmpty())
+        if (tree.isEmpty()) {
             logDebug("tree is empty");
-        else
+        } else {
             for (PdfDocument.Bookmark b : tree) {
 
                 logDebug(String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
@@ -205,6 +216,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     printBookmarksTree(b.getChildren(), sep + "-");
                 }
             }
+        }
     }
 
 }
