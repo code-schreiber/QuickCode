@@ -18,6 +18,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.model.ListItem;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
@@ -26,7 +27,6 @@ import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,7 +51,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        List<ListItem> data = new ArrayList<>();
+        List<ListItem> data = SharedPreferencesWrapper.getQuestionMark(getActivity());
         adapter = new MyCustomAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
@@ -94,7 +94,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     if (uri != null) {
-                        adapter.addAnItem(itemFromUri(uri));
+                        ListItem item = itemFromUri(uri);
+                        SharedPreferencesWrapper.addQuestionMark(getContext(), item);
+                        adapter.replaceData(SharedPreferencesWrapper.getQuestionMark(getContext()));
                     }
                 } else showSnack("resultData: " + resultData);
             } else showSnack("requestCode: " + requestCode);
