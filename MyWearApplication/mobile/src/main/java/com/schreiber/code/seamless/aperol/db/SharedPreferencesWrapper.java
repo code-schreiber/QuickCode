@@ -33,18 +33,18 @@ public final class SharedPreferencesWrapper {
 
     public static boolean addListItem(Context context, ListItem listItem) {
         initHawk(context);
-        ArrayList<ListItem> items = getListItem(context);
+        ArrayList<ListItem> items = getListItems(context);
         items.add(listItem);
         return Hawk.put(LIST_ITEMS_KEY, items);
     }
 
-    public static ArrayList<ListItem> getListItem(Context context) {
+    public static ArrayList<ListItem> getListItems(Context context) {
         initHawk(context);
-        ArrayList<ListItem> list = Hawk.get(LIST_ITEMS_KEY);
-        if (list == null) {
-            list = new ArrayList<>();
+        ArrayList<ListItem> listItems = Hawk.get(LIST_ITEMS_KEY);
+        if (listItems == null) {
+            listItems = new ArrayList<>();
         }
-        return list;
+        return listItems;
     }
 
     public static <T> boolean deleteListItem(Context context, T t) {
