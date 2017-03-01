@@ -80,12 +80,14 @@ public class UriUtils {
 
     @CheckResult
     public static String getDisplayName(ContentResolver contentResolver, Uri uri) {
-
         // The query, since it only applies to a single document, will only return
         // one row. There's no need to filter, sort, or select fields, since we want
         // all fields for one document.
         Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
+            if (cursor.getCount() > 1) {
+                Logger.logWarning(cursor.getCount() + " items in cursor!");
+            }
             try {
                 // moveToFirst() returns false if the cursor has 0 rows.  Very handy for
                 // "if there's anything to look at, look at it" conditionals.
@@ -99,17 +101,17 @@ public class UriUtils {
             } finally {
                 cursor.close();
             }
+        }
         return "";
     }
 
     @CheckResult
     public static String getSize(ContentResolver contentResolver, Uri uri) {
-
-        // The query, since it only applies to a single document, will only return
-        // one row. There's no need to filter, sort, or select fields, since we want
-        // all fields for one document.
         Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null) {
+            if (cursor.getCount() > 1) {
+                Logger.logWarning(cursor.getCount() + " items in cursor!");
+            }
             try {
                 // moveToFirst() returns false if the cursor has 0 rows.  Very handy for
                 // "if there's anything to look at, look at it" conditionals.
@@ -130,9 +132,23 @@ public class UriUtils {
             } finally {
                 cursor.close();
             }
+        }
         return "Unknown";
     }
 
+    @CheckResult
+    public static boolean fileExists(ContentResolver contentResolver, Uri uri) {
+        Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                cursor.close();
+                return true;
+            } else {
+                cursor.close();
+            }
+        }
+        return false;
+    }
 
     public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
         return "application/pdf".equals(contentResolver.getType(uri));

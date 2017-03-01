@@ -6,14 +6,17 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.orhanobut.hawk.Hawk;
+import com.orhanobut.hawk.LogInterceptor;
 import com.schreiber.code.seamless.aperol.model.ListItem;
+import com.schreiber.code.seamless.aperol.util.Logger;
 
 import java.util.ArrayList;
+
 
 public final class SharedPreferencesWrapper {
 
     private static final String FONT_STATISTIC_KEY = "FONT_STATISTIC_KEY";
-    private static final String QUESTION_mark_KEY = "QUESTION_mark_KEY";
+    private static final String LIST_ITEMS_KEY = "LIST_ITEMS_KEY";
 
 
     private SharedPreferencesWrapper() {
@@ -28,38 +31,43 @@ public final class SharedPreferencesWrapper {
         getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).apply();
     }
 
-    public static void addQuestionMark(Context context, ListItem listItem) {
-        if (!Hawk.isBuilt()) {
-            Hawk.init(context).build();
-        }
-        ArrayList<ListItem> items = getQuestionMark(context);
+    public static boolean addListItem(Context context, ListItem listItem) {
+        initHawk(context);
+        ArrayList<ListItem> items = getListItem(context);
         items.add(listItem);
-        Hawk.put(QUESTION_mark_KEY, items);
+        return Hawk.put(LIST_ITEMS_KEY, items);
     }
 
-    public static ArrayList<ListItem> getQuestionMark(Context context) {
-        if (!Hawk.isBuilt()) {
-            Hawk.init(context).build();
-        }
-        ArrayList<ListItem> list = Hawk.get(QUESTION_mark_KEY);
+    public static ArrayList<ListItem> getListItem(Context context) {
+        initHawk(context);
+        ArrayList<ListItem> list = Hawk.get(LIST_ITEMS_KEY);
         if (list == null) {
             list = new ArrayList<>();
         }
         return list;
     }
 
-    public static <T> boolean deleteQuestionMark(Context context, T t) {
-        if (!Hawk.isBuilt()) {
-            Hawk.init(context).build();
-        }
-        return Hawk.delete(QUESTION_mark_KEY);
+    public static <T> boolean deleteListItem(Context context, T t) {
+        initHawk(context);
+        return Hawk.delete(LIST_ITEMS_KEY);
     }
 
-    public static <T> boolean containsQuestionMark(Context context, T t) {
+    public static <T> boolean containsListItem(Context context, T t) {
+        initHawk(context);
+        return Hawk.contains(LIST_ITEMS_KEY);
+    }
+
+    private static void initHawk(Context context) {
         if (!Hawk.isBuilt()) {
-            Hawk.init(context).build();
+            Hawk.init(context)
+                    .setLogInterceptor(new LogInterceptor() {
+                        @Override
+                        public void onLog(String message) {
+                            Logger.logDebug("Hawk says: " + message);
+                        }
+                    })
+                    .build();
         }
-        return Hawk.contains(QUESTION_mark_KEY);
     }
 
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
