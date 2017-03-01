@@ -52,7 +52,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        List<ListItem> data = SharedPreferencesWrapper.getListItem(getActivity());
+        List<ListItem> data = SharedPreferencesWrapper.getListItems(getActivity());
         adapter = new MyCustomAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
@@ -82,22 +82,18 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == READ_REQUEST_CODE) {
-                // The document selected by the user won't be returned in the intent.
-                // Instead, a URI to that document will be contained in the return intent
-                // provided to this method as a parameter.
-                // Pull that URI using resultData.getData().
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     if (uri != null) {
                         ListItem item = itemFromUri(uri);
-                        SharedPreferencesWrapper.addListItem(getContext(), item);
-                        adapter.replaceData(SharedPreferencesWrapper.getListItem(getContext()));
+                        if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
+                            SharedPreferencesWrapper.addListItem(getActivity(), item);
+                            adapter.replaceData(SharedPreferencesWrapper.getListItems(getActivity()));
+                        } else {
+                            showSnack(item.filename() + " already exists");
+                        }
                     }
                 } else {
                     showSnack("resultData: " + resultData);
