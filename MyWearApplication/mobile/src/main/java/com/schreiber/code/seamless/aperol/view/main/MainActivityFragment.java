@@ -3,31 +3,40 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.Toast;
 
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.model.ListItem;
+import com.schreiber.code.seamless.aperol.util.CodeCreationUtils;
+import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -76,7 +85,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers, it would be "*/*".
         intent.setType("*/*");
-//        intent.setType("pdf/*");
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
@@ -87,12 +95,14 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     if (uri != null) {
-                        ListItem item = itemFromUri(uri);
-                        if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
-                            SharedPreferencesWrapper.addListItem(getActivity(), item);
-                            adapter.replaceData(SharedPreferencesWrapper.getListItems(getActivity()));
-                        } else {
-                            showSnack(item.filename() + " already exists");
+                        ListItem item = createItem(uri, getBitmapFromUri(uri));
+                        if (item != null) {
+                            if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
+                                SharedPreferencesWrapper.addListItem(getActivity(), item);
+                                adapter.replaceData(SharedPreferencesWrapper.getListItems(getActivity()));
+                            } else {
+                                showSnack(item.filename() + " already exists");
+                            }
                         }
                     }
                 } else {
@@ -106,18 +116,48 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }
     }
 
-    @NonNull
-    private ListItem itemFromUri(@NonNull Uri uri) {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        String filename = UriUtils.getDisplayName(contentResolver, uri);
-        String type = contentResolver.getType(uri);
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String mimeType = mime.getExtensionFromMimeType(type);
-        if (mimeType == null) {
-            mimeType = "";
+    private ListItem createItem(Uri uri, Bitmap fileAsImage) {
+        if (fileAsImage != null) {
+            Bitmap code = getCodeFromBitmap(fileAsImage);
+            if (code != null) {
+                int thumbnailSize = 64;
+                Bitmap thumbnail = Bitmap.createScaledBitmap(code, thumbnailSize, thumbnailSize, false);
+                if (thumbnail != null) {
+                    ContentResolver contentResolver = getActivity().getContentResolver();
+                    String filename = UriUtils.getDisplayName(contentResolver, uri);
+                    try {
+                        saveBitmapToFile(fileAsImage, filename, "original");
+                        saveBitmapToFile(code, filename, "code");
+                        saveBitmapToFile(thumbnail, filename, "thumbnail");
+                    } catch (IOException e) {
+                        Logger.logException(e);
+                        return null;
+                    }
+                    String type = contentResolver.getType(uri);
+                    String size = UriUtils.getSize(contentResolver, uri);
+                    return ListItem.create(filename, type, size);
+                }
+            }
         }
-        String size = UriUtils.getSize(contentResolver, uri);
-        return ListItem.create(filename, type, mimeType, size, uri);
+        return null;
+    }
+
+    private void saveBitmapToFile(Bitmap fileAsImage, String filename, String suffix) throws IOException {
+        FileOutputStream fos = getActivity().openFileOutput(filename + "." + suffix, Context.MODE_PRIVATE);
+        fileAsImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        fos.close();
+    }
+
+    private Bitmap getBitmapFromFile(String filename, String suffix) {
+        try {
+            FileInputStream fis = getActivity().openFileInput(filename + "." + suffix);
+            Bitmap bitmap = BitmapFactory.decodeStream(fis);
+            fis.close();
+            return bitmap;
+        } catch (IOException e) {
+            Logger.logException(e);
+        }
+        return null;
     }
 
     private void showSnack(String m) {
@@ -127,62 +167,103 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(ListItem item) {
-        Uri uri = item.getUri();
-        String type = item.type();
-        handleFile(uri, type);
+        String filename = item.filename();
+        Bitmap fileAsImage = getBitmapFromFile(filename, "original");
+        Bitmap code = getBitmapFromFile(filename, "code");
+        Bitmap thumbnail = getBitmapFromFile(filename, "thumbnail");
+        showImages(item.toString(), fileAsImage, code, thumbnail);
     }
 
-    void handleFile(Uri uri, String type) {
+    private void showImages(String info, Bitmap fileAsImage, Bitmap code, Bitmap thumbnail) {
+        showDialog(ImageDialogFragment.newInstance(info, fileAsImage, code, thumbnail));
+    }
+
+    @Nullable
+    Bitmap getBitmapFromUri(Uri uri) {
         ContentResolver resolver = getActivity().getContentResolver();
         if (UriUtils.fileExists(resolver, uri)) {
             if (UriUtils.isPdf(resolver, uri)) {
-                showPdf(uri);
+                return pdfToBitmap(uri);
             } else if (UriUtils.isImage(resolver, uri)) {
-                showImage(uri);
+                return UriUtils.getBitmapFromUri(getActivity().getContentResolver(), uri);
             } else if (UriUtils.isText(resolver, uri)) {
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                Toast.makeText(getActivity(), textContent, Toast.LENGTH_SHORT).show();
-            } else if (type.equals("application/octet-stream")) {
-                String text = UriUtils.readTextFromUri(resolver, uri);
-                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                return CodeCreationUtils.encodeAsQrCode(textContent);
             } else {
-                showSnack("No known type: " + type);
+                showSnack("No known file type: " + uri);
             }
         } else {
             showSnack("File doesn't exist: " + uri);
         }
+        return null;
     }
 
-    private void showImage(Uri uri) {
-        Bitmap bitmap = UriUtils.getBitmapFromUri(getActivity().getContentResolver(), uri);
-        showDialog(ImageDialogFragment.newInstance(bitmap));
+
+    private Bitmap getCodeFromBitmap(Bitmap bitmap) {
+        ArrayList<Bitmap> codes = new ArrayList<>();
+
+        BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
+                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                .build();
+
+        if (!detector.isOperational()) {
+            showSnack("Could not set up the detector!");
+            return null;
+        }
+
+        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        SparseArray<Barcode> barcodes = detector.detect(frame);
+
+        for (int i = 0; i < barcodes.size(); i++) {
+            int key = barcodes.keyAt(i);
+            Barcode barcode = barcodes.get(key);
+            showSnack(barcode.rawValue);
+
+            Bitmap code;
+            if (barcode.format == Barcode.QR_CODE) {
+                code = CodeCreationUtils.encodeAsQrCode(barcode.rawValue);
+            } else if (barcode.format == Barcode.PDF417) {
+                code = CodeCreationUtils.encodeAsPdf417(barcode.rawValue);
+            } else {
+                // TODO
+                code = CodeCreationUtils.encodeAsQrCode(barcode.rawValue);
+            }
+            if (code != null) {
+                codes.add(code);
+            }
+        }
+        if (codes.isEmpty()) {
+            return null;
+        } else {
+            if (codes.size() > 1) {
+                Logger.logError(codes.size() + " codes found in bitmap!");
+            }
+            return codes.get(0);
+        }
     }
 
-    private void showPdf(Uri uri) {
-
+    @Nullable
+    private Bitmap pdfToBitmap(Uri uri) {
+        int pageNum = 0;// TODO
         try {
-            ParcelFileDescriptor fd = getActivity().getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
-            int pageNum = 0;
+            ParcelFileDescriptor fileDescriptor = getActivity().getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
             PdfiumCore pdfiumCore = new PdfiumCore(getActivity());
-
-            PdfDocument pdfDocument = pdfiumCore.newDocument(fd);
-
+            PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
             pdfiumCore.openPage(pdfDocument, pageNum);
 
             int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum);
             int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum);
-
             Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             pdfiumCore.renderPageBitmap(pdfDocument, bitmap, pageNum, 0, 0, width, height);
 
             printInfo(pdfiumCore, pdfDocument);
-
             pdfiumCore.closeDocument(pdfDocument);
 
-            showDialog(ImageDialogFragment.newInstance(bitmap));
+            return bitmap;
         } catch (IOException e) {
             logException(e);
         }
+        return null;
     }
 
     private void printInfo(PdfiumCore core, PdfDocument doc) {
@@ -214,5 +295,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
         }
     }
+
 
 }
