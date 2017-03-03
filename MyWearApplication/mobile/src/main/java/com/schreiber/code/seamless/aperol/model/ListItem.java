@@ -5,13 +5,15 @@ import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.Date;
+
 
 // https://github.com/google/auto/blob/master/value/userguide/index.md
 @AutoValue
 public abstract class ListItem {
 
-    public static ListItem create(String filename, String type, String size) {
-        return new AutoValue_ListItem(filename, type, size);
+    public static ListItem create(String filename, String type, String size, Date creationDate) {
+        return new AutoValue_ListItem(filename, type, size, creationDate.getTime());
     }
 
     public abstract String filename();
@@ -19,6 +21,12 @@ public abstract class ListItem {
     public abstract String type();
 
     public abstract String size();
+
+    public abstract long creationDate();
+
+    public String getCreationDate() {
+        return new Date(creationDate());
+    }
 
     public String getMimeType() {
         MimeTypeMap mime = MimeTypeMap.getSingleton();

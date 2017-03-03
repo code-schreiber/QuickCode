@@ -37,6 +37,7 @@ public class ImageDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context context = getActivity();
         LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
         TextView textView = new TextView(context);
         textView.setText(getArguments().getString(INFO));
         layout.addView(textView);
