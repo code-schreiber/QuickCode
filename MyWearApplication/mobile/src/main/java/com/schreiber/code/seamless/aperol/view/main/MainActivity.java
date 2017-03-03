@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity implements
                     if (!type.equals(intentType)) {
                         showSnack(type + " not equals " + intentType);// TODO check
                     }
-                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
+//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
                 }
             }
         }

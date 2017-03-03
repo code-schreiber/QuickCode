@@ -1,34 +1,33 @@
 package com.schreiber.code.seamless.aperol.view.common.view.dialog;
 
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 public class ImageDialogFragment extends DialogFragment {
 
-    private static final String IMAGE = "IMAGE";
-    private static final String IMAGE_URI = "IMAGE_URI";
+    private static final String INFO = "INFO";
+    private static final String IMAGE_ORIGINAL = "IMAGE_ORIGINAL";
+    private static final String IMAGE_CODE = "IMAGE_CODE";
+    private static final String IMAGE_THUMBNAIL = "IMAGE_THUMBNAIL";
 
 
-    public static ImageDialogFragment newInstance(Bitmap image) {
+    public static ImageDialogFragment newInstance(String info, Bitmap fileAsImage, Bitmap code, Bitmap thumbnail) {
         ImageDialogFragment fragment = new ImageDialogFragment();
         Bundle args = new Bundle();
-        args.putParcelable(IMAGE, image);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static ImageDialogFragment newInstance(Uri imageUri) {
-        ImageDialogFragment fragment = new ImageDialogFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(IMAGE_URI, imageUri);
+        args.putString(INFO, info);
+        args.putParcelable(IMAGE_ORIGINAL, fileAsImage);
+        args.putParcelable(IMAGE_CODE, code);
+        args.putParcelable(IMAGE_THUMBNAIL, thumbnail);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,13 +36,21 @@ public class ImageDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context context = getActivity();
-        ImageView imageView = new ImageView(context);
-        if (getArguments().containsKey(IMAGE_URI))
-            imageView.setImageURI((Uri) getArguments().getParcelable(IMAGE_URI));
-        else if (getArguments().containsKey(IMAGE))
-            imageView.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE));
+        LinearLayout layout = new LinearLayout(context);
+        TextView textView = new TextView(context);
+        textView.setText(getArguments().getString(INFO));
+        layout.addView(textView);
+        ImageView original = new ImageView(context);
+        original.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_ORIGINAL));
+        layout.addView(original);
+        ImageView code = new ImageView(context);
+        code.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_CODE));
+        layout.addView(code);
+        ImageView thumb = new ImageView(context);
+        thumb.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_THUMBNAIL));
+        layout.addView(thumb);
         return new AlertDialog.Builder(context)
-                .setView(imageView)
+                .setView(layout)
                 .create();
     }
 
