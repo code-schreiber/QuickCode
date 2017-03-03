@@ -217,7 +217,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         for (int i = 0; i < barcodes.size(); i++) {
             int key = barcodes.keyAt(i);
             Barcode barcode = barcodes.get(key);
-            showSnack(barcode.rawValue);
 
             Bitmap code;
             if (barcode.format == Barcode.QR_CODE) {
