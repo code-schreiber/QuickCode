@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -73,6 +74,12 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
     public void performFileSearch() {
+
+        BarcodeDetector detector = setupBarcodeDetector();
+        if (detector == null) {
+            // Not able to scan, so why bother the user
+            return;
+        }
 
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file browser.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -135,7 +142,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     }
                     String type = contentResolver.getType(uri);
                     String size = UriUtils.getSize(contentResolver, uri);
-                    return ListItem.create(filename, type, size);
+                    return ListItem.create(filename, type, size, new Date());
                 }
             }
         }
@@ -202,12 +209,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     private Bitmap getCodeFromBitmap(Bitmap bitmap) {
         ArrayList<Bitmap> codes = new ArrayList<>();
 
-        BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
-                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
-                .build();
-
-        if (!detector.isOperational()) {
-            showSnack("Could not set up the detector!");
+        BarcodeDetector detector = setupBarcodeDetector();
+        if (detector == null) {
             return null;
         }
 
@@ -239,6 +242,19 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
             return codes.get(0);
         }
+    }
+
+    @Nullable
+    private BarcodeDetector setupBarcodeDetector() {
+        BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
+                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                .build();
+
+        if (!detector.isOperational()) {
+            showSnack("Could not set up the detector!");
+            return null;
+        }
+        return detector;
     }
 
     @Nullable
