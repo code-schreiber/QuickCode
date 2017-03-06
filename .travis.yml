@@ -29,3 +29,5 @@ android:
     # - sys-img-armeabi-v7a-android-22
     # - sys-img-armeabi-v7a-android-17
 script: ./MyWearApplication/gradlew build -p MyWearApplication
+before_install:
+    - gem install supply
