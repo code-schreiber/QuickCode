@@ -7,8 +7,8 @@ echo "TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
 cd MyWearApplication
 echo "Running gradle build"
 ./gradlew build
-echo "Running gradle sonarqube"
-./gradlew sonarqube
+# echo "Running gradle sonarqube"
+# ./gradlew sonarqube
 cd ..
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
