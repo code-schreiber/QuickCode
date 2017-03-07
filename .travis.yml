@@ -34,6 +34,7 @@ android:
 script:
   - cd MyWearApplication
   - ./gradlew build
+  - ./fastlane/travis.sh
 before_install:
     - openssl aes-256-cbc -K $encrypted_f305c44bb590_key -iv $encrypted_f305c44bb590_iv -in secrets.tar.enc -out secrets.tar -d
     - tar xvf secrets.tar
