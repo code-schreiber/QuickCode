@@ -5,20 +5,16 @@ secure: "J6l7sAUUsXDYlwEYTyCvI3yJY0Gb8oV2vrECCiV28nCfl0sjDVONf2Wbu5ing4IuCJri/+b
 secure: "Z9gtNoN7g1uZ54hyiRGBHXj15etU2foGj6znEg/N9oxs7t8CUxENnpPqjb/OR/oMeVRsSkjfy0Hhh5eUprraMxFXaCIxv+SbIy2fk7Mzd6n3a5V/VeYavuICxZJyNvEK6EgHppHD7bANCCcKTr988U1v5be9uGImGBRSBrNBQBJ89QaU2T/WBHTZEUsROiHeDUElCnPSBV8EzteXnoHdaSzfNNuqhf5b7ro4pjuNyqLwKgnpyWQ8KGRZfQSNIMzscy7MtDh81oJ5Yoprjk0fvpIknf93rDmu6oYzEytbTouUKiOYhtMwyf6WsAmxa1SCI5jQuNqBd5dc5ht333c3KNlQzrlMYHfuo8wGViKlkxMpDk0qTsiYE+VV5P4at4xhGoFXRh8Xr9A+0SyAfVwPPseaghFYnaF9iw+pJU4EeHN9P7GaiQ6h7hLKgXSkMxmLvtlyxvuB3/9RggYPF1kQ64QaFLYOhgFuJ9TZlAOCE3SZzSbGe4Nms5l4PslF5+mBqGO1Dwkfik2ePdk9qTKVkcqJnnmLQY9pwEOupO+0k/qeQL2uofQWHt0JoQm5OlLHAvlnvzmu1GvbXysUzZAFI443h3gOueJThhnob8jC5cJRmid6h4UBX9S7fdJLVB+iVtK/+Ug4ayhleYL8CifnU5j2alH/K4syvDLhcgXzbLw="
 android:
   components:
+    # use the latest revision of Android SDK Tools
     - tools
     - platform-tools
     # Workaround to get Android SDK 25 running
     - tools
 
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    # - platform-tools
-    # - tools
-
-    # The BuildTools version used by your project
+    # BuildTools version used by project
     - build-tools-25.0.2
 
-    # The SDK version used to compile your project
+    # SDK version to compile project
     - android-25
 
     # Additional components
@@ -31,12 +27,9 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
     # - sys-img-armeabi-v7a-android-17
-script:
-  - cd MyWearApplication
-  - ./gradlew build
-  - ./fastlane/travis.sh
+script: ./fastlane/travis.sh
 before_install:
-    - openssl aes-256-cbc -K $encrypted_f305c44bb590_key -iv $encrypted_f305c44bb590_iv -in secrets.tar.enc -out secrets.tar -d
-    - tar xvf secrets.tar
-    - rvm install 2.3.1
-    - gem install supply
+  - openssl aes-256-cbc -K $encrypted_f305c44bb590_key -iv $encrypted_f305c44bb590_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
+  - rvm install 2.3.1
+  - gem install supply

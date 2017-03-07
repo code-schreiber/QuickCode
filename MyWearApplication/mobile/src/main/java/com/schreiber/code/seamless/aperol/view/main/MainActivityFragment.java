@@ -155,9 +155,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         fos.close();
     }
 
-    private Bitmap getBitmapFromFile(String filename, String suffix) {
+    private Bitmap getBitmapFromFile(String originalFilename, String suffix) {
         try {
-            FileInputStream fis = getActivity().openFileInput(filename + "." + suffix);
+            FileInputStream fis = getActivity().openFileInput(originalFilename + "." + suffix);
             Bitmap bitmap = BitmapFactory.decodeStream(fis);
             fis.close();
             return bitmap;
@@ -174,10 +174,10 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(ListItem item) {
-        String filename = item.filename();
-        Bitmap fileAsImage = getBitmapFromFile(filename, "original");
-        Bitmap code = getBitmapFromFile(filename, "code");
-        Bitmap thumbnail = getBitmapFromFile(filename, "thumbnail");
+        String originalFilename = item.originalFilename();
+        Bitmap fileAsImage = getBitmapFromFile(originalFilename, "original");
+        Bitmap code = getBitmapFromFile(originalFilename, "code");
+        Bitmap thumbnail = getBitmapFromFile(originalFilename, "thumbnail");
         showImages(item.toString(), fileAsImage, code, thumbnail);
     }
 

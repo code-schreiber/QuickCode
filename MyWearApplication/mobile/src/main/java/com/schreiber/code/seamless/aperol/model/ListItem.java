@@ -13,10 +13,12 @@ import java.util.Date;
 public abstract class ListItem {
 
     public static ListItem create(String filename, String type, String size, Date creationDate) {
-        return new AutoValue_ListItem(filename, type, size, creationDate.getTime());
+        return new AutoValue_ListItem(filename, filename, type, size, creationDate.getTime());
     }
 
     public abstract String filename();
+
+    public abstract String originalFilename();
 
     public abstract String type();
 
@@ -24,7 +26,7 @@ public abstract class ListItem {
 
     public abstract long creationDate();
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return new Date(creationDate());
     }
 
