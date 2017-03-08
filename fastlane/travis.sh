@@ -15,6 +15,7 @@ ls mobile/build/outputs/apk
 # echo "travis.sh: Running gradle sonarqube"
 # ./gradlew sonarqube
 cd ..
+ls
 
 if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
   echo "travis.sh: Running fastlane supply --version"
