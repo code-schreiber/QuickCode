@@ -14,10 +14,6 @@ buildscript {
 
 }
 
-plugins {
-    id "org.sonarqube" version "2.2"
-}
-
 allprojects {
     repositories {
         jcenter()
@@ -32,3 +28,9 @@ ext {
     versionCode = 1
     versionName = "0.0"
 }
+
+task printVersion() {
+    println("Version Code: $versionCode")
+    println("Version Name: $versionName")
+}
+
