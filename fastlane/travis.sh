@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Running travis.sh"
 echo "travis.sh: TRAVIS_BRANCH: $TRAVIS_BRANCH"
