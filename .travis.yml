@@ -41,6 +41,8 @@ before_install:
 
 cache:
   directories:
+    - '$HOME/.m2'
+    - '$HOME/.gradle'
     - '$HOME/.sonar/cache'
 env:
   global:
