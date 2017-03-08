@@ -14,6 +14,10 @@ buildscript {
 
 }
 
+plugins {
+    id "org.sonarqube" version "2.2"
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -34,3 +38,13 @@ task printVersion() {
     println("Version Name: $versionName")
 }
 
+sonarqube {
+    properties {
+        property "sonar.projectName", project.name
+        property "sonar.projectKey", project.name
+        property "sonar.projectVersion", rootProject.versionName
+
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.host.url", "https://sonarqube.com"
+    }
+}

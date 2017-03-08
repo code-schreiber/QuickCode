@@ -14,8 +14,8 @@ echo "travis.sh: Running gradle build"
 ./gradlew build
 echo "travis.sh: mobile/build/outputs/apk now contains:"
 ls mobile/build/outputs/apk
-# echo "travis.sh: Running gradle sonarqube"
-# ./gradlew sonarqube
+echo "travis.sh: Running gradle sonarqube"
+./gradlew sonarqube
 cd ..
 
 if [ "$TRAVIS_REPO_SLUG" != "code-schreiber/seamless-aperol" ]; then
