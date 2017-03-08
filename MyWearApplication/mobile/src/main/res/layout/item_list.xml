@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="listItem"
-            type="com.schreiber.code.seamless.aperol.model.ListItem" />
+            type="com.schreiber.code.seamless.aperol.model.ListItem"/>
 
         <variable
             name="actionListener"
-            type="com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener" />
+            type="com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener"/>
     </data>
 
     <LinearLayout
@@ -28,6 +28,6 @@
             android:minHeight="@dimen/size_min_touchable_area"
             android:text="@{listItem.filename()}"
             android:textColor="@color/colorPrimaryDark"
-            tools:text="List item text" />
+            tools:text="List item text"/>
     </LinearLayout>
 </layout>
