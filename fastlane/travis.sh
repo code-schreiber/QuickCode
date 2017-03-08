@@ -17,7 +17,7 @@ ls mobile/build/outputs/apk
 cd ..
 ls
 
-if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+if [ "$TRAVIS_BRANCH" == "develop" ]; then
   echo "travis.sh: Running fastlane supply --version"
   fastlane supply --version
   echo "travis.sh: Running fastlane supply run"
