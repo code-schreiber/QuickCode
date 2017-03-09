@@ -11,7 +11,7 @@ echo "travis.sh: TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
 
 cd MyWearApplication
 echo "travis.sh: Running gradle build"
-./gradlew build
+./gradlew buildRelease
 echo "travis.sh: mobile/build/outputs/apk now contains:"
 ls mobile/build/outputs/apk
 echo "travis.sh: Running gradle sonarqube"
