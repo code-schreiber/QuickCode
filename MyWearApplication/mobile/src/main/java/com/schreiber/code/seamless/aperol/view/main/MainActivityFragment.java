@@ -3,10 +3,8 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -26,6 +24,7 @@ import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.model.ListItem;
 import com.schreiber.code.seamless.aperol.util.CodeCreationUtils;
+import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
@@ -33,8 +32,6 @@ import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFra
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,9 +130,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     ContentResolver contentResolver = getActivity().getContentResolver();
                     String filename = UriUtils.getDisplayName(contentResolver, uri);
                     try {
-                        saveBitmapToFile(fileAsImage, filename, "original");
-                        saveBitmapToFile(code, filename, "code");
-                        saveBitmapToFile(thumbnail, filename, "thumbnail");
+                        IOUtils.saveBitmapToFile(getActivity(), fileAsImage, filename, "original");
+                        IOUtils.saveBitmapToFile(getActivity(), code, filename, "code");
+                        IOUtils.saveBitmapToFile(getActivity(), thumbnail, filename, "thumbnail");
                     } catch (IOException e) {
                         Logger.logException(e);
                         return null;
@@ -149,24 +146,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return null;
     }
 
-    private void saveBitmapToFile(Bitmap fileAsImage, String filename, String suffix) throws IOException {
-        FileOutputStream fos = getActivity().openFileOutput(filename + "." + suffix, Context.MODE_PRIVATE);
-        fileAsImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        fos.close();
-    }
-
-    private Bitmap getBitmapFromFile(String originalFilename, String suffix) {
-        try {
-            FileInputStream fis = getActivity().openFileInput(originalFilename + "." + suffix);
-            Bitmap bitmap = BitmapFactory.decodeStream(fis);
-            fis.close();
-            return bitmap;
-        } catch (IOException e) {
-            Logger.logException(e);
-        }
-        return null;
-    }
-
     private void showSnack(String m) {
         logInfo(m);
         Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
@@ -175,9 +154,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public void onItemClicked(ListItem item) {
         String originalFilename = item.originalFilename();
-        Bitmap fileAsImage = getBitmapFromFile(originalFilename, "original");
-        Bitmap code = getBitmapFromFile(originalFilename, "code");
-        Bitmap thumbnail = getBitmapFromFile(originalFilename, "thumbnail");
+        Bitmap fileAsImage = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "original");
+        Bitmap code = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "code");
+        Bitmap thumbnail = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "thumbnail");
         showImages(item.toString(), fileAsImage, code, thumbnail);
     }
 
