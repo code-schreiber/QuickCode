@@ -9,15 +9,18 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+
 public class TypefaceProvider {
 
     private static final String FONTS_PATH = "fonts";
     private final Map<String, Font> fonts = new HashMap<>();
+    private final ArrayList<String> paths = new ArrayList<>();
 
     private static final boolean RANDOM_MODE = true;
     private String randomKey;
@@ -36,7 +39,9 @@ public class TypefaceProvider {
 
     private void initialize(Context context) {
         AssetManager assets = context.getAssets();
-        initializeTypefaces(assets, FONTS_PATH);
+
+        initializeTypefacesPaths(assets, FONTS_PATH);
+        initializeTypefaces(assets, paths);
 
         if (RANDOM_MODE && !fonts.isEmpty()) {
             for (String s : fonts.keySet()) {
@@ -51,25 +56,33 @@ public class TypefaceProvider {
         }
     }
 
-    private void initializeTypefaces(AssetManager assets, String path) {
+    private void initializeTypefacesPaths(AssetManager assets, String path) {
         try {
             String[] list = assets.list(path);
             boolean isFolder = list.length > 0;
             if (isFolder) {
                 for (String file : list) {
-                    initializeTypefaces(assets, path + "/" + file);
+                    initializeTypefacesPaths(assets, path + "/" + file);
                 }
             } else {
-                if (path.endsWith(".ttf") || path.endsWith(".otf")) {
-                    if (fontExists(assets, path)) {
-                        addTypefaceToFonts(assets, path);
-                    } else
-                        Logger.logError("Not adding not existant " + path);
-                } else
-                    Logger.logError("Not adding " + path);
+                paths.add(path);
             }
         } catch (IOException e) {
             Logger.logException(e);
+        }
+    }
+
+    private void initializeTypefaces(AssetManager assets, ArrayList<String> paths) {
+        for (String path : paths) {
+            if (path.endsWith(".ttf") || path.endsWith(".otf")) {
+                if (fontExists(assets, path)) {
+                    addTypefaceToFonts(assets, path);
+                } else {
+                    Logger.logError("Not adding not existant " + path);
+                }
+            } else {
+                Logger.logError("Not adding " + path);
+            }
         }
     }
 
