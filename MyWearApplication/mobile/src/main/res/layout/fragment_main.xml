@@ -17,6 +17,6 @@
         android:id="@+id/fragment_main_activity_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listItem="@layout/item_list" />
+        tools:codeFile="@layout/item_list" />
 
 </RelativeLayout>

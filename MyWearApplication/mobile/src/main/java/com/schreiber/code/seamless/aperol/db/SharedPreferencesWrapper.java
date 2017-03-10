@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 
 import com.orhanobut.hawk.Hawk;
 import com.orhanobut.hawk.LogInterceptor;
-import com.schreiber.code.seamless.aperol.model.ListItem;
+import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.util.Logger;
 
 import java.util.ArrayList;
@@ -31,20 +31,20 @@ public final class SharedPreferencesWrapper {
         getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).apply();
     }
 
-    public static boolean addListItem(Context context, ListItem listItem) {
+    public static boolean addListItem(Context context, CodeFile codeFile) {
         initHawk(context);
-        ArrayList<ListItem> items = getListItems(context);
-        items.add(listItem);
+        ArrayList<CodeFile> items = getListItems(context);
+        items.add(codeFile);
         return Hawk.put(LIST_ITEMS_KEY, items);
     }
 
-    public static ArrayList<ListItem> getListItems(Context context) {
+    public static ArrayList<CodeFile> getListItems(Context context) {
         initHawk(context);
-        ArrayList<ListItem> listItems = Hawk.get(LIST_ITEMS_KEY);
-        if (listItems == null) {
-            listItems = new ArrayList<>();
+        ArrayList<CodeFile> codeFiles = Hawk.get(LIST_ITEMS_KEY);
+        if (codeFiles == null) {
+            codeFiles = new ArrayList<>();
         }
-        return listItems;
+        return codeFiles;
     }
 
     public static <T> boolean deleteListItem(Context context, T t) {
