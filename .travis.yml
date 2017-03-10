@@ -2,6 +2,8 @@ language: android
 
 install: true
 
+sudo: true
+
 addons:
   sonarqube:
     branches:
