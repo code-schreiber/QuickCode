@@ -23,7 +23,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.model.ListItem;
-import com.schreiber.code.seamless.aperol.util.CodeCreationUtils;
+import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
+import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
@@ -60,6 +61,15 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         recyclerView.setLayoutManager(layoutManager);
 
         List<ListItem> data = SharedPreferencesWrapper.getListItems(getActivity());
+        ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
+        for (String path : paths) {
+            ListItem item = createItemFromPath(path);
+            if (item != null) {
+                data.add(item);
+            } else {
+                showSnack("Error: Not adding " + path);
+            }
+        }
         adapter = new MyCustomAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
@@ -99,7 +109,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     if (uri != null) {
-                        ListItem item = createItem(uri, getBitmapFromUri(uri));
+                        ListItem item = createItemFromUri(uri);
                         if (item != null) {
                             if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
                                 SharedPreferencesWrapper.addListItem(getActivity(), item);
@@ -120,15 +130,26 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }
     }
 
-    private ListItem createItem(Uri uri, Bitmap fileAsImage) {
+    private ListItem createItemFromPath(String path) {
+        return createItemFromUri(Uri.parse(path));
+    }
+
+    private ListItem createItemFromUri(Uri uri) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        String filename = UriUtils.getDisplayName(contentResolver, uri);
+        String type = contentResolver.getType(uri);
+        String size = UriUtils.getSize(contentResolver, uri);
+        Bitmap fileAsImage = getBitmapFromUri(uri);
+        return createItem(filename, type, size, fileAsImage, uri.toString());
+    }
+
+    private ListItem createItem(String filename, String type, String size, Bitmap fileAsImage, String source) {
         if (fileAsImage != null) {
             Bitmap code = getCodeFromBitmap(fileAsImage);
             if (code != null) {
                 int thumbnailSize = 64;
                 Bitmap thumbnail = Bitmap.createScaledBitmap(code, thumbnailSize, thumbnailSize, false);
                 if (thumbnail != null) {
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    String filename = UriUtils.getDisplayName(contentResolver, uri);
                     try {
                         IOUtils.saveBitmapToFile(getActivity(), fileAsImage, filename, "original");
                         IOUtils.saveBitmapToFile(getActivity(), code, filename, "code");
@@ -137,9 +158,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                         Logger.logException(e);
                         return null;
                     }
-                    String type = contentResolver.getType(uri);
-                    String size = UriUtils.getSize(contentResolver, uri);
-                    return ListItem.create(filename, type, size, new Date());
+                    return ListItem.create(filename, type, size, new Date(), source);
                 }
             }
         }
@@ -174,7 +193,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 return UriUtils.getBitmapFromUri(getActivity().getContentResolver(), uri);
             } else if (UriUtils.isText(resolver, uri)) {
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                return CodeCreationUtils.encodeAsQrCode(textContent);
+                return EncodingUtils.encodeAsQrCode(textContent);
             } else {
                 showSnack("No known file type: " + uri);
             }
@@ -202,12 +221,12 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
             Bitmap code;
             if (barcode.format == Barcode.QR_CODE) {
-                code = CodeCreationUtils.encodeAsQrCode(barcode.rawValue);
+                code = EncodingUtils.encodeAsQrCode(barcode.rawValue);
             } else if (barcode.format == Barcode.PDF417) {
-                code = CodeCreationUtils.encodeAsPdf417(barcode.rawValue);
+                code = EncodingUtils.encodeAsPdf417(barcode.rawValue);
             } else {
                 // TODO
-                code = CodeCreationUtils.encodeAsQrCode(barcode.rawValue);
+                code = EncodingUtils.encodeAsQrCode(barcode.rawValue);
             }
             if (code != null) {
                 codes.add(code);
@@ -244,6 +263,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             PdfiumCore pdfiumCore = new PdfiumCore(getActivity());
             PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
             pdfiumCore.openPage(pdfDocument, pageNum);
+            if (pdfiumCore.getPageCount(pdfDocument) != 1) {
+                showSnack("Error: Pdf has " + pdfiumCore.getPageCount(pdfDocument) + " pages.");
+            }
 
             int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum);
             int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum);

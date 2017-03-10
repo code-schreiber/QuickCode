@@ -77,7 +77,10 @@ public final class IOUtils {
                     delete(f);
                 }
             } else {
-                file.delete();
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    Logger.logError("Couldn't delete " + file.getAbsolutePath());
+                }
             }
         }
     }

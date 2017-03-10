@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,6 @@ public class TypefaceProvider {
 
     private static final String FONTS_PATH = "fonts";
     private final Map<String, Font> fonts = new HashMap<>();
-    private final ArrayList<String> paths = new ArrayList<>();
 
     private static final boolean RANDOM_MODE = true;
     private String randomKey;
@@ -40,7 +38,7 @@ public class TypefaceProvider {
     private void initialize(Context context) {
         AssetManager assets = context.getAssets();
 
-        initializeTypefacesPaths(assets, FONTS_PATH);
+        ArrayList<String> paths = new AssetPathLoader(assets, FONTS_PATH).getPaths();
         initializeTypefaces(assets, paths);
 
         if (RANDOM_MODE && !fonts.isEmpty()) {
@@ -53,22 +51,6 @@ public class TypefaceProvider {
             Font randomFont = fonts.get(randomKey);
             fonts.clear();
             fonts.put(randomKey, randomFont);
-        }
-    }
-
-    private void initializeTypefacesPaths(AssetManager assets, String path) {
-        try {
-            String[] list = assets.list(path);
-            boolean isFolder = list.length > 0;
-            if (isFolder) {
-                for (String file : list) {
-                    initializeTypefacesPaths(assets, path + "/" + file);
-                }
-            } else {
-                paths.add(path);
-            }
-        } catch (IOException e) {
-            Logger.logException(e);
         }
     }
 
