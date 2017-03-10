@@ -22,7 +22,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
-import com.schreiber.code.seamless.aperol.model.ListItem;
+import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
@@ -60,10 +60,10 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        List<ListItem> data = SharedPreferencesWrapper.getListItems(getActivity());
+        List<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         for (String path : paths) {
-            ListItem item = createItemFromPath(path);
+            CodeFile item = createItemFromPath(path);
             if (item != null) {
                 data.add(item);
             } else {
@@ -109,7 +109,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     if (uri != null) {
-                        ListItem item = createItemFromUri(uri);
+                        CodeFile item = createItemFromUri(uri);
                         if (item != null) {
                             if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
                                 SharedPreferencesWrapper.addListItem(getActivity(), item);
@@ -130,11 +130,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }
     }
 
-    private ListItem createItemFromPath(String path) {
+    private CodeFile createItemFromPath(String path) {
         return createItemFromUri(Uri.parse(path));
     }
 
-    private ListItem createItemFromUri(Uri uri) {
+    private CodeFile createItemFromUri(Uri uri) {
         ContentResolver contentResolver = getActivity().getContentResolver();
         String filename = UriUtils.getDisplayName(contentResolver, uri);
         String type = contentResolver.getType(uri);
@@ -143,7 +143,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return createItem(filename, type, size, fileAsImage, uri.toString());
     }
 
-    private ListItem createItem(String filename, String type, String size, Bitmap fileAsImage, String source) {
+    private CodeFile createItem(String filename, String type, String size, Bitmap fileAsImage, String source) {
         if (fileAsImage != null) {
             Bitmap code = getCodeFromBitmap(fileAsImage);
             if (code != null) {
@@ -158,7 +158,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                         Logger.logException(e);
                         return null;
                     }
-                    return ListItem.create(filename, type, size, new Date(), source);
+                    return CodeFile.create(filename, type, size, new Date(), source);
                 }
             }
         }
@@ -171,7 +171,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     @Override
-    public void onItemClicked(ListItem item) {
+    public void onItemClicked(CodeFile item) {
         String originalFilename = item.originalFilename();
         Bitmap fileAsImage = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "original");
         Bitmap code = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "code");

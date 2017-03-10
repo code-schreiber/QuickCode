@@ -10,12 +10,12 @@ import java.util.Date;
 
 // https://github.com/google/auto/blob/master/value/userguide/index.md
 @AutoValue
-public abstract class ListItem {
+public abstract class CodeFile {
 
     private static final long NOT_ON_WATCH = 0L;
 
-    public static ListItem create(String filename, String type, String size, Date creationDate, String source) {
-        return new AutoValue_ListItem(filename, filename, type, size, creationDate.getTime(), source, NOT_ON_WATCH);
+    public static CodeFile create(String filename, String type, String size, Date creationDate, String source) {
+        return new AutoValue_CodeFile(filename, filename, type, size, creationDate.getTime(), source, NOT_ON_WATCH);
     }
 
     public abstract String filename();

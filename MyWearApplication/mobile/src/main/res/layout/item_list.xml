@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="listItem"
-            type="com.schreiber.code.seamless.aperol.model.ListItem"/>
+            name="codeFile"
+            type="com.schreiber.code.seamless.aperol.model.CodeFile"/>
 
         <variable
             name="actionListener"
@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{()->actionListener.onItemClicked(listItem)}"
+        android:onClick="@{()->actionListener.onItemClicked(codeFile)}"
         android:orientation="vertical">
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:gravity="center_vertical"
             android:minHeight="@dimen/size_min_touchable_area"
-            android:text="@{listItem.filename()}"
+            android:text="@{codeFile.filename()}"
             android:textColor="@color/colorPrimaryDark"
             tools:text="List item text"/>
     </LinearLayout>
