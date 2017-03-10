@@ -11,10 +11,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 
-public class CodeCreationUtils {
+public class EncodingUtils {
 
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 400;
 
-    private CodeCreationUtils() {
+    private EncodingUtils() {
         // Hide utility class constructor
     }
 
@@ -22,18 +24,14 @@ public class CodeCreationUtils {
     @CheckResult
     public static Bitmap encodeAsPdf417(String rawContent) {
         BarcodeFormat format = BarcodeFormat.PDF_417;
-        int width = 400;
-        int height = 400;
-        return encodeAsBitmap(rawContent, format, width, height);
+        return encodeAsBitmap(rawContent, format, WIDTH, HEIGHT);
     }
 
     @Nullable
     @CheckResult
     public static Bitmap encodeAsQrCode(String rawContent) {
         BarcodeFormat format = BarcodeFormat.QR_CODE;
-        int width = 400;
-        int height = 400;
-        return encodeAsBitmap(rawContent, format, width, height);
+        return encodeAsBitmap(rawContent, format, WIDTH, HEIGHT);
     }
 
     @Nullable

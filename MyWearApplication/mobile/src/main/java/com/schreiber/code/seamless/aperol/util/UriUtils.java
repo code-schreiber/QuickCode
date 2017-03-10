@@ -23,6 +23,10 @@ public class UriUtils {
 
     public static final String MODE_READ = "r";
 
+    public static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
+    public static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
+    public static final String TYPE_RELATIVE_IMAGE = "image/";
+
     private UriUtils() {
         // Hide utility class constructor
     }
@@ -151,16 +155,16 @@ public class UriUtils {
     }
 
     public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
-        return "application/pdf".equals(contentResolver.getType(uri));
+        return TYPE_ABSOLUTE_APPLICATION_PDF.equals(contentResolver.getType(uri));
     }
 
     public static boolean isImage(ContentResolver contentResolver, Uri uri) {
         String type = contentResolver.getType(uri);
-        return !TypeUtils.isEmpty(type) && type.contains("image/");
+        return !TypeUtils.isEmpty(type) && type.contains(TYPE_RELATIVE_IMAGE);
     }
 
     public static boolean isText(ContentResolver contentResolver, Uri uri) {
-        return "text/plain".equals(contentResolver.getType(uri));
+        return TYPE_ABSOLUTE_TEXT_PLAIN.equals(contentResolver.getType(uri));
     }
 
 }
