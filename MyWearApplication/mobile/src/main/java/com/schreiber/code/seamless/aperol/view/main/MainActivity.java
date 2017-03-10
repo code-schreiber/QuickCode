@@ -1,6 +1,8 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -61,9 +63,9 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onClick(View view) {
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
-                if (fragment != null && fragment instanceof MainActivityFragment)
+                if (fragment != null && fragment instanceof MainActivityFragment) {
                     ((MainActivityFragment) fragment).performFileSearch();
-                else {
+                } else {
                     showSnack(fragment + " is not " + MainActivityFragment.class);
                 }
             }
@@ -76,22 +78,7 @@ public class MainActivity extends BaseActivity implements
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        // Get intent, action and MIME type
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        if (Intent.ACTION_VIEW.equals(action)) {
-            Fragment mainFragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
-            if (mainFragment != null && mainFragment.isVisible()) {
-                if (mainFragment instanceof MainActivityFragment) {
-                    String intentType = intent.getType();
-                    String type = getContentResolver().getType(intent.getData());
-                    if (!type.equals(intentType)) {
-                        showSnack(type + " not equals " + intentType);// TODO check
-                    }
-//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
-                }
-            }
-        }
+        handleIntent(getIntent());
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -100,6 +87,30 @@ public class MainActivity extends BaseActivity implements
             }
         }, 1000 * 3);
     }
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        String action = intent.getAction();
+        Uri linkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(action) && linkData != null) {
+            Fragment mainFragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
+            if (mainFragment != null && mainFragment.isVisible()) {
+                if (mainFragment instanceof MainActivityFragment) {
+                    String intentType = intent.getType();
+                    String type = getContentResolver().getType(linkData);
+                    if (!type.equals(intentType)) {
+                        showSnack(type + " not equals " + intentType);// TODO check
+                    }
+//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -146,10 +157,8 @@ public class MainActivity extends BaseActivity implements
 
         } else if (id == R.id.menu_global_manage) {
 
-        } else if (id == R.id.menu_global_share) {
-
-        } else if (id == R.id.menu_global_send) {
-
+        } else if (id == R.id.menu_debug_reset_app) {
+            showSnack("TODO: Reset app");
         }
     }
 

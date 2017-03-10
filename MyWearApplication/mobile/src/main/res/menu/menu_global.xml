@@ -15,16 +15,12 @@
             android:title="Tools" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/menu_debug">
         <menu>
             <item
-                android:id="@+id/menu_global_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/menu_global_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/menu_debug_reset_app"
+                android:icon="@drawable/ic_clear_black_24dp"
+                android:title="@string/menu_debug_reset_app" />
         </menu>
     </item>
 
