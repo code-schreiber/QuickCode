@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".MainActivity">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/menu_global_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/menu_global_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
+    <item
+        android:id="@+id/menu_global_import_assets"
+        android:icon="@drawable/ic_add_image_black_24dp"
+        android:title="Import assets"/>
 
     <item android:title="@string/menu_debug">
         <menu>
             <item
-                android:id="@+id/menu_debug_reset_app"
+                android:id="@+id/menu_global_debug_reset_app"
                 android:icon="@drawable/ic_clear_black_24dp"
-                android:title="@string/menu_debug_reset_app" />
+                android:title="@string/menu_debug_reset_app"/>
         </menu>
     </item>
 

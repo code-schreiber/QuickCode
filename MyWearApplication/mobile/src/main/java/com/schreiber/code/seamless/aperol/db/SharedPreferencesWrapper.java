@@ -70,6 +70,11 @@ public final class SharedPreferencesWrapper {
         }
     }
 
+    public static void clearAll(Context context) {
+        getDefaultPreferences(context).edit().clear().commit();
+        Hawk.deleteAll();
+    }
+
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
         getDefaultPreferences(context).registerOnSharedPreferenceChangeListener(listener);
     }

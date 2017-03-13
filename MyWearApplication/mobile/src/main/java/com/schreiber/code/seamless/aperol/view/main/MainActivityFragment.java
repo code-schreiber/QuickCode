@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -26,13 +27,13 @@ import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
-import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,15 +62,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         recyclerView.setLayoutManager(layoutManager);
 
         List<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
-        ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
-        for (String path : paths) {
-            CodeFile item = createItemFromPath(path);
-            if (item != null) {
-                data.add(item);
-            } else {
-                showSnack("Error: Not adding " + path);
-            }
-        }
         adapter = new MyCustomAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
@@ -80,7 +72,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
-    public void performFileSearch() {
+    void performFileSearch() {
 
         BarcodeDetector detector = setupBarcodeDetector();
         if (detector == null) {
@@ -100,6 +92,28 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         // To search for all documents available via installed storage providers, it would be "*/*".
         intent.setType("*/*");
         startActivityForResult(intent, READ_REQUEST_CODE);
+    }
+
+
+    void importAssets() {
+        ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
+        ArrayList<CodeFile> assets = new ArrayList<>();
+        for (String path : paths) {
+            CodeFile item = createItemFromPath(path);
+            if (item != null) {
+                assets.add(item);
+            } else {
+                showSimpleDialog("Error: Not adding " + path);
+            }
+        }
+
+        if (!assets.isEmpty()) {
+            showSimpleDialog("No Assets to import");
+        } else {
+            ArrayList<CodeFile> itemsBefore = SharedPreferencesWrapper.getListItems(getActivity());
+            itemsBefore.addAll(assets);
+            adapter.replaceData(itemsBefore);
+        }
     }
 
     @Override
@@ -131,7 +145,18 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     private CodeFile createItemFromPath(String path) {
-        return createItemFromUri(Uri.parse(path));
+        Uri uri = Uri.parse(path);
+        String filename = uri.getLastPathSegment();
+        String type = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
+        String size = "-1";// TODO
+        Bitmap fileAsImage = null;
+        try {
+            fileAsImage = BitmapFactory.decodeStream(getActivity().getAssets().open(path));
+        } catch (IOException e) {
+            logException(e);
+        }
+        String source = "app assets/" + (new File(path)).getParent();
+        return createItem(filename, type, size, fileAsImage, source);
     }
 
     private CodeFile createItemFromUri(Uri uri) {
@@ -143,22 +168,29 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return createItem(filename, type, size, fileAsImage, uri.toString());
     }
 
+    @Nullable
     private CodeFile createItem(String filename, String type, String size, Bitmap fileAsImage, String source) {
         if (fileAsImage != null) {
-            Bitmap code = getCodeFromBitmap(fileAsImage);
-            if (code != null) {
-                int thumbnailSize = 64;
-                Bitmap thumbnail = Bitmap.createScaledBitmap(code, thumbnailSize, thumbnailSize, false);
-                if (thumbnail != null) {
-                    try {
-                        IOUtils.saveBitmapToFile(getActivity(), fileAsImage, filename, "original");
+            int thumbnailSize = 128;
+            Bitmap thumbnail = Bitmap.createScaledBitmap(fileAsImage, thumbnailSize, thumbnailSize, false);
+            if (thumbnail != null) {
+                try {
+                    IOUtils.saveBitmapToFile(getActivity(), fileAsImage, filename, "original");
+                    IOUtils.saveBitmapToFile(getActivity(), thumbnail, filename, "thumbnail");
+                    ArrayList<Bitmap> codes = getCodesFromBitmap(fileAsImage);
+                    if (codes != null) {
+                        if (codes.size() > 1) {
+                            showSimpleDialog("Error: " + codes.size() + " codes found in bitmap! Saving only one.");
+                        }
+                        Bitmap code = codes.get(0);
                         IOUtils.saveBitmapToFile(getActivity(), code, filename, "code");
-                        IOUtils.saveBitmapToFile(getActivity(), thumbnail, filename, "thumbnail");
-                    } catch (IOException e) {
-                        Logger.logException(e);
-                        return null;
+                    } else {
+                        showSimpleDialog("Couldn't get code from " + filename);
                     }
                     return CodeFile.create(filename, type, size, new Date(), source);
+                } catch (IOException e) {
+                    logException(e);
+                    return null;
                 }
             }
         }
@@ -167,7 +199,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     private void showSnack(String m) {
         logInfo(m);
-        Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
+        try {
+            Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            logException(e);
+        }
     }
 
     @Override
@@ -184,7 +220,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     @Nullable
-    Bitmap getBitmapFromUri(Uri uri) {
+    private Bitmap getBitmapFromUri(Uri uri) {
         ContentResolver resolver = getActivity().getContentResolver();
         if (UriUtils.fileExists(resolver, uri)) {
             if (UriUtils.isPdf(resolver, uri)) {
@@ -203,13 +239,12 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return null;
     }
 
-
-    private Bitmap getCodeFromBitmap(Bitmap bitmap) {
+    private ArrayList<Bitmap> getCodesFromBitmap(Bitmap bitmap) {
         ArrayList<Bitmap> codes = new ArrayList<>();
 
         BarcodeDetector detector = setupBarcodeDetector();
         if (detector == null) {
-            return null;
+            return codes;
         }
 
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
@@ -230,26 +265,22 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
             if (code != null) {
                 codes.add(code);
+            } else {
+                logError("Coulnt encode bitmap from barcode");
             }
         }
-        if (codes.isEmpty()) {
-            return null;
-        } else {
-            if (codes.size() > 1) {
-                Logger.logError(codes.size() + " codes found in bitmap!");
-            }
-            return codes.get(0);
-        }
+        return codes;
     }
 
     @Nullable
     private BarcodeDetector setupBarcodeDetector() {
         BarcodeDetector detector = new BarcodeDetector.Builder(getActivity())
-                .setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                .setBarcodeFormats(Barcode.ALL_FORMATS)
+                // TODO choose formars a la setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
                 .build();
 
         if (!detector.isOperational()) {
-            showSnack("Could not set up the detector!");
+            showSimpleDialog("Could not set up the detector!");
             return null;
         }
         return detector;
@@ -264,7 +295,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
             pdfiumCore.openPage(pdfDocument, pageNum);
             if (pdfiumCore.getPageCount(pdfDocument) != 1) {
-                showSnack("Error: Pdf has " + pdfiumCore.getPageCount(pdfDocument) + " pages.");
+                showSimpleDialog("Error: Pdf has " + pdfiumCore.getPageCount(pdfDocument) + " pages.");
             }
 
             int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum);

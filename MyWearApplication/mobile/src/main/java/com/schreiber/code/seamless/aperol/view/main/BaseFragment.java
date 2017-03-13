@@ -1,9 +1,11 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
+
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
+import com.schreiber.code.seamless.aperol.view.common.view.dialog.SimpleDialogFragment;
 
 import timber.log.Timber;
 
@@ -15,42 +17,47 @@ public class BaseFragment extends Fragment {
 
     }
 
-    void showDialog(DialogFragment dialog) {
-        if (getActivity() instanceof BaseActivity)
-            ((BaseActivity) getActivity()).showDialog(dialog);
+    void showSimpleDialog(String message) {
+        showDialog(SimpleDialogFragment.newInstance(message));
     }
 
-    public static void logInfo(String message) {
+    void showDialog(DialogFragment dialog) {
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).showDialog(dialog);
+        }
+    }
+
+    static void logInfo(String message) {
         if (isMessageOk(message)) {
             Timber.i(message);
         }
     }
 
-    public static void logDebug(String message) {
+    static void logDebug(String message) {
         if (isMessageOk(message)) {
             Timber.d(message);
         }
     }
 
-    public static void logWarning(String message) {
+    static void logWarning(String message) {
         if (isMessageOk(message)) {
             Timber.w(message);
         }
     }
 
-    public static void logError(String message) {
+    static void logError(String message) {
         if (isMessageOk(message)) {
             Timber.e(message);
         }
     }
 
-    public static void logException(String message, Throwable e) {
+    static void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
             Timber.e(e, message);
         }
     }
 
-    public static void logException(Exception e) {
+    static void logException(Exception e) {
         logException(e.getMessage(), e);
     }
 
