@@ -7,6 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'org.ajoberstar:grgit:1.5.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,13 +25,30 @@ allprojects {
     }
 }
 
+import org.ajoberstar.grgit.Grgit
+
+
 ext {
-    versionCode = 1
-    versionName = "0.0"
+    def version = "0.0.1"
+    def git = Grgit.open(currentDir: projectDir)
+    versionCode = getVersionCode(version, git)
+    versionName = getVersionName(git, version)
+
     compileSdkVersion = 23
     buildToolsVersion = "23.0.3"
     minSdkVersion = 23
     targetSdkVersion = 23
+}
+
+static def getVersionCode(version, git) {
+    def versionCode = version.replaceAll("\\.", "")
+    def postfix = git.head().time// TODO use git.tag.list().size() as soon as we start tagging
+    def substring = (versionCode + postfix).substring(0, 10)
+    return Integer.parseInt(substring)
+}
+
+static def getVersionName(git, version) {
+    return version + "-" + git.describe() + "-" + git.branch.getCurrent().name
 }
 
 task printVersion() {
