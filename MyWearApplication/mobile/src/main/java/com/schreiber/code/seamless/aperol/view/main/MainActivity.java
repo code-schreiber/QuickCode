@@ -28,6 +28,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
 
@@ -62,11 +63,11 @@ public class MainActivity extends BaseActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
-                if (fragment != null && fragment instanceof MainActivityFragment) {
-                    ((MainActivityFragment) fragment).performFileSearch();
+                MainActivityFragment fragment = getMainActivityFragment();
+                if (fragment != null) {
+                    fragment.performFileSearch();
                 } else {
-                    showSnack(fragment + " is not " + MainActivityFragment.class);
+                    showSnack(MainActivityFragment.class + " not found");
                 }
             }
         });
@@ -97,20 +98,17 @@ public class MainActivity extends BaseActivity implements
         String action = intent.getAction();
         Uri linkData = intent.getData();
         if (Intent.ACTION_VIEW.equals(action) && linkData != null) {
-            Fragment mainFragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
-            if (mainFragment != null && mainFragment.isVisible()) {
-                if (mainFragment instanceof MainActivityFragment) {
-                    String intentType = intent.getType();
-                    String type = getContentResolver().getType(linkData);
-                    if (!type.equals(intentType)) {
-                        showSnack(type + " not equals " + intentType);// TODO check
-                    }
-//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
+            MainActivityFragment fragment = getMainActivityFragment();
+            if (fragment != null) {
+                String intentType = intent.getType();
+                String type = getContentResolver().getType(linkData);
+                if (!type.equals(intentType)) {
+                    showSnack(type + " not equals " + intentType);// TODO check
                 }
+//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
             }
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -153,13 +151,24 @@ public class MainActivity extends BaseActivity implements
         int id = item.getItemId();
         showSnack("MenuItem selected: " + item.getTitle());
 
-        if (id == R.id.menu_global_camera) {
-
-        } else if (id == R.id.menu_global_manage) {
-
-        } else if (id == R.id.menu_debug_reset_app) {
-            showSnack("TODO: Reset app");
+        if (id == R.id.menu_global_import_assets) {
+            MainActivityFragment fragment = getMainActivityFragment();
+            if (fragment != null) {
+                fragment.importAssets();
+            } else {
+                showSnack(MainActivityFragment.class + " not found");
+            }
+        } else if (id == R.id.menu_global_debug_reset_app) {
+            SharedPreferencesWrapper.clearAll(this);
         }
+    }
+
+    private MainActivityFragment getMainActivityFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
+        if (fragment != null && fragment instanceof MainActivityFragment) {
+            return (MainActivityFragment) fragment;
+        }
+        return null;
     }
 
     private void showSnack(String m) {
