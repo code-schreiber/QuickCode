@@ -24,9 +24,11 @@ android:
 
     # BuildTools version used by project
     - build-tools-25.0.2
+    - build-tools-23.4.0
 
     # SDK version to compile project
     - android-25
+    - android-23
 
     # Additional components
     # - extra-google-google_play_services
@@ -52,6 +54,7 @@ cache:
     - '$HOME/.m2'
     - '$HOME/.gradle'
     - '$HOME/.sonar/cache'
+    # - '.gradle'
 
 env:
   global:
