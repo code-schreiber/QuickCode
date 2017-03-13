@@ -39,10 +39,10 @@ dependencies {
 
     compile 'com.google.android.gms:play-services:10.0.1'
     // Note: specific version numbers are managed in gradle.properties. This is preferred since it easily keeps sub-projects on the same versions.
-    compile "com.android.support:design:${google_support_library}"
-    compile "com.android.support:support-v13:${google_support_library}"
-    compile "com.android.support:appcompat-v7:${google_support_library}"
-    compile "com.android.support:recyclerview-v7:${google_support_library}"
+    compile "com.android.support:design:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
 
     //compile 'com.jakewharton:butterknife:6.1.0'
     compile "com.jakewharton.timber:timber:4.5.1"
