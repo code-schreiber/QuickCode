@@ -39,7 +39,7 @@ ext {
     minSdkVersion = 23
     targetSdkVersion = 25
 
-    googleSupportLibrary="25.2.1"
+    googleSupportLibrary="25.2.0"
 }
 
 static def getVersionCode(version, git) {
