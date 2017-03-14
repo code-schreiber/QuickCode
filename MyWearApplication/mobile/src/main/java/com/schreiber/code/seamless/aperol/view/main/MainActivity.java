@@ -98,14 +98,14 @@ public class MainActivity extends BaseActivity implements
         String action = intent.getAction();
         Uri linkData = intent.getData();
         if (Intent.ACTION_VIEW.equals(action) && linkData != null) {
+            String intentType = intent.getType();
+            String type = getContentResolver().getType(linkData);
+            showSnack(type + " and " + intentType);// TODO check
             MainActivityFragment fragment = getMainActivityFragment();
             if (fragment != null) {
-                String intentType = intent.getType();
-                String type = getContentResolver().getType(linkData);
-                if (!type.equals(intentType)) {
-                    showSnack(type + " not equals " + intentType);// TODO check
-                }
-//                    ((MainActivityFragment) mainFragment).handleFile(intent.getData(), intentType);// TODO do this the right way
+                fragment.handleFile(linkData);
+            } else {
+                showSnack(MainActivityFragment.class + " not found");
             }
         }
     }
@@ -166,7 +166,7 @@ public class MainActivity extends BaseActivity implements
     private MainActivityFragment getMainActivityFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
         if (fragment != null && fragment instanceof MainActivityFragment) {
-            return (MainActivityFragment) fragment;
+            return (MainActivityFragment) fragment;// TODO do this the right way
         }
         return null;
     }

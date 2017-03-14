@@ -29,7 +29,6 @@ import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
-import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
 
@@ -94,7 +93,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
-
     void importAssets() {
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         ArrayList<CodeFile> assets = new ArrayList<>();
@@ -122,17 +120,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             if (requestCode == READ_REQUEST_CODE) {
                 if (resultData != null) {
                     Uri uri = resultData.getData();
-                    if (uri != null) {
-                        CodeFile item = createItemFromUri(uri);
-                        if (item != null) {
-                            if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
-                                SharedPreferencesWrapper.addListItem(getActivity(), item);
-                                adapter.replaceData(SharedPreferencesWrapper.getListItems(getActivity()));
-                            } else {
-                                showSnack(item.filename() + " already exists");
-                            }
-                        }
-                    }
+                    handleFile(uri);
                 } else {
                     showSnack("resultData: " + resultData);
                 }
@@ -141,6 +129,20 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
         } else {
             showSnack("resultCode: " + resultCode);
+        }
+    }
+
+    void handleFile(Uri uri) {
+        if (uri != null) {
+            CodeFile item = createItemFromUri(uri);
+            if (item != null) {
+                if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
+                    SharedPreferencesWrapper.addListItem(getActivity(), item);
+                    adapter.replaceData(SharedPreferencesWrapper.getListItems(getActivity()));
+                } else {
+                    showSnack(item.filename() + " already exists");
+                }
+            }
         }
     }
 
@@ -208,15 +210,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(CodeFile item) {
-        String originalFilename = item.originalFilename();
-        Bitmap fileAsImage = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "original");
-        Bitmap code = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "code");
-        Bitmap thumbnail = IOUtils.getBitmapFromFile(getActivity(), originalFilename, "thumbnail");
-        showImages(item.toString(), fileAsImage, code, thumbnail);
-    }
-
-    private void showImages(String info, Bitmap fileAsImage, Bitmap code, Bitmap thumbnail) {
-        showDialog(ImageDialogFragment.newInstance(info, fileAsImage, code, thumbnail));
+        CodeFileDetailActivity.start(getActivity(), item);
     }
 
     @Nullable
