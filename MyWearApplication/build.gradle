@@ -34,12 +34,12 @@ ext {
     versionCode = getVersionCode(version, git)
     versionName = getVersionName(git, version)
 
-    compileSdkVersion = 23
-    buildToolsVersion = "23.0.1"
+    compileSdkVersion = 25
+    buildToolsVersion = "25.0.2"
     minSdkVersion = 23
-    targetSdkVersion = 23
+    targetSdkVersion = 25
 
-    googleSupportLibrary="23.0.1"
+    googleSupportLibrary="25.2.1"
 }
 
 static def getVersionCode(version, git) {
