@@ -35,7 +35,7 @@ ext {
     versionName = getVersionName(git, version)
 
     compileSdkVersion = 23
-    buildToolsVersion = "23.0.3"
+    buildToolsVersion = "23.0.1"
     minSdkVersion = 23
     targetSdkVersion = 23
 
