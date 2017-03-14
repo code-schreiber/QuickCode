@@ -1,6 +1,7 @@
 package com.schreiber.code.seamless.aperol.model;
 
 
+import android.os.Parcelable;
 import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
@@ -8,9 +9,8 @@ import com.google.auto.value.AutoValue;
 import java.util.Date;
 
 
-// https://github.com/google/auto/blob/master/value/userguide/index.md
 @AutoValue
-public abstract class CodeFile {
+public abstract class CodeFile implements Parcelable {
 
     private static final long NOT_ON_WATCH = 0L;
 
