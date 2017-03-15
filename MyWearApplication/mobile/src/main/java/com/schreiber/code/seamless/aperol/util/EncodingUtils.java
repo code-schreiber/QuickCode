@@ -13,8 +13,7 @@ import com.google.zxing.common.BitMatrix;
 
 public class EncodingUtils {
 
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 400;
+    private static final float WIDTH = 500;
 
     private EncodingUtils() {
         // Hide utility class constructor
@@ -22,16 +21,9 @@ public class EncodingUtils {
 
     @Nullable
     @CheckResult
-    public static Bitmap encodeAsPdf417(String rawContent) {
-        BarcodeFormat format = BarcodeFormat.PDF_417;
-        return encodeAsBitmap(rawContent, format, WIDTH, HEIGHT);
-    }
-
-    @Nullable
-    @CheckResult
-    public static Bitmap encodeAsQrCode(String rawContent) {
-        BarcodeFormat format = BarcodeFormat.QR_CODE;
-        return encodeAsBitmap(rawContent, format, WIDTH, HEIGHT);
+    public static Bitmap encode(BarcodeFormat format, String rawContent, float aspectRatio) {
+        float height = WIDTH * aspectRatio;
+        return encodeAsBitmap(rawContent, format, Math.round(WIDTH), Math.round(height));
     }
 
     @Nullable
