@@ -55,9 +55,7 @@ public class FullscreenImageActivity extends BaseActivity {
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // TODO play
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     };
     private View mControlsView;
@@ -126,11 +124,6 @@ public class FullscreenImageActivity extends BaseActivity {
                 toggle();
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.activity_fullscreen_image_dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
 
     @Override
@@ -159,7 +152,6 @@ public class FullscreenImageActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button.
 //            NavUtils.navigateUpFromSameTask(this);// FIXME not working
             onBackPressed();// FIXME remove workaround
             return true;

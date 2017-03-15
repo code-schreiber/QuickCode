@@ -224,8 +224,8 @@ public class MainActivity extends BaseActivity implements
         // For sending text 100KB of data is 102400 characters
         putDataMapReq.getDataMap().putInt(COUNT_KEY, count);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
         logDebug(count + " putDataItem " + putDataReq);
+//        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
         // FIXME devices not connected http://stackoverflow.com/questions/22524760/not-able-to-connect-android-wear-emulator-with-device
 //        React to when it sends the data
 // developer.android.com/training/wearables/data-layer/events.html#Wait

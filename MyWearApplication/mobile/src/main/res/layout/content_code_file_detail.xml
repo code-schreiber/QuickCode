@@ -9,10 +9,11 @@
     tools:context="com.schreiber.code.seamless.aperol.view.main.CodeFileDetailActivity"
     tools:showIn="@layout/activity_code_file_detail">
 
-    <TextView android:id="@+id/content_code_file_detail_text"
+    <TextView
+        android:id="@+id/content_code_file_detail_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text"/>
+        tools:text="Content"/>
 
 </android.support.v4.widget.NestedScrollView>
