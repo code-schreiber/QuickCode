@@ -2,7 +2,6 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.model.CodeFile;
+import com.schreiber.code.seamless.aperol.util.IOUtils;
 
 
 /**
@@ -23,7 +24,7 @@ import com.schreiber.code.seamless.aperol.R;
  */
 public class FullscreenImageActivity extends BaseActivity {
 
-    private static final String EXTRA_BITMAP = "EXTRA_BITMAP";
+    private static final String EXTRA_CODE_FILE = "EXTRA_CODE_FILE";
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -56,7 +57,7 @@ public class FullscreenImageActivity extends BaseActivity {
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // TODO play
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
@@ -65,9 +66,9 @@ public class FullscreenImageActivity extends BaseActivity {
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+            ActionBar actionBar = getSupportActionBar();// TODO extract
             if (actionBar != null) {
-                actionBar.show();
+                actionBar.show();// TODO extract
             }
             mControlsView.setVisibility(View.VISIBLE);
         }
@@ -94,10 +95,11 @@ public class FullscreenImageActivity extends BaseActivity {
         }
     };
 
-    static void start(Context context, Bitmap bitmap) {
+    static void start(BaseActivity context, CodeFile codeFile) {
         Intent intent = new Intent(context, FullscreenImageActivity.class);
-        intent.putExtra(EXTRA_BITMAP, bitmap);
+        intent.putExtra(EXTRA_CODE_FILE, codeFile);
         context.startActivity(intent);
+        context.overridePendingTransitionFadeIn();
     }
 
     @Override
@@ -105,15 +107,18 @@ public class FullscreenImageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen_image);
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();// TODO extract
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);// TODO extract
         }
 
         mVisible = true;
         mControlsView = findViewById(R.id.activity_fullscreen_image_content_controls);
         mContentView = findViewById(R.id.activity_fullscreen_image_content);
-        ((ImageView) mContentView).setImageBitmap((Bitmap) getIntent().getParcelableExtra(EXTRA_BITMAP));
+        CodeFile codeFile = getIntent().getParcelableExtra(EXTRA_CODE_FILE);
+        setTitle(codeFile.filename());
+        final Bitmap code = IOUtils.getBitmapFromFile(this, codeFile.originalFilename(), "code");// TODO extract getBitmapFromFile()s
+        ((ImageView) mContentView).setImageBitmap(code);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +132,18 @@ public class FullscreenImageActivity extends BaseActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.activity_fullscreen_image_dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransitionFadeOut();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransitionFadeOut();
     }
 
     @Override
@@ -144,7 +161,8 @@ public class FullscreenImageActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             // This ID represents the Home or Up button.
-            NavUtils.navigateUpFromSameTask(this);
+            NavUtils.navigateUpFromSameTask(this);// FIXME not working
+            onBackPressed();// FIXME workaround
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -160,9 +178,9 @@ public class FullscreenImageActivity extends BaseActivity {
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();// TODO extract
         if (actionBar != null) {
-            actionBar.hide();
+            actionBar.hide();// TODO extract
         }
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
