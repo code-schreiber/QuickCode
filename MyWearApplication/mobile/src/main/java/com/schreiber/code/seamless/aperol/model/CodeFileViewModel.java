@@ -3,6 +3,7 @@ package com.schreiber.code.seamless.aperol.model;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.webkit.MimeTypeMap;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 
 
 @AutoValue
-public abstract class CodeFileViewModel implements Parcelable {
+public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFileViewModel> {
 
     public static CodeFileViewModel create(CodeFile codeFile) {
         return new AutoValue_CodeFileViewModel(codeFile);
@@ -22,8 +23,15 @@ public abstract class CodeFileViewModel implements Parcelable {
     public abstract CodeFile codeFile();
 
 
+    @Override
+    public int compareTo(@NonNull CodeFileViewModel o) {
+        // Last created items first
+        return Long.compare(o.codeFile().creationDate(), this.codeFile().creationDate());
+    }
+
     public String getCreationDate(Context context) {
-        return DateFormat.getDateFormat(context).format(new Date(codeFile().creationDate()));
+        Date creationDate = new Date(codeFile().creationDate());// TODO extract to dateutils
+        return DateFormat.getDateFormat(context).format(creationDate) + " " + DateFormat.getTimeFormat(context).format(creationDate);
     }
 
     public String getMimeType() {
@@ -42,5 +50,6 @@ public abstract class CodeFileViewModel implements Parcelable {
         }
         return list;
     }
+
 }
 
