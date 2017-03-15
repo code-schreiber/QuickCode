@@ -11,6 +11,7 @@
         android:background="@color/white"
         android:gravity="center"
         android:keepScreenOn="true"
+        android:scaleType="centerInside"
         tools:src="@drawable/ic_visibility_black_24dp"/>
 
     <!-- This FrameLayout insets its children based on system windows using
