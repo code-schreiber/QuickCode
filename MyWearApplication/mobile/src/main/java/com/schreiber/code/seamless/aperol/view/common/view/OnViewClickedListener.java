@@ -1,11 +1,11 @@
 package com.schreiber.code.seamless.aperol.view.common.view;
 
 
-import com.schreiber.code.seamless.aperol.model.CodeFile;
+import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 
 
 public interface OnViewClickedListener {
 
-    void onItemClicked(CodeFile item);
+    void onItemClicked(CodeFileViewModel item);
 
 }

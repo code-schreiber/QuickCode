@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="codeFile"
-            type="com.schreiber.code.seamless.aperol.model.CodeFile"/>
+            name="codeFileViewModel"
+            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
 
         <variable
             name="actionListener"
@@ -16,18 +16,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{()->actionListener.onItemClicked(codeFile)}"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/item_list_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:minHeight="@dimen/size_min_touchable_area"
-            android:text="@{codeFile.filename()}"
-            android:textColor="@color/colorPrimaryDark"
+            android:text="@{codeFileViewModel.codeFile().filename()}"
             tools:text="List item text"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/size_min_touchable_area"
+            android:text="@{codeFileViewModel.getCreationDate(context)}"
+            tools:text="12.12.2000"/>
     </LinearLayout>
 </layout>

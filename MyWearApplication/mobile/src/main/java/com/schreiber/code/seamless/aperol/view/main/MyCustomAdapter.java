@@ -8,26 +8,25 @@ import android.view.ViewGroup;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ItemListBinding;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
+import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 // TODO generalize ViewHolder https://medium.com/google-developers/android-data-binding-recyclerview-db7c40d9f0e4
 class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
-    private List<CodeFile> data;
+    private ArrayList<CodeFileViewModel> data;
     private final OnViewClickedListener listener;
 
 
-    MyCustomAdapter(List<CodeFile> data, OnViewClickedListener listener) {
+    MyCustomAdapter(ArrayList<CodeFileViewModel> data, OnViewClickedListener listener) {
         this.data = data;
         this.listener = listener;
     }
 
-    void replaceData(ArrayList<CodeFile> items) {
+    void replaceData(ArrayList<CodeFileViewModel> items) {
         data.clear();
         data.addAll(items);
         notifyDataSetChanged();
@@ -42,7 +41,7 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CodeFile item = data.get(position);
+        CodeFileViewModel item = data.get(position);
         holder.bind(item);
     }
 
@@ -60,8 +59,8 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
             this.binding = binding;
         }
 
-        void bind(CodeFile item) {
-            binding.setCodeFile(item);
+        void bind(CodeFileViewModel item) {
+            binding.setCodeFileViewModel(item);
             binding.setActionListener(listener);
             binding.executePendingBindings();
         }
