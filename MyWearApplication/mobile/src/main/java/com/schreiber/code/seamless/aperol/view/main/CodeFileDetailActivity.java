@@ -1,7 +1,6 @@
 package com.schreiber.code.seamless.aperol.view.main;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -22,10 +21,11 @@ public class CodeFileDetailActivity extends BaseActivity {
     private static final String EXTRA_CODE_FILE = "EXTRA_CODE_FILE";
 
 
-    static void start(Context context, CodeFile codeFile) {
+    static void start(BaseActivity context, CodeFile codeFile) {
         Intent intent = new Intent(context, CodeFileDetailActivity.class);
         intent.putExtra(EXTRA_CODE_FILE, codeFile);
         context.startActivity(intent);
+        context.overridePendingTransitionEnter();
     }
 
     @Override
@@ -34,16 +34,29 @@ public class CodeFileDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_code_file_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);// TODO extract
         initViews();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransitionExit();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransitionExit();
     }
 
     private void initViews() {
         final CodeFile codeFile = getIntent().getParcelableExtra(EXTRA_CODE_FILE);
-        String originalFilename = codeFile.originalFilename();
+        final String originalFilename = codeFile.originalFilename();
         final Bitmap fileAsImage = IOUtils.getBitmapFromFile(this, originalFilename, "original");
         final Bitmap code = IOUtils.getBitmapFromFile(this, originalFilename, "code");
         final Bitmap thumbnail = IOUtils.getBitmapFromFile(this, originalFilename, "thumbnail");// TODO extract getBitmapFromFile()s
+        setTitle(codeFile.filename());
         ((ImageView) findViewById(R.id.activity_code_file_detail_header_image)).setImageBitmap(fileAsImage);
         ((TextView) findViewById(R.id.content_code_file_detail_text)).setText(codeFile.toString());
         ((TextView) findViewById(R.id.content_code_file_detail_text)).setOnClickListener(new View.OnClickListener() {
@@ -56,7 +69,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FullscreenImageActivity.start(view.getContext(), code);
+                FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFile);
             }
         });
     }
