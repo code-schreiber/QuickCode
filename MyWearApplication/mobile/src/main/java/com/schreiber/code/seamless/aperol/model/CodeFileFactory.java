@@ -7,12 +7,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.zxing.BarcodeFormat;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
@@ -28,10 +31,13 @@ import java.util.List;
 
 public abstract class CodeFileFactory {
 
+    private static final int SUPPORTED_BARCODE_FORMATS = Barcode.ALL_FORMATS; // TODO choose supported and unit tested formats a la setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+
+
     public static CodeFile createItemFromPath(Context context, String path) {
         Uri uri = Uri.parse(path);
         String originalFilename = uri.getLastPathSegment();
-        String type = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
+        String type = getFileSuffix(originalFilename);
         String size = "-1";// TODO
         Bitmap fileAsImage = null;
         try {
@@ -41,6 +47,11 @@ public abstract class CodeFileFactory {
         }
         String source = "app assets/" + (new File(path)).getParent();
         return createItem(context, originalFilename, type, size, fileAsImage, source);
+    }
+
+    @NonNull
+    private static String getFileSuffix(String originalFilename) {
+        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
     }
 
     public static CodeFile createItemFromUri(Context context, Uri uri) {
@@ -59,30 +70,36 @@ public abstract class CodeFileFactory {
             Bitmap thumbnail = Bitmap.createScaledBitmap(fileAsImage, thumbnailSize, thumbnailSize, false);
             if (thumbnail != null) {
                 try {
-                    IOUtils.saveBitmapToFile(context, fileAsImage, originalFilename, "original");
-                    IOUtils.saveBitmapToFile(context, thumbnail, originalFilename, "thumbnail");
-                    ArrayList<Bitmap> codes = getCodesFromBitmap(context, fileAsImage);
-                    if (codes != null && !codes.isEmpty()) {
-                        if (codes.size() > 1) {
-                            Logger.logError("Error: " + codes.size() + " codes found in bitmap! Saving only one.");
-                        }
-                        Bitmap code = codes.get(0);
-                        IOUtils.saveBitmapToFile(context, code, originalFilename, "code");
+                    if (saveBitmapsToFile(context, originalFilename, fileAsImage, thumbnail)) {
+                        String suffix = getFileSuffix(originalFilename);
+                        String fileName = originalFilename.replace("." + suffix, "");
+                        return CodeFile.create(fileName, originalFilename, type, size, source);
                     } else {
-                        Logger.logError("Couldn't get code from " + originalFilename);
+                        Logger.logError("Couldn't save images from " + originalFilename);
                     }
-                    String suffix = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());//TODO extract
-                    String fileName = originalFilename.replace("." + suffix, "");
-                    return CodeFile.create(fileName, originalFilename, type, size, source);
                 } catch (IOException e) {
                     Logger.logException(e);
-                    return null;
                 }
             }
         }
         return null;
     }
 
+    @CheckResult
+    private static boolean saveBitmapsToFile(Context context, String filename, Bitmap fileAsImage, Bitmap thumbnail) throws IOException {
+        IOUtils.saveBitmapToFile(context, fileAsImage, filename, "original");// TODO check if it was saved and return status
+        IOUtils.saveBitmapToFile(context, thumbnail, filename, "thumbnail");
+        ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, fileAsImage);
+        if (!barcodesAsBitmap.isEmpty()) {
+            if (barcodesAsBitmap.size() > 1) {
+                Logger.logError("Error: " + barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
+            }
+            IOUtils.saveBitmapToFile(context, barcodesAsBitmap.get(0), filename, "code");
+        } else {
+            Logger.logError("Couldn't get code from " + filename);
+        }
+        return true;
+    }
 
     @Nullable
     private static Bitmap getBitmapFromUri(Context context, Uri uri) {
@@ -94,7 +111,7 @@ public abstract class CodeFileFactory {
                 return UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
             } else if (UriUtils.isText(resolver, uri)) {
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                return EncodingUtils.encodeAsQrCode(textContent);
+                return EncodingUtils.encode(BarcodeFormat.QR_CODE, textContent, 1);
             } else {
                 Logger.logError("No known file type: " + uri);
             }
@@ -104,51 +121,126 @@ public abstract class CodeFileFactory {
         return null;
     }
 
-    private static ArrayList<Bitmap> getCodesFromBitmap(Context context, Bitmap bitmap) {
-        ArrayList<Bitmap> codes = new ArrayList<>();
-
+    private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
         BarcodeDetector detector = setupBarcodeDetector(context);
         if (detector == null) {
-            return codes;
+            return new SparseArray<>();
         }
-
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-        SparseArray<Barcode> barcodes = detector.detect(frame);
-
-        for (int i = 0; i < barcodes.size(); i++) {
-            int key = barcodes.keyAt(i);
-            Barcode barcode = barcodes.get(key);
-
-            Bitmap code;
-            if (barcode.format == Barcode.QR_CODE) {
-                code = EncodingUtils.encodeAsQrCode(barcode.rawValue);
-            } else if (barcode.format == Barcode.PDF417) {
-                code = EncodingUtils.encodeAsPdf417(barcode.rawValue);
-            } else {
-                // TODO
-                Logger.logError("Unknown code: " + barcode.format);
-                code = EncodingUtils.encodeAsQrCode(barcode.rawValue);
-            }
-            if (code != null) {
-                codes.add(code);
-            } else {
-                Logger.logError("Coulnt encode bitmap from barcode");
-            }
-        }
-        return codes;
+        return detector.detect(frame);
     }
 
     @Nullable
     public static BarcodeDetector setupBarcodeDetector(Context context) {
         BarcodeDetector detector = new BarcodeDetector.Builder(context)
-                .setBarcodeFormats(Barcode.ALL_FORMATS)
-                // TODO choose formars a la setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
+                .setBarcodeFormats(SUPPORTED_BARCODE_FORMATS)
                 .build();
 
         if (!detector.isOperational()) {
             return null;
         }
         return detector;
+    }
+
+    @NonNull
+    public static ArrayList<Bitmap> getBarcodesAsBitmapFromImage(Context context, Bitmap fileAsImage) {
+        SparseArray<Barcode> barcodes = getCodesFromBitmap(context, fileAsImage);
+        ArrayList<Bitmap> barcodesAsBitmap = new ArrayList<>();
+
+        if (barcodes.size() < 1) {
+            Logger.logError("No barcodes detected.");
+        } else {
+            for (int i = 0; i < barcodes.size(); i++) {
+                int key = barcodes.keyAt(i);
+                Barcode barcode = barcodes.get(key);
+                Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is, CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
+                Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints);
+                Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
+                Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
+                Logger.logDebug("Barcode found, rawValue: " + barcode.rawValue);
+// Logger.logDebug("Barcode founde, BoundingBox "+barcode.//valueFormat);
+                int barcodeFormat = barcode.format;
+                BarcodeFormat encodingFormat = getEncodingFormat(barcodeFormat);
+                if (encodingFormat != null) {
+                    Bitmap code = EncodingUtils.encode(encodingFormat, barcode.rawValue, 1);// TODO pass ratio taken from barcode instead of 1
+                    if (code != null) {
+                        barcodesAsBitmap.add(code);
+                    } else {
+                        Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
+                    }
+                } else {
+                    Logger.logError("Code format not supported: " + getEncodingFormatName(barcodeFormat) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
+                }
+            }
+        }
+        return barcodesAsBitmap;
+    }
+
+    @Nullable
+    private static BarcodeFormat getEncodingFormat(int barcodeFormat) {
+// Barcode can be:
+// CODE_128
+// CODE_39
+// CODE_93
+// CODABAR
+// DATA_MATRIX
+// EAN_13 Typical grocery barcode
+// EAN_8
+// ITF
+// QR_CODE
+// UPC_A
+// UPC_E
+// PDF417
+// AZTEC
+        switch (barcodeFormat) {
+            case Barcode.DATA_MATRIX:
+                return BarcodeFormat.DATA_MATRIX;
+            case Barcode.EAN_13:
+                return BarcodeFormat.EAN_13;
+            case Barcode.QR_CODE:
+                return BarcodeFormat.QR_CODE;
+            case Barcode.PDF417:
+                return BarcodeFormat.PDF_417;
+            case Barcode.AZTEC:
+                return BarcodeFormat.AZTEC;
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    private static String getEncodingFormatName(int barcodeFormat) {
+        switch (barcodeFormat) {
+            case Barcode.CODE_128:
+                return "CODE 128";
+            case Barcode.CODE_39:
+                return "CODE 39";
+            case Barcode.CODE_93:
+                return "CODE 93";
+            case Barcode.CODABAR:
+                return "CODABAR";
+            case Barcode.DATA_MATRIX:
+                return "DATA MATRIX";
+            case Barcode.EAN_13:
+                return "EAN 13 ";
+            case Barcode.EAN_8:
+                return "EAN 8";
+            case Barcode.ITF:
+                return "ITF";
+            case Barcode.QR_CODE:
+                return "QR CODE";
+            case Barcode.UPC_A:
+                return "UPC A";
+            case Barcode.UPC_E:
+                return "UPC E";
+            case Barcode.PDF417:
+                return "PDF 417";
+            case Barcode.AZTEC:
+                return "AZTEC";
+            default:
+                Logger.logError("Code format not supported:" + barcodeFormat);
+                return "Unknown";
+        }
     }
 
     @Nullable
@@ -208,4 +300,3 @@ public abstract class CodeFileFactory {
     }
 
 }
-
