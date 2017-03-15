@@ -71,7 +71,8 @@ public abstract class CodeFileFactory {
                     } else {
                         Logger.logError("Couldn't get code from " + originalFilename);
                     }
-                    String fileName = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());//TODO extract
+                    String suffix = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());//TODO extract
+                    String fileName = originalFilename.replace("." + suffix, "");
                     return CodeFile.create(fileName, originalFilename, type, size, source);
                 } catch (IOException e) {
                     Logger.logException(e);
