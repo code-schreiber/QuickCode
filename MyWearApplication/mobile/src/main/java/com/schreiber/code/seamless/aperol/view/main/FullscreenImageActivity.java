@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -161,8 +160,8 @@ public class FullscreenImageActivity extends BaseActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             // This ID represents the Home or Up button.
-            NavUtils.navigateUpFromSameTask(this);// FIXME not working
-            onBackPressed();// FIXME workaround
+//            NavUtils.navigateUpFromSameTask(this);// FIXME not working
+            onBackPressed();// FIXME remove workaround
             return true;
         }
         return super.onOptionsItemSelected(item);
