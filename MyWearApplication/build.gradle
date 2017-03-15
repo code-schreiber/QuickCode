@@ -66,6 +66,16 @@ sonarqube {
 
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.host.url", "https://sonarqube.com"
+
+        property "sonar.android.lint.report", "mobile/build/outputs/lint-results-debug.xml"
         property "sonar.import_unknown_files", true
+        property "sonar.exclusions","**/*.png,**/*.jpg,**/*.pdf,**/*.ttf,**/*.otf,"
+        
+        //    # Comma-separated paths to directories with sources
+        //    # sonar.sources = "."
+        //    # path to test source directories
+        //    # sonar.tests=libraryTest/src
+        //    # Tell SonarQube where to get the code coverage reports
+        //    # sonar.emma.reportPath=target/emma
     }
 }
