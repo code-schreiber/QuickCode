@@ -154,4 +154,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         CodeFileDetailActivity.start((BaseActivity) getActivity(), item.codeFile());
     }
 
+    @Override
+    public boolean onItemLongClicked(CodeFileViewModel item) {
+        SharedPreferencesWrapper.deleteListItem(getActivity(), item.codeFile());
+        showSnack("Item deleted");// TODO undo
+        return true;
+    }
+
 }

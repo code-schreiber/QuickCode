@@ -39,7 +39,7 @@ ext {
     minSdkVersion = 23
     targetSdkVersion = 25
 
-    googleSupportLibrary="25.2.0"
+    googleSupportLibrary = "25.2.0"
 }
 
 static def getVersionCode(version, git) {
@@ -69,8 +69,8 @@ sonarqube {
 
         property "sonar.android.lint.report", "mobile/build/outputs/lint-results-debug.xml"
         property "sonar.import_unknown_files", true
-        property "sonar.exclusions","**/*.png,**/*.jpg,**/*.pdf,**/*.ttf,**/*.otf,"
-        
+        property "sonar.exclusions", "**/*.png,**/*.jpg,**/*.pdf,**/*.ttf,**/*.otf,"
+
         //    # Comma-separated paths to directories with sources
         //    # sonar.sources = "."
         //    # path to test source directories
