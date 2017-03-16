@@ -34,7 +34,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_code_file_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);// TODO extract
+        setDisplayHomeAsUpEnabled(true);
         initViews();
     }
 
