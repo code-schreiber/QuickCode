@@ -52,6 +52,41 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == READ_REQUEST_CODE) {
+                if (resultData != null) {
+                    Uri uri = resultData.getData();
+                    handleFile(uri);
+                    return;
+                }
+            }
+        }
+        showSnack("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
+    }
+
+    @Override
+    public void onItemClicked(CodeFileViewModel item) {
+        CodeFileDetailActivity.start((BaseActivity) getActivity(), item.codeFile());
+    }
+
+    @Override
+    public boolean onItemLongClicked(CodeFileViewModel item) {
+        final CodeFile codeFile = item.codeFile();
+        SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile);
+        adapter.replaceData(getAdapterData());
+        Snackbar.make(recyclerView, "Item deleted", Snackbar.LENGTH_LONG)
+                .setAction("Undo", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addItemToAdapter(codeFile);
+                    }
+                })
+                .show();
+        return true;
+    }
+
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
@@ -115,20 +150,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return CodeFileViewModel.createList(data);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == READ_REQUEST_CODE) {
-                if (resultData != null) {
-                    Uri uri = resultData.getData();
-                    handleFile(uri);
-                    return;
-                }
-            }
-        }
-        showSnack("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
-    }
-
     void handleFile(Uri uri) {
         if (uri != null) {
             CodeFile item = CodeFileFactory.createItemFromUri(getActivity(), uri);
@@ -141,18 +162,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     private void showSnack(String m) {
         logInfo(m);
         Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onItemClicked(CodeFileViewModel item) {
-        CodeFileDetailActivity.start((BaseActivity) getActivity(), item.codeFile());
-    }
-
-    @Override
-    public boolean onItemLongClicked(CodeFileViewModel item) {
-        SharedPreferencesWrapper.deleteListItem(getActivity(), item.codeFile());
-        showSnack("Item deleted");// TODO undo
-        return true;
     }
 
 }
