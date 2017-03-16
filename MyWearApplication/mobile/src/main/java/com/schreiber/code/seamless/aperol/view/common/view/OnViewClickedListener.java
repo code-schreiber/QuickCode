@@ -8,4 +8,6 @@ public interface OnViewClickedListener {
 
     void onItemClicked(CodeFileViewModel item);
 
+    boolean onItemLongClicked(CodeFileViewModel item);
+
 }

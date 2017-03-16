@@ -47,9 +47,11 @@ public final class SharedPreferencesWrapper {
         return codeFiles;
     }
 
-    public static <T> boolean deleteListItem(Context context, T t) {
+    public static boolean deleteListItem(Context context, CodeFile codeFile) {
         initHawk(context);
-        return Hawk.delete(LIST_ITEMS_KEY);
+        ArrayList<CodeFile> items = getListItems(context);
+        items.remove(codeFile);// TODO use return val
+        return Hawk.put(LIST_ITEMS_KEY, items);
     }
 
     public static <T> boolean containsListItem(Context context, T t) {

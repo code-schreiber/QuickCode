@@ -18,12 +18,12 @@ import java.util.ArrayList;
 class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     private ArrayList<CodeFileViewModel> data;
-    private final OnViewClickedListener listener;
+    private final OnViewClickedListener clickListener;
 
 
     MyCustomAdapter(ArrayList<CodeFileViewModel> data, OnViewClickedListener listener) {
         this.data = data;
-        this.listener = listener;
+        this.clickListener = listener;
     }
 
     void replaceData(ArrayList<CodeFileViewModel> items) {
@@ -61,7 +61,7 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
         void bind(CodeFileViewModel item) {
             binding.setCodeFileViewModel(item);
-            binding.setActionListener(listener);
+            binding.setActionListener(clickListener);
             binding.executePendingBindings();
         }
 
