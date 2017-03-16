@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -63,10 +62,7 @@ public class FullscreenImageActivity extends BaseActivity {
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();// TODO extract
-            if (actionBar != null) {
-                actionBar.show();// TODO extract
-            }
+            showActionBar();
             mControlsView.setVisibility(View.VISIBLE);
         }
     };
@@ -104,10 +100,7 @@ public class FullscreenImageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_fullscreen_image);
-        ActionBar actionBar = getSupportActionBar();// TODO extract
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);// TODO extract
-        }
+        setDisplayHomeAsUpEnabled(true);
 
         mVisible = true;
         mControlsView = findViewById(R.id.activity_fullscreen_image_content_controls);
@@ -169,10 +162,7 @@ public class FullscreenImageActivity extends BaseActivity {
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();// TODO extract
-        if (actionBar != null) {
-            actionBar.hide();// TODO extract
-        }
+        hideActionBar();
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
 

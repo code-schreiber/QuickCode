@@ -2,6 +2,7 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
@@ -42,6 +43,27 @@ public class BaseActivity extends AppCompatActivity {
 
     void overridePendingTransitionFadeOut() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    void showActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+    }
+
+    void hideActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
+
+    void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
+        }
     }
 
     void showSimpleDialog(String message) {

@@ -45,8 +45,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
-        adapter = new MyCustomAdapter(CodeFileViewModel.createList(data), this);
+        adapter = new MyCustomAdapter(getAdapterData(), this);
         recyclerView.setAdapter(adapter);
 
         return rootView;
@@ -94,17 +93,26 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         if (assets.isEmpty()) {
             showSimpleDialog("No Assets to import");
         } else {
-            ArrayList<CodeFile> itemsBefore = SharedPreferencesWrapper.getListItems(getActivity());
             for (CodeFile codeFile : assets) {
-                if (!itemsBefore.contains(codeFile)) {
-                    SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
-                } else {
-                    showSnack(codeFile.filename() + " already exists");// TODO extract method
-                }
+                addItemToAdapter(codeFile);
             }
-            ArrayList<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
-            adapter.replaceData(CodeFileViewModel.createList(data));
+
         }
+    }
+
+    private void addItemToAdapter(CodeFile codeFile) {
+        ArrayList<CodeFile> itemsBefore = SharedPreferencesWrapper.getListItems(getActivity());
+        if (!itemsBefore.contains(codeFile)) {
+            SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
+            adapter.replaceData(getAdapterData());
+        } else {
+            showSnack(codeFile.filename() + " already exists");
+        }
+    }
+
+    private ArrayList<CodeFileViewModel> getAdapterData() {
+        ArrayList<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
+        return CodeFileViewModel.createList(data);
     }
 
     @Override
@@ -114,39 +122,25 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (resultData != null) {
                     Uri uri = resultData.getData();
                     handleFile(uri);
-                } else {
-                    showSnack("resultData: " + resultData);
+                    return;
                 }
-            } else {
-                showSnack("requestCode: " + requestCode);
             }
-        } else {
-            showSnack("resultCode: " + resultCode);
         }
+        showSnack("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
     }
 
     void handleFile(Uri uri) {
         if (uri != null) {
             CodeFile item = CodeFileFactory.createItemFromUri(getActivity(), uri);
             if (item != null) {
-                if (!SharedPreferencesWrapper.getListItems(getActivity()).contains(item)) {
-                    SharedPreferencesWrapper.addListItem(getActivity(), item);
-                    ArrayList<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
-                    adapter.replaceData(CodeFileViewModel.createList(data));
-                } else {
-                    showSnack(item.filename() + " already exists");
-                }
+                addItemToAdapter(item);
             }
         }
     }
 
     private void showSnack(String m) {
         logInfo(m);
-        try {
-            Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            logException(e);
-        }
+        Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
