@@ -17,7 +17,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
         android:minHeight="@dimen/size_min_touchable_area"
+
         android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
         android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
         android:orientation="vertical"
@@ -26,17 +28,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
             android:text="@{codeFileViewModel.codeFile().filename()}"
+            android:textSize="@dimen/text_size_medium"
             tools:text="List item text"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center_vertical"
             android:text="@{codeFileViewModel.getCreationDate(context)}"
-            tools:text="12.12.2000"/>
+            android:textSize="@dimen/text_size_small"
+            tools:text="12.12.2000 12:12"/>
     </LinearLayout>
 </layout>

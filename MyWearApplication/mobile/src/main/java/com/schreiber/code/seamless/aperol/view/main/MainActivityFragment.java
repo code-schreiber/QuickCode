@@ -76,7 +76,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         final CodeFile codeFile = item.codeFile();
         SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile);
         adapter.replaceData(getAdapterData());
-        Snackbar.make(recyclerView, "Item deleted", Snackbar.LENGTH_LONG)
+        Snackbar.make(recyclerView, codeFile.filename() + " was deleted", Snackbar.LENGTH_LONG)
                 .setAction("Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
