@@ -5,12 +5,16 @@
       tools:context=".MainActivity">
 
     <item
-        android:id="@+id/menu_global_import_assets"
-        android:icon="@drawable/ic_add_image_black_24dp"
-        android:title="Import assets"/>
+        android:id="@+id/menu_global_show_font_dialog"
+        android:icon="@drawable/ic_file"
+        android:title="Show font dialog"/>
 
     <item android:title="@string/menu_debug">
         <menu>
+            <item
+                android:id="@+id/menu_global_import_assets"
+                android:icon="@drawable/ic_add_image_black_24dp"
+                android:title="Import assets"/>
             <item
                 android:id="@+id/menu_global_debug_reset_app"
                 android:icon="@drawable/ic_clear_black_24dp"

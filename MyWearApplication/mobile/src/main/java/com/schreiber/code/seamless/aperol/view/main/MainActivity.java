@@ -4,7 +4,6 @@ package com.schreiber.code.seamless.aperol.view.main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -20,7 +19,6 @@ import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -80,13 +78,6 @@ public class MainActivity extends BaseActivity implements
                 .build();
 
         handleIntent(getIntent());
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showDialog(FontStatisticDialogFragment.newInstance());
-            }
-        }, 1000 * 3);
     }
 
     protected void onNewIntent(Intent intent) {
@@ -158,6 +149,8 @@ public class MainActivity extends BaseActivity implements
             } else {
                 showSnack(MainActivityFragment.class + " not found");
             }
+        } else if (id == R.id.menu_global_show_font_dialog) {
+            showDialog(FontStatisticDialogFragment.newInstance());
         } else if (id == R.id.menu_global_debug_reset_app) {
             SharedPreferencesWrapper.clearAll(this);
         }
