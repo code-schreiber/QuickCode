@@ -144,8 +144,7 @@ public class FullscreenImageActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-//            NavUtils.navigateUpFromSameTask(this);// FIXME not working
-            onBackPressed();// FIXME remove workaround
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
