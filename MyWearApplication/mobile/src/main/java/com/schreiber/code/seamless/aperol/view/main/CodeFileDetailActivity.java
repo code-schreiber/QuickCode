@@ -12,9 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
-import com.schreiber.code.seamless.aperol.util.IOUtils;
+import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 
@@ -24,12 +23,12 @@ import java.util.ArrayList;
 
 public class CodeFileDetailActivity extends BaseActivity {
 
-    private static final String EXTRA_CODE_FILE = "EXTRA_CODE_FILE";
+    private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
 
 
-    static void start(BaseActivity context, CodeFile codeFile) {
+    static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
         Intent intent = new Intent(context, CodeFileDetailActivity.class);
-        intent.putExtra(EXTRA_CODE_FILE, codeFile);
+        intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
         context.startActivity(intent);
         context.overridePendingTransitionEnter();
     }
@@ -67,47 +66,43 @@ public class CodeFileDetailActivity extends BaseActivity {
     }
 
     private void initViews() {
-        final CodeFile codeFile = getIntent().getParcelableExtra(EXTRA_CODE_FILE);
-        final String originalFilename = codeFile.originalFilename();
-        final Bitmap fileAsImage = IOUtils.getBitmapFromFile(this, originalFilename, "original");
-        final Bitmap thumbnail = IOUtils.getBitmapFromFile(this, originalFilename, "thumbnail");// TODO extract getBitmapFromFile()s
-        setTitle(codeFile.filename());
-        ((ImageView) findViewById(R.id.activity_code_file_detail_header_image)).setImageBitmap(fileAsImage);
-        ((TextView) findViewById(R.id.content_code_file_detail_text)).setText(codeFile.toString());
+        final CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+
+        setTitle(codeFileViewModel.codeFile().filename());
+        final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
+        ((ImageView) findViewById(R.id.activity_code_file_detail_header_image)).setImageBitmap(originalImage);
+        ((TextView) findViewById(R.id.content_code_file_detail_text)).setText(codeFileViewModel.toString());
         findViewById(R.id.content_code_file_detail_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap code = IOUtils.getBitmapFromFile(v.getContext(), originalFilename, "code");
-                showDialog(ImageDialogFragment.newInstance(codeFile.toString(), fileAsImage, code, thumbnail));
+                showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getThumbnailImage(v.getContext())));
             }
         });
-        initFab(originalFilename, fileAsImage);
+        initFab(codeFileViewModel, originalImage);
     }
 
-    private void initFab(final String originalFilename, final Bitmap fileAsImage) {
+    private void initFab(final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.activity_code_file_detail_fab);
-        Bitmap code = IOUtils.getBitmapFromFile(this, originalFilename, "code");
-        if (code == null) {
+        if (codeFileViewModel.getCodeImage(this) == null) {
             // No code, let the user try again
-            // TODO test trying again
             fab.setImageResource(R.drawable.ic_add_image_black_24dp);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ArrayList<Bitmap> barcodesAsBitmap = CodeFileFactory.getBarcodesAsBitmapFromImage(view.getContext(), fileAsImage);
+                    ArrayList<Bitmap> barcodesAsBitmap = CodeFileFactory.getBarcodesAsBitmapFromImage(view.getContext(), originalImage);
                     if (barcodesAsBitmap.isEmpty()) {
-                        showSimpleDialog("Could't get code from " + originalFilename);
+                        showSimpleDialog("Could't get code from " + codeFileViewModel.codeFile().originalFilename());
                     } else {
                         if (barcodesAsBitmap.size() > 1) {
                             showSimpleDialog("Error: " + barcodesAsBitmap.size() + " codes found, saving only one.");
                         }
                         Bitmap code = barcodesAsBitmap.get(0);
                         try {
-                            IOUtils.saveBitmapToFile(view.getContext(), code, originalFilename, "code");
+                            codeFileViewModel.saveCodeImage(view.getContext(), code);
                         } catch (IOException e) {
                             Logger.logException(e);
                         }
-                        initFab(originalFilename, fileAsImage);
+                        initFab(codeFileViewModel, originalImage);
                     }
                 }
             });
@@ -116,8 +111,7 @@ public class CodeFileDetailActivity extends BaseActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CodeFile codeFile = getIntent().getParcelableExtra(EXTRA_CODE_FILE);
-                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFile);
+                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileViewModel);
                 }
             });
         }

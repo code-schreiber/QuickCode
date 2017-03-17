@@ -4,6 +4,7 @@ package com.schreiber.code.seamless.aperol.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -24,10 +25,12 @@ public final class IOUtils {
         // Hide utility class constructor
     }
 
-    public static void saveBitmapToFile(Context context, Bitmap fileAsImage, String filename, String suffix) throws IOException {
+    @CheckResult
+    public static boolean saveBitmapToFile(Context context, Bitmap fileAsImage, String filename, String suffix) throws IOException {
         FileOutputStream fos = context.openFileOutput(filename + "." + suffix, Context.MODE_PRIVATE);
-        fileAsImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        boolean saved = fileAsImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
         fos.close();
+        return saved;
     }
 
     @Nullable

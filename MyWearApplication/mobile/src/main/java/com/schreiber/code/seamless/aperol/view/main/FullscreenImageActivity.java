@@ -3,7 +3,6 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -12,8 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
-import com.schreiber.code.seamless.aperol.util.IOUtils;
+import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 
 
 /**
@@ -22,7 +20,7 @@ import com.schreiber.code.seamless.aperol.util.IOUtils;
  */
 public class FullscreenImageActivity extends BaseActivity {
 
-    private static final String EXTRA_CODE_FILE = "EXTRA_CODE_FILE";
+    private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -87,9 +85,9 @@ public class FullscreenImageActivity extends BaseActivity {
         }
     };
 
-    static void start(BaseActivity context, CodeFile codeFile) {
+    static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
         Intent intent = new Intent(context, FullscreenImageActivity.class);
-        intent.putExtra(EXTRA_CODE_FILE, codeFile);
+        intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
         context.startActivity(intent);
         context.overridePendingTransitionFadeIn();
     }
@@ -104,10 +102,9 @@ public class FullscreenImageActivity extends BaseActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.activity_fullscreen_image_content_controls);
         mContentView = findViewById(R.id.activity_fullscreen_image_content);
-        CodeFile codeFile = getIntent().getParcelableExtra(EXTRA_CODE_FILE);
-        setTitle(codeFile.filename());
-        final Bitmap code = IOUtils.getBitmapFromFile(this, codeFile.originalFilename(), "code");// TODO extract getBitmapFromFile()s
-        ((ImageView) mContentView).setImageBitmap(code);
+        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        setTitle(codeFileViewModel.codeFile().filename());
+        ((ImageView) mContentView).setImageBitmap(codeFileViewModel.getCodeImage(this));
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
