@@ -64,8 +64,6 @@ public class MainActivity extends BaseActivity implements
                 MainActivityFragment fragment = getMainActivityFragment();
                 if (fragment != null) {
                     fragment.performFileSearch();
-                } else {
-                    showSnack(MainActivityFragment.class + " not found");
                 }
             }
         });
@@ -95,8 +93,6 @@ public class MainActivity extends BaseActivity implements
             MainActivityFragment fragment = getMainActivityFragment();
             if (fragment != null) {
                 fragment.handleFile(linkData);
-            } else {
-                showSnack(MainActivityFragment.class + " not found");
             }
         }
     }
@@ -140,16 +136,13 @@ public class MainActivity extends BaseActivity implements
 
     private void onMenuItemSelected(MenuItem item) {
         int id = item.getItemId();
-        showSnack("MenuItem selected: " + item.getTitle());
-
         if (id == R.id.menu_global_import_assets) {
             MainActivityFragment fragment = getMainActivityFragment();
             if (fragment != null) {
                 fragment.importAssets();
-            } else {
-                showSnack(MainActivityFragment.class + " not found");
             }
         } else if (id == R.id.menu_global_show_font_dialog) {
+            // TODO
             showDialog(FontStatisticDialogFragment.newInstance());
         } else if (id == R.id.menu_global_debug_reset_app) {
             SharedPreferencesWrapper.clearAll(this);
@@ -161,6 +154,7 @@ public class MainActivity extends BaseActivity implements
         if (fragment != null && fragment instanceof MainActivityFragment) {
             return (MainActivityFragment) fragment;// TODO do this the right way
         }
+        showSnack(MainActivityFragment.class + " not found");
         return null;
     }
 
