@@ -32,6 +32,7 @@ import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticD
 
 public class MainActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
+        FontStatisticDialogFragment.DialogFragmentListener,
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -137,16 +138,29 @@ public class MainActivity extends BaseActivity implements
     private void onMenuItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_global_import_assets) {
-            MainActivityFragment fragment = getMainActivityFragment();
-            if (fragment != null) {
-                fragment.importAssets();
-            }
+            importAssets();
         } else if (id == R.id.menu_global_show_font_dialog) {
-            // TODO
-            showDialog(FontStatisticDialogFragment.newInstance());
+            showFontsDialog();
         } else if (id == R.id.menu_global_debug_reset_app) {
             SharedPreferencesWrapper.clearAll(this);
+            finish();
         }
+    }
+
+    private void importAssets() {
+        MainActivityFragment fragment = getMainActivityFragment();
+        if (fragment != null) {
+            fragment.importAssets();
+        }
+    }
+
+    private void showFontsDialog() {
+        showDialog(FontStatisticDialogFragment.newInstance());
+    }
+
+    @Override
+    public void onOkClicked(boolean showDialogAgain) {
+        showFontsDialog();
     }
 
     private MainActivityFragment getMainActivityFragment() {
