@@ -2,16 +2,16 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.Logger;
@@ -36,11 +36,15 @@ public class CodeFileDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_code_file_detail);
+        ActivityCodeFileDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
+        final CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        binding.setCodeFileViewModel(codeFileViewModel);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setDisplayHomeAsUpEnabled(true);
-        initViews();
+        
+        initViews(codeFileViewModel);
     }
 
     @Override
@@ -65,14 +69,10 @@ public class CodeFileDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initViews() {
-        final CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
-
+    private void initViews(final CodeFileViewModel codeFileViewModel) {
         setTitle(codeFileViewModel.codeFile().filename());
         final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
-        ((ImageView) findViewById(R.id.activity_code_file_detail_header_image)).setImageBitmap(originalImage);
-        ((TextView) findViewById(R.id.content_code_file_detail_text)).setText(codeFileViewModel.toString());
-        findViewById(R.id.content_code_file_detail_text).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.activity_code_file_detail_header).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getThumbnailImage(v.getContext())));

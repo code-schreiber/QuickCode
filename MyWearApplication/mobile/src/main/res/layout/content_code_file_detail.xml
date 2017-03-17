@@ -1,19 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.schreiber.code.seamless.aperol.view.main.CodeFileDetailActivity"
-    tools:showIn="@layout/activity_code_file_detail">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/content_code_file_detail_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        tools:text="Content"/>
+    <data>
 
-</android.support.v4.widget.NestedScrollView>
+        <variable
+            name="codeFileViewModel"
+            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
+
+    </data>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.schreiber.code.seamless.aperol.view.main.CodeFileDetailActivity"
+        tools:showIn="@layout/activity_code_file_detail">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.codeFile().originalFilename()}"
+                tools:text="original filename"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getCreationDate(context)}"
+                tools:text="creation date"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.codeFile().source()}"
+                tools:text="source"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.codeFile().size()}"
+                tools:text="size"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.codeFile().type()}"
+                tools:text="type"/>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</layout>
