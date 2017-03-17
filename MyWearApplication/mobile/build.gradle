@@ -13,6 +13,12 @@ android {
             storeFile file(RELEASE_STORE_FILE)
             storePassword System.getenv(RELEASE_STORE_PASSWORD)
         }
+        debugConfig {
+            keyAlias DEBUG_KEY_ALIAS
+            keyPassword DEBUG_KEY_PASSWORD
+            storeFile file(DEBUG_STORE_FILE)
+            storePassword DEBUG_STORE_PASSWORD
+        }
     }
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -21,12 +27,25 @@ android {
         versionName rootProject.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        signingConfig signingConfigs.releaseConfig
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        dev {
+            signingConfig signingConfigs.debugConfig
+            versionCode rootProject.versionCode
+            versionName rootProject.versionName
+            applicationId 'seamles.aperol.flavordev'
+            versionNameSuffix '.dev'
+        }
+        prod {
+            signingConfig signingConfigs.releaseConfig
+            versionCode rootProject.versionCode
+            versionName rootProject.versionName
         }
     }
     dataBinding {
