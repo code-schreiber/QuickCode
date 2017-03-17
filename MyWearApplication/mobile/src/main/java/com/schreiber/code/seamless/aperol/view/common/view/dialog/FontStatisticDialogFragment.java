@@ -1,5 +1,6 @@
 package com.schreiber.code.seamless.aperol.view.common.view.dialog;
 
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,9 +20,8 @@ public class FontStatisticDialogFragment extends DialogFragment {
 
     public interface DialogFragmentListener {
 
-        void onDialogCancelled();
+        void onOkClicked(boolean showDialogAgain);
 
-        void onDialogDismissed();
     }
 
     private DialogFragmentListener mListener;
@@ -30,22 +30,27 @@ public class FontStatisticDialogFragment extends DialogFragment {
         return new FontStatisticDialogFragment();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        if (context instanceof DialogFragmentListener) {
+            mListener = (DialogFragmentListener) context;
+        } else {
+            throw new ClassCastException("Activity must implement " + DialogFragmentListener.class + ": " + context.getClass());
+        }
+        super.onAttach(context);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Context context = getActivity();
-        if (context instanceof DialogFragmentListener) {
-            mListener = (DialogFragmentListener) context;
-        } else {
-            // TODO
-//            throw new ClassCastException("Activity must implement " + DialogFragmentListener.class + ": " + context.getClass());
-        }
         return new AlertDialog.Builder(context)
                 .setMessage("do you like this font?")
                 .setNegativeButton("it's ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         addToStatistic(" -", context);
+                        mListener.onOkClicked(true);
                     }
                 })
                 .setNeutralButton("statistic", new DialogInterface.OnClickListener() {
@@ -53,12 +58,14 @@ public class FontStatisticDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         initStatistic(context);
                         Toast.makeText(context, SharedPreferencesWrapper.getFontStatistic(context), Toast.LENGTH_LONG).show();
+                        mListener.onOkClicked(false);
                     }
                 })
                 .setPositiveButton("oh yea", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         addToStatistic(" |", context);
+                        mListener.onOkClicked(true);
                     }
                 })
                 .create();
@@ -96,22 +103,6 @@ public class FontStatisticDialogFragment extends DialogFragment {
         TypefaceProvider.getInstance(context).setTypeface(view, Typeface.ITALIC);
         view = (TextView) dialog.findViewById(android.R.id.button3);
         TypefaceProvider.getInstance(context).setTypeface(view, Typeface.BOLD_ITALIC);
-    }
-
-    @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
-        if (mListener != null) {
-            mListener.onDialogCancelled();
-        }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (mListener != null) {
-            mListener.onDialogDismissed();
-        }
     }
 
 }

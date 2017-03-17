@@ -7,7 +7,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="menu_debug">Debug</string>
-    <string name="menu_debug_reset_app">Reset App</string>
+    <string name="menu_debug_reset_app">Reset App and exit</string>
 
     <string name="action_settings">Settings</string>
 
