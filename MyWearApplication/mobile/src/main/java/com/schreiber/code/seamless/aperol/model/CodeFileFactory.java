@@ -17,7 +17,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.zxing.BarcodeFormat;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
-import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.shockwave.pdfium.PdfDocument;
@@ -64,16 +63,17 @@ public abstract class CodeFileFactory {
     }
 
     @Nullable
-    private static CodeFile createItem(Context context, String originalFilename, String type, String size, Bitmap fileAsImage, String source) {
-        if (fileAsImage != null) {
-            int thumbnailSize = 128;
-            Bitmap thumbnail = Bitmap.createScaledBitmap(fileAsImage, thumbnailSize, thumbnailSize, false);
+    private static CodeFile createItem(Context context, String originalFilename, String type, String size, Bitmap originalImage, String source) {
+        if (originalImage != null) {
+            int thumbnailSize = 200;
+            Bitmap thumbnail = Bitmap.createScaledBitmap(originalImage, thumbnailSize, thumbnailSize, false);
             if (thumbnail != null) {
                 try {
-                    if (saveBitmapsToFile(context, originalFilename, fileAsImage, thumbnail)) {
-                        String suffix = getFileSuffix(originalFilename);
-                        String fileName = originalFilename.replace("." + suffix, "");
-                        return CodeFile.create(fileName, originalFilename, type, size, source);
+                    String suffix = getFileSuffix(originalFilename);
+                    String fileName = originalFilename.replace("." + suffix, "");
+                    CodeFile codeFile = CodeFile.create(fileName, originalFilename, type, size, source);
+                    if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail)) {
+                        return codeFile;
                     } else {
                         Logger.logError("Couldn't save images from " + originalFilename);
                     }
@@ -86,19 +86,29 @@ public abstract class CodeFileFactory {
     }
 
     @CheckResult
-    private static boolean saveBitmapsToFile(Context context, String filename, Bitmap fileAsImage, Bitmap thumbnail) throws IOException {
-        IOUtils.saveBitmapToFile(context, fileAsImage, filename, "original");// TODO check if it was saved and return status
-        IOUtils.saveBitmapToFile(context, thumbnail, filename, "thumbnail");
-        ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, fileAsImage);
-        if (!barcodesAsBitmap.isEmpty()) {
-            if (barcodesAsBitmap.size() > 1) {
-                Logger.logError("Error: " + barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
+    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap thumbnail)
+            throws IOException {
+        CodeFileViewModel codeFileViewModel = CodeFileViewModel.create(codeFile);
+        boolean allSaved = codeFileViewModel.saveOriginalImage(context, originalImage);
+        if (allSaved) {
+            allSaved = codeFileViewModel.saveThumbnailImage(context, thumbnail);
+            if (allSaved) {
+                ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, originalImage);
+                Bitmap codeImage = null;
+                if (barcodesAsBitmap.isEmpty()) {
+                    Logger.logError("Couldn't get code from " + codeFile.originalFilename());
+                } else {
+                    if (barcodesAsBitmap.size() > 1) {
+                        Logger.logError("Error: " + barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
+                    }
+                    codeImage = barcodesAsBitmap.get(0);
+                }
+                if (codeImage != null) {
+                    allSaved = codeFileViewModel.saveThumbnailImage(context, codeImage);
+                }
             }
-            IOUtils.saveBitmapToFile(context, barcodesAsBitmap.get(0), filename, "code");
-        } else {
-            Logger.logError("Couldn't get code from " + filename);
         }
-        return true;
+        return allSaved;
     }
 
     @Nullable
