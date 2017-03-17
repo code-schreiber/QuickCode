@@ -5,6 +5,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.SimpleDialogFragment;
 
@@ -14,23 +15,7 @@ import timber.log.Timber;
 public class BaseActivity extends AppCompatActivity {
 
     void overridePendingTransitionEnter() {
-        // TODO
-// overridePendingTransition(R.anim.slide_in_right, android.R.anim.slide_out_left);
-//
-// <set xmlns:android="http://schemas.android.com/apk/res/android">
-// <translate android:fromXDelta="50%p" android:toXDelta="0"
-// android:duration="@android:integer/config_mediumAnimTime"/>
-// <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
-// android:duration="@android:integer/config_mediumAnimTime" />
-// </set>
-//
-// slide_out_left:
-// <set xmlns:android="http://schemas.android.com/apk/res/android">
-// <translate android:fromXDelta="0" android:toXDelta="-50%p"
-// android:duration="@android:integer/config_mediumAnimTime"/>
-// <alpha android:fromAlpha="1.0" android:toAlpha="0.0"
-// android:duration="@android:integer/config_mediumAnimTime" />
-// </set>
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     void overridePendingTransitionExit() {
