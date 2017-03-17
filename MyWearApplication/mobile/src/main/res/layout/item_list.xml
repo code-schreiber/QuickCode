@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -18,25 +19,70 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
         android:minHeight="@dimen/size_min_touchable_area"
-
         android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
         android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="@dimen/activity_horizontal_margin">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{codeFileViewModel.codeFile().filename()}"
-            android:textSize="@dimen/text_size_medium"
-            tools:text="List item text"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/activity_horizontal_margin">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{codeFileViewModel.getCreationDate(context)}"
-            android:textSize="@dimen/text_size_small"
-            tools:text="12.12.2000 12:12"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:imageBitmap="@{codeFileViewModel.getThumbnailImage(context)}"
+                tools:src="@drawable/ic_add_image_black_24dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{codeFileViewModel.codeFile().filename()}"
+                android:textSize="@dimen/text_size_medium"
+                tools:text="List item text"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{codeFileViewModel.getCreationDate(context)}"
+                android:textSize="@dimen/text_size_small"
+                tools:text="12.12.2000 12:12"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:src="@drawable/ic_visibility_black_24dp"/>
+            <!--android:src="@{codeFileViewModel.hasCode(context)? @drawable/ic_visibility_black_24dp: null"-->
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:src="@drawable/ic_watch_black_24dp"/>
+            <!--android:src="@{codeFileViewModel.isOnWatch()? @drawable/ic_watch_black_24dp: null"-->
+
+        </LinearLayout>
     </LinearLayout>
 </layout>

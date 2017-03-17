@@ -2,11 +2,13 @@ package com.schreiber.code.seamless.aperol.model;
 
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
 
 import com.google.auto.value.AutoValue;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
@@ -60,6 +62,19 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return list;
     }
 
+    public boolean hasCode(Context context) {
+        return getCodeImage(context) != null;
+    }
+
+    public boolean isOnWatch() {
+        return codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;
+    }
+
+    @BindingAdapter("bind:imageBitmap")
+    public static void setImageBitmap(ImageView imageView, Bitmap bitmap) {
+        imageView.setImageBitmap(bitmap);
+    }
+
     public Bitmap getOriginalImage(Context context) {
         return getBitmapFromFile(context, SUFFIX_ORIGINAL);
     }
@@ -85,10 +100,12 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     private boolean saveBitmapToFile(Context context, Bitmap image, String fileSuffix) throws IOException {
+        // TODO do of the UI thread
         return IOUtils.saveBitmapToFile(context, image, codeFile().originalFilename(), fileSuffix);
     }
 
     private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
+        // TODO do of the UI thread
         return IOUtils.getBitmapFromFile(context, codeFile().originalFilename(), fileSuffix);
     }
 
