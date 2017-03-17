@@ -68,22 +68,26 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(CodeFileViewModel item) {
-        CodeFileDetailActivity.start((BaseActivity) getActivity(), item.codeFile());
+        CodeFileDetailActivity.start((BaseActivity) getActivity(), item);
     }
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.codeFile();
-        SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile);
+        if (SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile)) {
+            Snackbar.make(recyclerView, codeFile.filename() + " was deleted", Snackbar.LENGTH_LONG)
+                    .setAction("Undo", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            addItemToAdapter(codeFile);
+                        }
+                    })
+                    .show();
+        } else {
+            Snackbar.make(recyclerView, "Problem deleting " + codeFile.filename(), Snackbar.LENGTH_LONG)
+                    .show();
+        }
         adapter.replaceData(getAdapterData());
-        Snackbar.make(recyclerView, codeFile.filename() + " was deleted", Snackbar.LENGTH_LONG)
-                .setAction("Undo", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        addItemToAdapter(codeFile);
-                    }
-                })
-                .show();
         return true;
     }
 
