@@ -93,13 +93,13 @@ public abstract class CodeFileFactory {
         if (allSaved) {
             allSaved = codeFileViewModel.saveThumbnailImage(context, thumbnail);
             if (allSaved) {
-                ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, originalImage);
+                ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, codeFileViewModel);
                 Bitmap codeImage = null;
                 if (barcodesAsBitmap.isEmpty()) {
                     Logger.logError("Couldn't get code from " + codeFile.originalFilename());
                 } else {
                     if (barcodesAsBitmap.size() > 1) {
-                        Logger.logError("Error: " + barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
+                        Logger.logError(barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
                     }
                     codeImage = barcodesAsBitmap.get(0);
                 }
@@ -153,8 +153,8 @@ public abstract class CodeFileFactory {
     }
 
     @NonNull
-    public static ArrayList<Bitmap> getBarcodesAsBitmapFromImage(Context context, Bitmap fileAsImage) {
-        SparseArray<Barcode> barcodes = getCodesFromBitmap(context, fileAsImage);
+    public static ArrayList<Bitmap> getBarcodesAsBitmapFromImage(Context context, CodeFileViewModel codeFileViewModel) {
+        SparseArray<Barcode> barcodes = getCodesFromBitmap(context, codeFileViewModel.getOriginalImage(context));
         ArrayList<Bitmap> barcodesAsBitmap = new ArrayList<>();
 
         if (barcodes.size() < 1) {
@@ -163,7 +163,7 @@ public abstract class CodeFileFactory {
             for (int i = 0; i < barcodes.size(); i++) {
                 int key = barcodes.keyAt(i);
                 Barcode barcode = barcodes.get(key);
-                Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is, CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
+                Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
                 Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints);
                 Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
                 Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
