@@ -16,6 +16,7 @@
     <dimen name="fab_margin">@dimen/margin_large</dimen>
 
     <dimen name="size_min_touchable_area">48dp</dimen>
+    <dimen name="size_thumbnail">48dp</dimen>
 
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_medium">18sp</dimen>
