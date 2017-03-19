@@ -37,9 +37,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layout_collapseMode="parallax">
-                    <!--TODO try out collapseParallaxMultiplier-->
-                    <!--app:layout_collapseParallaxMultiplier="0.1"-->
-                    <!--app:layout_collapseParallaxMultiplier="0.9"-->
 
                     <ImageView
                         android:layout_width="match_parent"

@@ -18,6 +18,7 @@ public class BaseFragment extends Fragment {
     }
 
     void showSimpleDialog(String message) {
+        logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
     }
 
