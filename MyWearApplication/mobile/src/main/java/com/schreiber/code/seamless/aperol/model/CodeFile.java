@@ -14,18 +14,18 @@ public abstract class CodeFile implements Parcelable {
 
     static final long NOT_ON_WATCH = 0L;
 
-    public static CodeFile create(OriginalCodeFile originalCodeFile, Barcode barcode) {
+    public static CodeFile create(OriginalCodeFile originalCodeFile) {
         String originalFilename = originalCodeFile.filename();
         String suffix = CodeFileFactory.getFileSuffix(originalFilename);
         String displayName = originalFilename.replace("." + suffix, "");
-        return new AutoValue_CodeFile(displayName, originalCodeFile, barcode, NOT_ON_WATCH);
+        return new AutoValue_CodeFile(displayName, originalCodeFile, NOT_ON_WATCH);
     }
 
     public abstract String displayName();
 
     public abstract OriginalCodeFile originalCodeFile();
 
-    public abstract Barcode barcode();
+//    public abstract Barcode barcode();// TODO pass important data from barcode
 
     public abstract long onWatchUntil();
 

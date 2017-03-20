@@ -66,9 +66,9 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return list;
     }
 
-    public boolean hasCode() {
-        return codeFile().barcode() != null;
-    }
+//    public boolean hasCode() {
+//        return codeFile().barcode() != null; // TODO pass important data from barcode
+//    }
 
     public boolean isOnWatch() {
         return codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;

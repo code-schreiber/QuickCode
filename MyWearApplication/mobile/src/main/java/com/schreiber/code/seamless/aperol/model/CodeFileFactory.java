@@ -108,7 +108,7 @@ public abstract class CodeFileFactory {
                     }
                 }
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, null);// TODO pass important data from barcode instead of barcode object
+                CodeFile codeFile = CodeFile.create(originalCodeFile);
                 try {
                     if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
                         return codeFile;
