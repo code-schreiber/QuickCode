@@ -24,7 +24,6 @@ import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,46 +32,85 @@ public abstract class CodeFileFactory {
     private static final int SUPPORTED_BARCODE_FORMATS = Barcode.ALL_FORMATS; // TODO choose supported and unit tested formats a la setBarcodeFormats(Barcode.DATA_MATRIX | Barcode.QR_CODE)
 
 
-    public static CodeFile createItemFromPath(Context context, String path) {
+    public static CodeFile createCodeFileFromPath(Context context, String path) {
         Uri uri = Uri.parse(path);
         String originalFilename = uri.getLastPathSegment();
-        String type = getFileSuffix(originalFilename);
+        String fileType = getFileSuffix(originalFilename);
         String size = "-1";// TODO
-        Bitmap fileAsImage = null;
+        Bitmap originalImage = null;
         try {
-            fileAsImage = BitmapFactory.decodeStream(context.getAssets().open(path));
+            originalImage = BitmapFactory.decodeStream(context.getAssets().open(path));
         } catch (IOException e) {
             Logger.logException(e);
         }
-        String source = "app assets/" + (new File(path)).getParent();
-        return createItem(context, originalFilename, type, size, fileAsImage, source);
+        String importedFrom = "app assets/" + (new File(path)).getParent();
+        return createItem(context, originalFilename, fileType, size, originalImage, importedFrom);
+    }
+
+    public static CodeFile createCodeFileFromUri(Context context, Uri uri) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
+        String fileType = contentResolver.getType(uri);
+        String size = UriUtils.getSize(contentResolver, uri);
+        Bitmap originalImage = getBitmapFromUri(context, uri);
+        return createItem(context, originalFilename, fileType, size, originalImage, uri.toString());
+    }
+
+    public static CodeFile createCodeFileFromCodeFile(Context context, CodeFile codeFile, Bitmap originalImage) {
+        String originalFilename = codeFile.originalCodeFile().filename();
+        String fileType = codeFile.originalCodeFile().fileType();
+        String size = codeFile.originalCodeFile().size();
+        return createItem(context, originalFilename, fileType, size, originalImage, "CodeFile of " + originalFilename);
     }
 
     @NonNull
-    private static String getFileSuffix(String originalFilename) {
+    static String getFileSuffix(String originalFilename) {
         return originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
     }
 
-    public static CodeFile createItemFromUri(Context context, Uri uri) {
-        ContentResolver contentResolver = context.getContentResolver();
-        String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
-        String type = contentResolver.getType(uri);
-        String size = UriUtils.getSize(contentResolver, uri);
-        Bitmap fileAsImage = getBitmapFromUri(context, uri);
-        return createItem(context, originalFilename, type, size, fileAsImage, uri.toString());
-    }
-
     @Nullable
-    private static CodeFile createItem(Context context, String originalFilename, String type, String size, Bitmap originalImage, String source) {
+    private static CodeFile createItem(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
         if (originalImage != null) {
             int thumbnailSize = 200;
             Bitmap thumbnail = Bitmap.createScaledBitmap(originalImage, thumbnailSize, thumbnailSize, false);
             if (thumbnail != null) {
+                SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
+                Bitmap codeImage = null;
+                if (barcodes.size() < 1) {
+                    Logger.logError("No barcodes detected in " + originalFilename);
+                } else {
+                    if (barcodes.size() > 1) {
+                        Logger.logError(barcodes.size() + " barcodes found in bitmap! Saving only one.");
+//                            TODO create multiple files for premium
+                    }
+                    for (int i = 0; i < barcodes.size(); i++) {
+                        int key = barcodes.keyAt(i);
+                        Barcode barcode = barcodes.get(key);
+
+                        Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
+                        Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints[0] + "," + barcode.cornerPoints[1]);
+                        Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
+                        Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
+                        Logger.logDebug("Barcode found, rawValue: " + barcode.rawValue);
+
+                        int barcodeFormat = barcode.format;
+                        BarcodeFormat encodingFormat = getEncodingFormat(barcodeFormat);
+                        Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
+
+                        if (encodingFormat != null) {
+                            int aspectRatio = 1;// TODO pass ratio taken from barcode instead of 1
+                            codeImage = EncodingUtils.encode(encodingFormat, barcode.rawValue, aspectRatio);
+                            if (codeImage == null) {
+                                Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
+                            }
+                            Logger.logError("Code format not supported: " + getEncodingFormatName(barcodeFormat) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
+                        }
+                    }
+                }
+                OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
+                CodeFile codeFile = CodeFile.create(originalCodeFile, null);// TODO pass important data from barcode instead of barcode object
                 try {
-                    String suffix = getFileSuffix(originalFilename);
-                    String fileName = originalFilename.replace("." + suffix, "");
-                    CodeFile codeFile = CodeFile.create(fileName, originalFilename, type, size, source);
-                    if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail)) {
+                    if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
                         return codeFile;
                     } else {
                         Logger.logError("Couldn't save images from " + originalFilename);
@@ -80,34 +118,27 @@ public abstract class CodeFileFactory {
                 } catch (IOException e) {
                     Logger.logException(e);
                 }
+            } else {
+                Logger.logError("Couldn't create thumbnail of " + originalFilename);
             }
         }
         return null;
     }
 
     @CheckResult
-    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap thumbnail)
+    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap thumbnail, Bitmap codeImage)
             throws IOException {
         CodeFileViewModel codeFileViewModel = CodeFileViewModel.create(codeFile);
         boolean allSaved = codeFileViewModel.saveOriginalImage(context, originalImage);
         if (allSaved) {
             allSaved = codeFileViewModel.saveThumbnailImage(context, thumbnail);
             if (allSaved) {
-                ArrayList<Bitmap> barcodesAsBitmap = getBarcodesAsBitmapFromImage(context, codeFileViewModel);
-                Bitmap codeImage = null;
-                if (barcodesAsBitmap.isEmpty()) {
-                    Logger.logError("Couldn't get code from " + codeFile.originalFilename());
-                } else {
-                    if (barcodesAsBitmap.size() > 1) {
-                        Logger.logError(barcodesAsBitmap.size() + " codes found in bitmap! Saving only one.");
-                    }
-                    codeImage = barcodesAsBitmap.get(0);
-                }
                 if (codeImage != null) {
-                    allSaved = codeFileViewModel.saveThumbnailImage(context, codeImage);
+                    allSaved = codeFileViewModel.saveCodeImage(context, codeImage);
                 }
             }
         }
+        // TODO some type of rollback on fail
         return allSaved;
     }
 
@@ -131,7 +162,7 @@ public abstract class CodeFileFactory {
         return null;
     }
 
-    private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
+    public static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
         BarcodeDetector detector = setupBarcodeDetector(context);
         if (detector == null) {
             return new SparseArray<>();
@@ -152,42 +183,8 @@ public abstract class CodeFileFactory {
         return detector;
     }
 
-    @NonNull
-    public static ArrayList<Bitmap> getBarcodesAsBitmapFromImage(Context context, CodeFileViewModel codeFileViewModel) {
-        SparseArray<Barcode> barcodes = getCodesFromBitmap(context, codeFileViewModel.getOriginalImage(context));
-        ArrayList<Bitmap> barcodesAsBitmap = new ArrayList<>();
-
-        if (barcodes.size() < 1) {
-            Logger.logError("No barcodes detected.");
-        } else {
-            for (int i = 0; i < barcodes.size(); i++) {
-                int key = barcodes.keyAt(i);
-                Barcode barcode = barcodes.get(key);
-                Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
-                Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints);
-                Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
-                Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
-                Logger.logDebug("Barcode found, rawValue: " + barcode.rawValue);
-// Logger.logDebug("Barcode founde, BoundingBox "+barcode.//valueFormat);
-                int barcodeFormat = barcode.format;
-                BarcodeFormat encodingFormat = getEncodingFormat(barcodeFormat);
-                if (encodingFormat != null) {
-                    Bitmap code = EncodingUtils.encode(encodingFormat, barcode.rawValue, 1);// TODO pass ratio taken from barcode instead of 1
-                    if (code != null) {
-                        barcodesAsBitmap.add(code);
-                    } else {
-                        Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
-                    }
-                } else {
-                    Logger.logError("Code format not supported: " + getEncodingFormatName(barcodeFormat) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
-                }
-            }
-        }
-        return barcodesAsBitmap;
-    }
-
     @Nullable
-    private static BarcodeFormat getEncodingFormat(int barcodeFormat) {
+    public static BarcodeFormat getEncodingFormat(int barcodeFormat) {
 // Barcode can be:
 // CODE_128
 // CODE_39

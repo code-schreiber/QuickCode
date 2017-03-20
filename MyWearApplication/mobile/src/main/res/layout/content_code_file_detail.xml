@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().originalFilename()}"
+                android:text="@{codeFileViewModel.codeFile().originalCodeFile().filename()}"
                 tools:text="original filename"/>
 
             <TextView
@@ -42,14 +42,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().source()}"
-                tools:text="source"/>
+                android:text="@{codeFileViewModel.codeFile().originalCodeFile().importedFrom()}"
+                tools:text="importedFrom"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().size()}"
+                android:text="@{codeFileViewModel.codeFile().originalCodeFile().size()}"
                 tools:text="size"/>
 
 
@@ -57,8 +57,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().type()}"
-                tools:text="type"/>
+                android:text="@{codeFileViewModel.codeFile().originalCodeFile().fileType()}"
+                tools:text="fileType"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getMimeType()}"
+                tools:text="Mime Type"/>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

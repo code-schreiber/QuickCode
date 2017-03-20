@@ -12,13 +12,10 @@ import android.view.View;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
+import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
-import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class CodeFileDetailActivity extends BaseActivity {
@@ -39,11 +36,12 @@ public class CodeFileDetailActivity extends BaseActivity {
         ActivityCodeFileDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
         final CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
         binding.setCodeFileViewModel(codeFileViewModel);
+        binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setDisplayHomeAsUpEnabled(true);
-        
+
         initViews(codeFileViewModel);
     }
 
@@ -70,7 +68,7 @@ public class CodeFileDetailActivity extends BaseActivity {
     }
 
     private void initViews(final CodeFileViewModel codeFileViewModel) {
-        setTitle(codeFileViewModel.codeFile().filename());
+        setTitle(codeFileViewModel.codeFile().displayName());
         final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
         findViewById(R.id.activity_code_file_detail_header).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,20 +87,17 @@ public class CodeFileDetailActivity extends BaseActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ArrayList<Bitmap> barcodesAsBitmap = CodeFileFactory.getBarcodesAsBitmapFromImage(view.getContext(), originalImage);
-                    if (barcodesAsBitmap.isEmpty()) {
-                        showSimpleDialog("Could't get code from " + codeFileViewModel.codeFile().originalFilename());
+                    CodeFile codeFile = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.codeFile(), originalImage);
+                    if (codeFile != null) {
+                        CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
+                        if (newCodeFileViewModel.getCodeImage(view.getContext()) != null) {
+                            // TODO persist
+                            initFab(newCodeFileViewModel, originalImage);
+                        } else {
+                            showSimpleDialog("No code could be found");
+                        }
                     } else {
-                        if (barcodesAsBitmap.size() > 1) {
-                            showSimpleDialog("Error: " + barcodesAsBitmap.size() + " codes found, saving only one.");
-                        }
-                        Bitmap code = barcodesAsBitmap.get(0);
-                        try {
-                            codeFileViewModel.saveCodeImage(view.getContext(), code);
-                        } catch (IOException e) {
-                            Logger.logException(e);
-                        }
-                        initFab(codeFileViewModel, originalImage);
+                        showSimpleDialog("No CodeFile could be created");
                     }
                 }
             });
