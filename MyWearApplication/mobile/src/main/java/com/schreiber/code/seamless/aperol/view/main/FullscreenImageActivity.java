@@ -103,7 +103,7 @@ public class FullscreenImageActivity extends BaseActivity {
         mControlsView = findViewById(R.id.activity_fullscreen_image_content_controls);
         mContentView = findViewById(R.id.activity_fullscreen_image_content);
         CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
-        setTitle(codeFileViewModel.codeFile().filename());
+        setTitle(codeFileViewModel.codeFile().displayName());
         ((ImageView) mContentView).setImageBitmap(codeFileViewModel.getCodeImage(this));
 
         // Set up the user interaction to manually show or hide the system UI.

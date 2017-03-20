@@ -26,6 +26,7 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     private static final String SUFFIX_THUMBNAIL = "thumbnail";
     private static final String SUFFIX_ORIGINAL = "original";
 
+
     public static CodeFileViewModel create(CodeFile codeFile) {
         return new AutoValue_CodeFileViewModel(codeFile);
     }
@@ -36,17 +37,20 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     @Override
     public int compareTo(@NonNull CodeFileViewModel o) {
         // Last created items first
-        return Long.compare(o.codeFile().creationDate(), this.codeFile().creationDate());
+        return Long.compare(o.codeFile().originalCodeFile().importedOn(), this.codeFile().originalCodeFile().importedOn());
     }
 
+    // TODO extract to dateutils
     public String getCreationDate(Context context) {
-        Date creationDate = new Date(codeFile().creationDate());// TODO extract to dateutils
-        return DateFormat.getDateFormat(context).format(creationDate) + " " + DateFormat.getTimeFormat(context).format(creationDate);
+        Date creationDate = new Date(codeFile().originalCodeFile().importedOn());
+        String date = DateFormat.getDateFormat(context).format(creationDate);
+        String time = DateFormat.getTimeFormat(context).format(creationDate);
+        return date + " " + time;
     }
 
     public String getMimeType() {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String mimeType = mime.getExtensionFromMimeType(codeFile().type());
+        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
         if (mimeType == null) {
             mimeType = "";
         }
@@ -62,15 +66,15 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return list;
     }
 
-    public boolean hasCode(Context context) {
-        return getCodeImage(context) != null;
+    public boolean hasCode() {
+        return codeFile().barcode() != null;
     }
 
     public boolean isOnWatch() {
         return codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;
     }
 
-    @BindingAdapter("bind:imageBitmap")
+    @BindingAdapter("imageBitmap")
     public static void setImageBitmap(ImageView imageView, Bitmap bitmap) {
         imageView.setImageBitmap(bitmap);
     }
@@ -101,12 +105,12 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
 
     private boolean saveBitmapToFile(Context context, Bitmap image, String fileSuffix) throws IOException {
         // TODO do of the UI thread
-        return IOUtils.saveBitmapToFile(context, image, codeFile().originalFilename(), fileSuffix);
+        return IOUtils.saveBitmapToFile(context, image, codeFile().originalCodeFile().filename(), fileSuffix);
     }
 
     private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
         // TODO do of the UI thread
-        return IOUtils.getBitmapFromFile(context, codeFile().originalFilename(), fileSuffix);
+        return IOUtils.getBitmapFromFile(context, codeFile().originalCodeFile().filename(), fileSuffix);
     }
 
 }
