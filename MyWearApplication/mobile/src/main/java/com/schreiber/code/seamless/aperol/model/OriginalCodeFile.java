@@ -9,27 +9,22 @@ import java.util.Date;
 
 
 @AutoValue
-public abstract class CodeFile implements Parcelable {
+public abstract class OriginalCodeFile implements Parcelable {
 
-    static final long NOT_ON_WATCH = 0L;
-
-    public static CodeFile create(String filename, String originalFilename, String type, String size, String source) {
-        return new AutoValue_CodeFile(filename, originalFilename, type, size, new Date().getTime(), source, NOT_ON_WATCH);
+    public static OriginalCodeFile create(String filename, String fileType, String size, String importedFrom) {
+        long importedOn = new Date().getTime();
+        return new AutoValue_OriginalCodeFile(filename, fileType, size, importedOn, importedFrom);
     }
 
     public abstract String filename();
 
-    public abstract String originalFilename();
-
-    public abstract String type();
+    public abstract String fileType();
 
     public abstract String size();
 
-    public abstract long creationDate();
+    public abstract long importedOn();
 
-    public abstract String source();
-
-    public abstract long onWatchUntil();
+    public abstract String importedFrom();
 
 }
 
