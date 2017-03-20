@@ -19,6 +19,7 @@ import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
+import com.schreiber.code.seamless.aperol.util.android.NetworkUtils;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.codeFile();
         if (SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile)) {
-            Snackbar.make(recyclerView, codeFile.filename() + " was deleted", Snackbar.LENGTH_LONG)
+            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
                     .setAction("Undo", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -84,7 +85,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     })
                     .show();
         } else {
-            Snackbar.make(recyclerView, "Problem deleting " + codeFile.filename(), Snackbar.LENGTH_LONG)
+            Snackbar.make(recyclerView, "Problem deleting " + codeFile.displayName(), Snackbar.LENGTH_LONG)
                     .show();
         }
         adapter.replaceData(getAdapterData());
@@ -99,7 +100,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         BarcodeDetector detector = CodeFileFactory.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            showSimpleDialog("Could not set up the detector!");
+            showSimpleDialog("Could not set up the detector! Was offline: " + !NetworkUtils.isOnline(getActivity()));
             return;
         }
 
@@ -121,7 +122,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         ArrayList<CodeFile> assets = new ArrayList<>();
         for (String path : paths) {
-            CodeFile item = CodeFileFactory.createItemFromPath(getActivity(), path);
+            CodeFile item = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
             if (item != null) {
                 assets.add(item);
             } else {
@@ -143,9 +144,16 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         ArrayList<CodeFile> itemsBefore = SharedPreferencesWrapper.getListItems(getActivity());
         if (!itemsBefore.contains(codeFile)) {
             SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
-            adapter.replaceData(getAdapterData());
+            ArrayList<CodeFileViewModel> adapterData = getAdapterData();
+            if (adapterData.isEmpty()) {
+                showSimpleDialog("adapterData is empty after adding file, showing item that was not persisted");
+                ArrayList<CodeFile> data = new ArrayList<>();
+                data.add(codeFile);
+                adapterData = CodeFileViewModel.createList(data);
+            }
+            adapter.replaceData(adapterData);
         } else {
-            showSnack(codeFile.filename() + " already exists");
+            showSnack(codeFile.displayName() + " already exists");
         }
     }
 
@@ -156,7 +164,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     void handleFile(Uri uri) {
         if (uri != null) {
-            CodeFile item = CodeFileFactory.createItemFromUri(getActivity(), uri);
+            CodeFile item = CodeFileFactory.createCodeFileFromUri(getActivity(), uri);
             if (item != null) {
                 addItemToAdapter(item);
             }
