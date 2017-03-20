@@ -35,8 +35,10 @@
             android:paddingRight="@dimen/activity_horizontal_margin">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_thumbnail"
+                android:layout_height="@dimen/size_thumbnail"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
                 app:imageBitmap="@{codeFileViewModel.getThumbnailImage(context)}"
                 tools:src="@drawable/ic_add_image_black_24dp"/>
         </LinearLayout>
@@ -51,9 +53,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{codeFileViewModel.codeFile().filename()}"
+                android:text="@{codeFileViewModel.codeFile().displayName()}"
                 android:textSize="@dimen/text_size_medium"
-                tools:text="List item text"/>
+                tools:text="Display Name"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -74,14 +76,15 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 tools:src="@drawable/ic_visibility_black_24dp"/>
-            <!--android:src="@{codeFileViewModel.hasCode(context)? @drawable/ic_visibility_black_24dp: null"-->
+            <!--  android:src="@{codeFileViewModel.hasCode() ? @drawable/ic_visibility_black_24dp : @drawable/ic_watch_black_24dp""-->
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:src="@drawable/ic_watch_black_24dp"/>
-            <!--android:src="@{codeFileViewModel.isOnWatch()? @drawable/ic_watch_black_24dp: null"-->
+            <!--android:src="@{codeFileViewModel.isOnWatch()? @drawable/ic_watch_black_24dp: @null"-->
 
         </LinearLayout>
     </LinearLayout>
