@@ -29,7 +29,7 @@ import org.ajoberstar.grgit.Grgit
 
 
 ext {
-    def version = "0.0.1"
+    def version = "1.0.0"
     def git = Grgit.open(currentDir: projectDir)
     versionCode = getVersionCode(version, git)
     versionName = getVersionName(git, version)
@@ -44,7 +44,7 @@ ext {
 
 static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
-    def postfix = git.head().time// TODO use git.tag.list().size() as soon as we start tagging
+    def postfix = git.tag.list().size()// git.head().time
     def substring = (versionCode + postfix).substring(0, 10)
     return Integer.parseInt(substring)
 }
