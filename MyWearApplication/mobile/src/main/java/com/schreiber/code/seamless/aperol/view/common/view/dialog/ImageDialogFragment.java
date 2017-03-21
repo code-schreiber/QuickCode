@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -50,8 +51,10 @@ public class ImageDialogFragment extends DialogFragment {
         ImageView thumb = new ImageView(context);
         thumb.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_THUMBNAIL));
         layout.addView(thumb);
+        ScrollView scrollView = new ScrollView(context);
+        scrollView.addView(layout);
         return new AlertDialog.Builder(context)
-                .setView(layout)
+                .setView(scrollView)
                 .create();
     }
 
