@@ -62,7 +62,9 @@
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
-        <include android:id="@+id/activity_code_file_detail_content" layout="@layout/content_code_file_detail"/>
+        <include
+            android:id="@+id/activity_code_file_detail_content"
+            layout="@layout/content_code_file_detail"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/activity_code_file_detail_fab"
