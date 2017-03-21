@@ -76,6 +76,7 @@ public abstract class CodeFileFactory {
             if (thumbnail != null) {
                 SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
                 Bitmap codeImage = null;
+                Barcode barcode = null;
                 if (barcodes.size() < 1) {
                     Logger.logError("No barcodes detected in " + originalFilename);
                 } else {
@@ -85,16 +86,15 @@ public abstract class CodeFileFactory {
                     }
                     for (int i = 0; i < barcodes.size(); i++) {
                         int key = barcodes.keyAt(i);
-                        Barcode barcode = barcodes.get(key);
+                        barcode = barcodes.get(key);
 
-                        Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);// TODO use this is CONTACT_INFO, EMAIL, ISBN, PHONE, PRODUCT, SMS, TEXT, URL, WIFI, GEO , CALENDAR_EVENT , DRIVER_LICENSE
+                        Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);
                         Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints[0] + "," + barcode.cornerPoints[1]);
                         Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
                         Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
                         Logger.logDebug("Barcode found, rawValue: " + barcode.rawValue);
 
-                        int barcodeFormat = barcode.format;
-                        BarcodeFormat encodingFormat = getEncodingFormat(barcodeFormat);
+                        BarcodeFormat encodingFormat = getEncodingFormat(barcode.format);
                         Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
 
                         if (encodingFormat != null) {
@@ -103,12 +103,12 @@ public abstract class CodeFileFactory {
                             if (codeImage == null) {
                                 Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
                             }
-                            Logger.logError("Code format not supported: " + getEncodingFormatName(barcodeFormat) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
+                            Logger.logError("Code format not supported: " + getEncodingFormatName(barcode.format) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
                         }
                     }
                 }
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile);
+                CodeFile codeFile = CodeFile.create(originalCodeFile, getEncodingFormatName(barcode.format), getContentType(barcode.valueFormat), barcode.displayValue, barcode.rawValue);
                 try {
                     if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
                         return codeFile;
@@ -215,7 +215,6 @@ public abstract class CodeFileFactory {
         }
     }
 
-    @Nullable
     private static String getEncodingFormatName(int barcodeFormat) {
         switch (barcodeFormat) {
             case Barcode.CODE_128:
@@ -247,6 +246,38 @@ public abstract class CodeFileFactory {
             default:
                 Logger.logError("Code format not supported:" + barcodeFormat);
                 return "Unknown";
+        }
+    }
+
+    private static String getContentType(int barcodeValueFormat) {
+        switch (barcodeValueFormat) {
+            case Barcode.CONTACT_INFO:
+                return "CONTACT_INFO";
+            case Barcode.EMAIL:
+                return "EMAIL";
+            case Barcode.ISBN:
+                return "ISBN";
+            case Barcode.PHONE:
+                return "PHONE";
+            case Barcode.PRODUCT:
+                return "PRODUCT";
+            case Barcode.SMS:
+                return "SMS";
+            case Barcode.TEXT:
+                return "TEXT";
+            case Barcode.URL:
+                return "URL";
+            case Barcode.WIFI:
+                return "WIFI";
+            case Barcode.GEO:
+                return "GEO";
+            case Barcode.CALENDAR_EVENT:
+                return "CALENDAR_EVENT";
+            case Barcode.DRIVER_LICENSE:
+                return "DRIVER_LICENSE";
+            default:
+                Logger.logError("barcodeValueFormat not supported:" + barcodeValueFormat);
+                return "Unknown barcodeValueFormat";
         }
     }
 
