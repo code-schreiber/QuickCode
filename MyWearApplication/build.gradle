@@ -45,8 +45,8 @@ ext {
 static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
     def postfix = git.tag.list().size()// git.head().time
-    def substring = (versionCode + postfix).substring(0, 10)
-    return Integer.parseInt(substring)
+    def completeVersionCode = versionCode + postfix
+    return Integer.parseInt(completeVersionCode)
 }
 
 static def getVersionName(git, version) {
