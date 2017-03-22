@@ -11,11 +11,11 @@ public abstract class CodeFile implements Parcelable {
 
     static final long NOT_ON_WATCH = 0L;
 
-    public static CodeFile create(OriginalCodeFile originalCodeFile, String codeType, String codeContentType, String codeDisplayContent, String codeRawContent) {
+    public static CodeFile create(OriginalCodeFile originalCodeFile, String codeType, String codeContentType, String codeDisplayContent, String codeRawContent, float aspectRatio) {
         String originalFilename = originalCodeFile.filename();
         String suffix = CodeFileFactory.getFileSuffix(originalFilename);
         String displayName = originalFilename.replace("." + suffix, "");
-        return new AutoValue_CodeFile(displayName, codeType, codeContentType, codeDisplayContent, codeRawContent, originalCodeFile, NOT_ON_WATCH);
+        return new AutoValue_CodeFile(displayName, codeType, codeContentType, codeDisplayContent, codeRawContent, aspectRatio, originalCodeFile, NOT_ON_WATCH);
     }
 
     public abstract String displayName();
@@ -27,6 +27,8 @@ public abstract class CodeFile implements Parcelable {
     public abstract String codeDisplayContent();
 
     public abstract String codeRawContent();
+
+    public abstract float aspectRatio();
 
     public abstract OriginalCodeFile originalCodeFile();
 

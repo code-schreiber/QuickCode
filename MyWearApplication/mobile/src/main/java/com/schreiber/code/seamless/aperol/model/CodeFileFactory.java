@@ -77,6 +77,7 @@ public abstract class CodeFileFactory {
                 SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
                 Bitmap codeImage = null;
                 Barcode barcode = null;
+                float aspectRatio = 1;
                 if (barcodes.size() < 1) {
                     Logger.logError("No barcodes detected in " + originalFilename);
                 } else {
@@ -98,7 +99,9 @@ public abstract class CodeFileFactory {
                         Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
 
                         if (encodingFormat != null) {
-                            int aspectRatio = 1;// TODO pass ratio taken from barcode instead of 1
+                            float width = barcode.getBoundingBox().width();
+                            float height = barcode.getBoundingBox().height();
+                            aspectRatio = width / height;
                             codeImage = EncodingUtils.encode(encodingFormat, barcode.rawValue, aspectRatio);
                             if (codeImage == null) {
                                 Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
@@ -108,7 +111,7 @@ public abstract class CodeFileFactory {
                     }
                 }
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, getEncodingFormatName(barcode.format), getContentType(barcode.valueFormat), barcode.displayValue, barcode.rawValue);
+                CodeFile codeFile = CodeFile.create(originalCodeFile, getEncodingFormatName(barcode.format), getContentType(barcode.valueFormat), barcode.displayValue, barcode.rawValue, aspectRatio);
                 try {
                     if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
                         return codeFile;
@@ -151,6 +154,7 @@ public abstract class CodeFileFactory {
             } else if (UriUtils.isImage(resolver, uri)) {
                 return UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
             } else if (UriUtils.isText(resolver, uri)) {
+                // TODO
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
                 return EncodingUtils.encode(BarcodeFormat.QR_CODE, textContent, 1);
             } else {
