@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.CheckResult;
@@ -71,13 +72,17 @@ public abstract class CodeFileFactory {
     @Nullable
     private static CodeFile createItem(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
         if (originalImage != null) {
-            int thumbnailSize = 200;
-            Bitmap thumbnail = Bitmap.createScaledBitmap(originalImage, thumbnailSize, thumbnailSize, false);
+            Bitmap thumbnail = getThumbnail(originalImage);
             if (thumbnail != null) {
                 SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
                 Bitmap codeImage = null;
-                Barcode barcode = null;
-                float aspectRatio = 1;
+                Barcode barcode;
+
+                String encodingFormatName = "";
+                String codeContentType = "";
+                String codeDisplayValue = "";
+                String codeRawValue = "";
+
                 if (barcodes.size() < 1) {
                     Logger.logError("No barcodes detected in " + originalFilename);
                 } else {
@@ -89,29 +94,31 @@ public abstract class CodeFileFactory {
                         int key = barcodes.keyAt(i);
                         barcode = barcodes.get(key);
 
+                        encodingFormatName = getEncodingFormatName(barcode.format);
+                        codeContentType = getContentType(barcode.valueFormat);
+                        codeDisplayValue = barcode.displayValue;
+                        codeRawValue = barcode.rawValue;
+
                         Logger.logDebug("Barcode found, valueformat: " + barcode.valueFormat);
                         Logger.logDebug("Barcode found, cornerPoints: " + barcode.cornerPoints[0] + "," + barcode.cornerPoints[1]);
                         Logger.logDebug("Barcode found, BoundingBox: " + barcode.getBoundingBox());
-                        Logger.logDebug("Barcode found, displayValue: " + barcode.displayValue);
-                        Logger.logDebug("Barcode found, rawValue: " + barcode.rawValue);
+                        Logger.logDebug("Barcode found, displayValue: " + codeDisplayValue);
+                        Logger.logDebug("Barcode found, rawValue: " + codeRawValue);
 
                         BarcodeFormat encodingFormat = getEncodingFormat(barcode.format);
                         Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
 
                         if (encodingFormat != null) {
-                            float width = barcode.getBoundingBox().width();
-                            float height = barcode.getBoundingBox().height();
-                            aspectRatio = width / height;
-                            codeImage = EncodingUtils.encode(encodingFormat, barcode.rawValue, aspectRatio);
+                            codeImage = EncodingUtils.encode(encodingFormat, codeRawValue, barcode.getBoundingBox().width(), barcode.getBoundingBox().height());
                             if (codeImage == null) {
-                                Logger.logError("Couldn't encode bitmap from barcode:" + barcode.rawValue);
+                                Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
                             }
-                            Logger.logError("Code format not supported: " + getEncodingFormatName(barcode.format) + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
+                            Logger.logError("Code format not supported: " + encodingFormatName + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
                         }
                     }
                 }
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, getEncodingFormatName(barcode.format), getContentType(barcode.valueFormat), barcode.displayValue, barcode.rawValue, aspectRatio);
+                CodeFile codeFile = CodeFile.create(originalCodeFile, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
                 try {
                     if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
                         return codeFile;
@@ -126,6 +133,45 @@ public abstract class CodeFileFactory {
             }
         }
         return null;
+    }
+
+    private static Bitmap getThumbnail(Bitmap originalImage) {
+        return resizeImage(originalImage, 200);
+    }
+
+    private static Bitmap resizeImage(Bitmap bitmap, int scaleSize) {
+        int originalWidth = bitmap.getWidth();
+        int originalHeight = bitmap.getHeight();
+        Point dimensions = getNewDimensions(scaleSize, originalWidth, originalHeight);
+        return Bitmap.createScaledBitmap(bitmap, dimensions.x, dimensions.y, false);
+    }
+
+    @NonNull
+    public static Point getNewDimensions(int scaleSize, int originalWidth, int originalHeight) {
+        int newWidth = -1;
+        int newHeight = -1;
+        float ratio;
+        if (originalHeight > originalWidth) {
+            newHeight = scaleSize;
+            ratio = (float) originalWidth / (float) originalHeight;
+            newWidth = Math.round(newHeight * ratio);
+        } else if (originalWidth > originalHeight) {
+            newWidth = scaleSize;
+            ratio = (float) originalHeight / (float) originalWidth;
+            newHeight = Math.round(newWidth * ratio);
+        } else if (originalHeight == originalWidth) {
+            newHeight = scaleSize;
+            newWidth = scaleSize;
+        }
+        if (newWidth < 1) {
+            newWidth = scaleSize;
+        }
+        if (newHeight < 1) {
+            newHeight = scaleSize;
+        }
+        Point point = new Point();
+        point.set(newWidth, newHeight);
+        return point;
     }
 
     @CheckResult
@@ -156,7 +202,7 @@ public abstract class CodeFileFactory {
             } else if (UriUtils.isText(resolver, uri)) {
                 // TODO
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                return EncodingUtils.encode(BarcodeFormat.QR_CODE, textContent, 1);
+                return EncodingUtils.encodeQRCode(textContent);
             } else {
                 Logger.logError("No known file type: " + uri);
             }
@@ -166,7 +212,7 @@ public abstract class CodeFileFactory {
         return null;
     }
 
-    public static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
+    private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
         BarcodeDetector detector = setupBarcodeDetector(context);
         if (detector == null) {
             return new SparseArray<>();
@@ -188,21 +234,21 @@ public abstract class CodeFileFactory {
     }
 
     @Nullable
-    public static BarcodeFormat getEncodingFormat(int barcodeFormat) {
-// Barcode can be:
-// CODE_128
-// CODE_39
-// CODE_93
-// CODABAR
-// DATA_MATRIX
-// EAN_13 Typical grocery barcode
-// EAN_8
-// ITF
-// QR_CODE
-// UPC_A
-// UPC_E
-// PDF417
-// AZTEC
+    private static BarcodeFormat getEncodingFormat(int barcodeFormat) {
+        // Barcode can be:
+        // CODE_128
+        // CODE_39
+        // CODE_93
+        // CODABAR
+        // DATA_MATRIX
+        // EAN_13 Typical grocery barcode
+        // EAN_8
+        // ITF
+        // QR_CODE
+        // UPC_A
+        // UPC_E
+        // PDF417
+        // AZTEC
         switch (barcodeFormat) {
             case Barcode.DATA_MATRIX:
                 return BarcodeFormat.DATA_MATRIX;

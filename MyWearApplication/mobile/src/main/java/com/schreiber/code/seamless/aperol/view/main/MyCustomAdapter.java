@@ -32,6 +32,11 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    void addData(CodeFileViewModel item) {
+        data.add(item);
+        notifyDataSetChanged();
+    }
+
     @Override
     public MyCustomAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
