@@ -146,11 +146,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
             ArrayList<CodeFileViewModel> adapterData = getAdapterData();
             if (adapterData.isEmpty()) {
-                showSimpleDialog("adapterData is empty after adding file, showing item that was not persisted");
-                ArrayList<CodeFile> data = new ArrayList<>();
-                data.add(codeFile);
-                adapterData = CodeFileViewModel.createList(data);
-            }
+//                showSimpleDialog("adapterData is empty after adding file, showing item that was not persisted");
+                adapter.addData(CodeFileViewModel.create(codeFile));
+            }else
             adapter.replaceData(adapterData);
         } else {
             showSnack(codeFile.displayName() + " already exists");

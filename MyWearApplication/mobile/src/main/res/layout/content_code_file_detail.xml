@@ -41,13 +41,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getAspectRatio()}"
-                tools:text="aspectRatio"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
                 android:text="@{codeFileViewModel.codeFile().codeContentType()}"
                 tools:text="codeContentType"/>
 
