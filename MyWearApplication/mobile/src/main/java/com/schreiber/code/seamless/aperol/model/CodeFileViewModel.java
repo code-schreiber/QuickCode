@@ -48,6 +48,10 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return date + " " + time;
     }
 
+    public String getAspectRatio() {
+        return "Aspect Ratio: " + codeFile().aspectRatio();
+    }
+
     public String getMimeType() {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
