@@ -2,6 +2,7 @@ package com.schreiber.code.seamless.aperol.util;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 
@@ -9,11 +10,12 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 
 
 public class EncodingUtils {
 
-    private static final float WIDTH = 500;
+    private static final int WIDTH = 500;
 
     private EncodingUtils() {
         // Hide utility class constructor
@@ -21,9 +23,15 @@ public class EncodingUtils {
 
     @Nullable
     @CheckResult
-    public static Bitmap encode(BarcodeFormat format, String rawContent, float aspectRatio) {
-        float height = WIDTH * aspectRatio;
-        return encodeAsBitmap(rawContent, format, Math.round(WIDTH), Math.round(height));
+    public static Bitmap encode(BarcodeFormat format, String rawContent, int originalWidth, int originalHeight) {
+        Point dimensions = CodeFileFactory.getNewDimensions(WIDTH, originalWidth, originalHeight);
+        return encodeAsBitmap(rawContent, format, dimensions.x, dimensions.y);
+    }
+
+    @Nullable
+    @CheckResult
+    public static Bitmap encodeQRCode(String rawContent) {
+        return encodeAsBitmap(rawContent, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
     }
 
     @Nullable
