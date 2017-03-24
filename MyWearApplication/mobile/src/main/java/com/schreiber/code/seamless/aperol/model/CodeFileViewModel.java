@@ -83,7 +83,11 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
 
 
     public String getOriginalFileType() {
-        return "Original File Type " + codeFile().originalCodeFile().fileType();
+        String mimeType = getMimeType();
+        if (!TypeUtils.isEmpty(mimeType)) {
+            mimeType = " (" + mimeType + ")";
+        }
+        return "Original File Type " + codeFile().originalCodeFile().fileType() + mimeType;
     }
 
     public String getDisplayName() {
@@ -91,33 +95,24 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getCodeType() {
-        return codeFile().codeType();
+        return "Code type: " + codeFile().codeType();
     }
 
     public String getCodeContentType() {
-        return codeFile().codeContentType();
+        return "Code content type: " + codeFile().codeContentType();
     }
 
     public String getCodeDisplayContent() {
-        return codeFile().codeDisplayContent();
+        return "Code display content: " + codeFile().codeDisplayContent();
     }
 
     public String getCodeRawContent() {
-        return codeFile().codeRawContent();
-    }
-
-    public String getMimeType() {
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
-        if (mimeType == null) {
-            mimeType = "";
-        }
-        return mimeType;
+        return "Code raw content: " + codeFile().codeRawContent();
     }
 
     @DrawableRes
     public int getHasCodeResource() {
-        boolean hasCode = TypeUtils.isEmpty(codeFile().codeRawContent());
+        boolean hasCode = !TypeUtils.isEmpty(codeFile().codeRawContent());
         return hasCode ? R.drawable.ic_visibility_black_24dp : 0;
     }
 
@@ -125,7 +120,6 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     public int getIsOnWatchResource() {
         boolean isOnWatch = codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;
         return isOnWatch ? R.drawable.ic_watch_black_24dp : 0;
-
     }
 
     @BindingAdapter("imageBitmap")
@@ -165,6 +159,15 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
         // TODO do off the UI thread
         return IOUtils.getBitmapFromFile(context, codeFile().originalCodeFile().filename(), fileSuffix);
+    }
+
+    private String getMimeType() {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
+        if (mimeType == null) {
+            mimeType = "";
+        }
+        return mimeType;
     }
 
 }
