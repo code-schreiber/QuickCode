@@ -8,7 +8,7 @@
         android:id="@+id/activity_fullscreen_image_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_large"
+        android:padding="@dimen/margin_large"
         android:adjustViewBounds="true"
         android:background="@color/white"
         android:gravity="center"
