@@ -27,73 +27,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().originalCodeFile().filename()}"
-                tools:text="original filename"/>
+                android:text="@{codeFileViewModel.getOriginalFilePath()}"
+                tools:text="original file"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().codeType()}"
-                tools:text="codeType"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getAspectRatio()}"
-                tools:text="aspectRatio"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().codeContentType()}"
-                tools:text="codeContentType"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().codeDisplayContent()}"
-                tools:text="codeDisplayContent"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().codeRawContent()}"
-                tools:text="codeRawContent"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getCreationDate(context)}"
+                android:text="@{codeFileViewModel.getCreationDateLong(context)}"
                 tools:text="creation date"/>
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().originalCodeFile().importedFrom()}"
-                tools:text="importedFrom"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().originalCodeFile().size()}"
-                tools:text="size"/>
+                android:text="@{codeFileViewModel.getOriginalFileSize()}"
+                tools:text="original file size"/>
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.codeFile().originalCodeFile().fileType()}"
-                tools:text="fileType"/>
+                android:text="@{codeFileViewModel.getOriginalFileType()}"
+                tools:text="Original fileType"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -101,6 +58,38 @@
                 android:layout_margin="@dimen/text_margin"
                 android:text="@{codeFileViewModel.getMimeType()}"
                 tools:text="Mime Type"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getCodeType()}"
+                tools:text="codeType"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getCodeContentType()}"
+                tools:text="codeContentType"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getCodeDisplayContent()}"
+                tools:text="codeDisplayContent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@{codeFileViewModel.getCodeRawContent()}"
+                tools:text="codeRawContent"/>
+
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

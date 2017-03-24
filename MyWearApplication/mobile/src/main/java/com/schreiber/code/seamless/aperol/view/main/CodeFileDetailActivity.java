@@ -68,7 +68,7 @@ public class CodeFileDetailActivity extends BaseActivity {
     }
 
     private void initViews(final CodeFileViewModel codeFileViewModel) {
-        setTitle(codeFileViewModel.codeFile().displayName());
+        setTitle(codeFileViewModel.getDisplayName());
         final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
         findViewById(R.id.activity_code_file_detail_header).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class CodeFileDetailActivity extends BaseActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CodeFile codeFile = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.codeFile(), originalImage);
+                    CodeFile codeFile = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile(), originalImage);
                     if (codeFile != null) {
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                         if (newCodeFileViewModel.getCodeImage(view.getContext()) != null) {

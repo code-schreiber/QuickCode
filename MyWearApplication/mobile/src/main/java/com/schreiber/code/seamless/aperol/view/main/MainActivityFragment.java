@@ -74,7 +74,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
-        final CodeFile codeFile = item.codeFile();
+        final CodeFile codeFile = item.getCodeFile();
         if (SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile)) {
             Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
                     .setAction("Undo", new View.OnClickListener() {

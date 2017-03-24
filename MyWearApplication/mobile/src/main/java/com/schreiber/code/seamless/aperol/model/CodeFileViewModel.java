@@ -5,13 +5,16 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.google.auto.value.AutoValue;
+import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.util.IOUtils;
+import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,34 +34,13 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return new AutoValue_CodeFileViewModel(codeFile);
     }
 
-    public abstract CodeFile codeFile();
+    abstract CodeFile codeFile();
 
 
     @Override
     public int compareTo(@NonNull CodeFileViewModel o) {
         // Last created items first
         return Long.compare(o.codeFile().originalCodeFile().importedOn(), this.codeFile().originalCodeFile().importedOn());
-    }
-
-    // TODO extract to dateutils
-    public String getCreationDate(Context context) {
-        Date creationDate = new Date(codeFile().originalCodeFile().importedOn());
-        String date = DateFormat.getDateFormat(context).format(creationDate);
-        String time = DateFormat.getTimeFormat(context).format(creationDate);
-        return date + " " + time;
-    }
-
-    public String getAspectRatio() {
-        return "Aspect Ratio: " + codeFile().aspectRatio();
-    }
-
-    public String getMimeType() {
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
-        if (mimeType == null) {
-            mimeType = "";
-        }
-        return mimeType;
     }
 
     public static ArrayList<CodeFileViewModel> createList(ArrayList<CodeFile> data) {
@@ -70,12 +52,80 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return list;
     }
 
-//    public boolean hasCode() {
-//        return codeFile().barcode() != null; // TODO pass important data from barcode
-//    }
+    public CodeFile getCodeFile() {
+        return codeFile();
+    }
 
-    public boolean isOnWatch() {
-        return codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;
+    public String getCreationDateShort(Context context) {
+        return getCreationDate(context);
+    }
+
+    public String getCreationDateLong(Context context) {
+        return "Imported on " + getCreationDate(context);
+    }
+
+    @NonNull
+    private String getCreationDate(Context context) {
+        // TODO extract to dateutils
+        Date creationDate = new Date(codeFile().originalCodeFile().importedOn());
+        String date = DateFormat.getDateFormat(context).format(creationDate);
+        String time = DateFormat.getTimeFormat(context).format(creationDate);
+        return date + " " + time;
+    }
+
+    public String getOriginalFilePath() {
+        return "Original File " + codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
+    }
+
+    public String getOriginalFileSize() {
+        return "Original File Size " + codeFile().originalCodeFile().size();
+    }
+
+
+    public String getOriginalFileType() {
+        return "Original File Type " + codeFile().originalCodeFile().fileType();
+    }
+
+    public String getDisplayName() {
+        return codeFile().displayName();
+    }
+
+    public String getCodeType() {
+        return codeFile().codeType();
+    }
+
+    public String getCodeContentType() {
+        return codeFile().codeContentType();
+    }
+
+    public String getCodeDisplayContent() {
+        return codeFile().codeDisplayContent();
+    }
+
+    public String getCodeRawContent() {
+        return codeFile().codeRawContent();
+    }
+
+    public String getMimeType() {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
+        if (mimeType == null) {
+            mimeType = "";
+        }
+        return mimeType;
+    }
+
+    @DrawableRes
+    public int getHasCodeResource() {
+        boolean hasCode = TypeUtils.isEmpty(codeFile().codeRawContent());
+        return hasCode ? R.drawable.ic_visibility_black_24dp : 0;
+    }
+
+    @DrawableRes
+    public int getIsOnWatchResource() {
+        boolean isOnWatch = codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;
+        return isOnWatch ? R.drawable.ic_watch_black_24dp : 0;
+
     }
 
     @BindingAdapter("imageBitmap")
@@ -108,12 +158,12 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     private boolean saveBitmapToFile(Context context, Bitmap image, String fileSuffix) throws IOException {
-        // TODO do of the UI thread
+        // TODO do off the UI thread
         return IOUtils.saveBitmapToFile(context, image, codeFile().originalCodeFile().filename(), fileSuffix);
     }
 
     private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
-        // TODO do of the UI thread
+        // TODO do off the UI thread
         return IOUtils.getBitmapFromFile(context, codeFile().originalCodeFile().filename(), fileSuffix);
     }
 
