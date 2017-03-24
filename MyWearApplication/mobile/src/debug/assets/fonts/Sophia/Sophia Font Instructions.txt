@@ -1,0 +1,54 @@
+
+Sophia - instructions for alternate Sophia Left and Sophia Right
+
+Sophia was deigned with lower case character sets in mind, although upper case letters are available.  These 3 font files are identical other than the “Left” having Initial forms (ornaments on the left) and the “Right” terminal forms (ornaments on the right).
+In turn, creating decorated word sequences. Start and end your words with a lovely swirl effect. 
+
+This family of fonts is usable in all programs; however, not all programs allow control over manual character spacing. You may find it quite disappointing.
+
+Instructions are specific to AI Illustrator and The Touch Type Tool.
+Sophia Left and Right are available in all programs, but will require minor adjustments, if you don't mind a few seconds of extra work, and have the know how, please feel free.  Of course, there are various ways here is one I’ve used.
+
+Illustrator:
+
+1. chose Sophia as you type your word(s)
+
+2. with the Touch Type Tool highlight you first letter, and change the font to Sophia Left.
+
+3. Do the same on the last letter and chose Sophia Right
+
+4. Adjustments if necessary:
+
+Last Letter: with the Touch Type Tool highlight the letter and nudge left using left arrow key
+
+First letter: with the Touch Type Tool highlight the second letter and nudge left
+
+
+In MS WORD:  
+
+1. chose Sophia as you type your word(s)
+
+2. highlight you first letter, and change the font to Sophia Left.
+
+3. Do the same on the last letter and chose Sophia Right
+
+4. Adjustments if necessary: 
+
+To close a small space between letters highlight the two letters.  In the font format menu under the advanced tab - 
+spacing -
+choose "condensed" by (number of spaces)  enter your chosen number usually 2-5 depending on the font size.
+
+
+
+
+
+Thank you for your support.  Have fun!
+
+Emily Spadoni
+Sweet Type
+
+
+	
+
+
+
