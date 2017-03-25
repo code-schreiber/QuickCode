@@ -56,29 +56,24 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return codeFile();
     }
 
-    public String getCreationDateShort(Context context) {
-        return getCreationDate(context);
+    public String getDisplayName() {
+        return codeFile().displayName();
+    }
+
+    public String getOriginalFilePath() {
+        return "Original File: " + codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
     }
 
     public String getCreationDateLong(Context context) {
         return "Imported on " + getCreationDate(context);
     }
 
-    @NonNull
-    private String getCreationDate(Context context) {
-        // TODO extract to dateutils
-        Date creationDate = new Date(codeFile().originalCodeFile().importedOn());
-        String date = DateFormat.getDateFormat(context).format(creationDate);
-        String time = DateFormat.getTimeFormat(context).format(creationDate);
-        return date + " " + time;
-    }
-
-    public String getOriginalFilePath() {
-        return "Original File " + codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
+    public String getCreationDateShort(Context context) {
+        return getCreationDate(context);
     }
 
     public String getOriginalFileSize() {
-        return "Original File Size " + codeFile().originalCodeFile().size();
+        return "Original File Size: " + codeFile().originalCodeFile().size();
     }
 
 
@@ -87,27 +82,28 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         if (!TypeUtils.isEmpty(mimeType)) {
             mimeType = " (" + mimeType + ")";
         }
-        return "Original File Type " + codeFile().originalCodeFile().fileType() + mimeType;
-    }
-
-    public String getDisplayName() {
-        return codeFile().displayName();
+        return "Original File Type: " + codeFile().originalCodeFile().fileType() + mimeType;
     }
 
     public String getCodeType() {
-        return "Code type: " + codeFile().codeType();
+        return createStringWithPrefix("Code type: ", codeFile().codeType());
     }
 
     public String getCodeContentType() {
-        return "Code content type: " + codeFile().codeContentType();
+        return createStringWithPrefix("Code content type: ", codeFile().codeContentType());
     }
 
     public String getCodeDisplayContent() {
-        return "Code display content: " + codeFile().codeDisplayContent();
+        return createStringWithPrefix("Code display content: ", codeFile().codeDisplayContent());
     }
 
     public String getCodeRawContent() {
-        return "Code raw content: " + codeFile().codeRawContent();
+        return createStringWithPrefix("Code raw content: ", codeFile().codeRawContent());
+    }
+
+    @NonNull
+    private String createStringWithPrefix(String prefix, String s) {
+        return TypeUtils.isEmpty(s) ? "" : prefix + s;
     }
 
     @DrawableRes
@@ -125,6 +121,11 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     @BindingAdapter("imageBitmap")
     public static void setImageBitmap(ImageView imageView, Bitmap bitmap) {
         imageView.setImageBitmap(bitmap);
+    }
+
+    @BindingAdapter("imageResource")
+    public static void setImageResource(ImageView imageView, @DrawableRes int resId) {
+        imageView.setImageResource(resId);
     }
 
     public Bitmap getOriginalImage(Context context) {
@@ -159,6 +160,15 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
         // TODO do off the UI thread
         return IOUtils.getBitmapFromFile(context, codeFile().originalCodeFile().filename(), fileSuffix);
+    }
+
+    @NonNull
+    private String getCreationDate(Context context) {
+        // TODO extract to dateutils
+        Date creationDate = new Date(codeFile().originalCodeFile().importedOn());
+        String date = DateFormat.getDateFormat(context).format(creationDate);
+        String time = DateFormat.getTimeFormat(context).format(creationDate);
+        return date + " " + time;
     }
 
     private String getMimeType() {
