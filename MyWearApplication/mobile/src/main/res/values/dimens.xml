@@ -22,6 +22,6 @@
     <dimen name="text_size_medium">18sp</dimen>
     <dimen name="text_size_large">25sp</dimen>
 
-    <dimen name="text_margin">@dimen/margin_large</dimen>
+    <dimen name="text_margin">@dimen/margin_medium</dimen>
 
 </resources>
