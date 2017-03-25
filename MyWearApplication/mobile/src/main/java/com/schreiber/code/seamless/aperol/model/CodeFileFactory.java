@@ -29,7 +29,12 @@ import java.util.Arrays;
 
 public abstract class CodeFileFactory {
 
-    private static final int[] SUPPORTED_BARCODE_FORMATS = {Barcode.DATA_MATRIX, Barcode.QR_CODE, Barcode.AZTEC, Barcode.PDF417};
+    private static final Integer[] SUPPORTED_BARCODE_FORMATS = {
+            Barcode.DATA_MATRIX,
+            Barcode.QR_CODE,
+            Barcode.PDF417,
+            Barcode.AZTEC,
+    };
 
 
     public static CodeFile createCodeFileFromPath(Context context, String path) {
@@ -112,7 +117,7 @@ public abstract class CodeFileFactory {
                             if (codeImage == null) {
                                 Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
                             }
-                            Logger.logError("Code format not supported: " + encodingFormatName + ". " + "Currenty supported:" + SUPPORTED_BARCODE_FORMATS);//TODO loop through and get names
+                            Logger.logError("Code format not supported: " + encodingFormatName + ". " + "Currenty supported: " + Arrays.toString(SUPPORTED_BARCODE_FORMATS));
                         }
                     }
                 }
@@ -252,7 +257,7 @@ public abstract class CodeFileFactory {
         // UPC_E
         // PDF417
         // AZTEC
-        if (Arrays.asList(SUPPORTED_BARCODE_FORMATS).contains(barcodeFormat)) {
+        if (isBarcodeFormatSupported(barcodeFormat)) {
             switch (barcodeFormat) {
                 case Barcode.DATA_MATRIX:
                     return BarcodeFormat.DATA_MATRIX;
@@ -272,7 +277,7 @@ public abstract class CodeFileFactory {
     }
 
     private static String getEncodingFormatName(int barcodeFormat) {
-        if (Arrays.asList(SUPPORTED_BARCODE_FORMATS).contains(barcodeFormat)) {
+        if (isBarcodeFormatSupported(barcodeFormat)) {
             switch (barcodeFormat) {
                 case Barcode.CODE_128:
                     return "CODE 128";
@@ -307,6 +312,10 @@ public abstract class CodeFileFactory {
         }
         Logger.logError("Code format not supported:" + barcodeFormat);
         return "Unknown";
+    }
+
+    private static boolean isBarcodeFormatSupported(int barcodeFormat) {
+        return Arrays.asList(SUPPORTED_BARCODE_FORMATS).contains(barcodeFormat);
     }
 
     private static String getContentType(int barcodeValueFormat) {
