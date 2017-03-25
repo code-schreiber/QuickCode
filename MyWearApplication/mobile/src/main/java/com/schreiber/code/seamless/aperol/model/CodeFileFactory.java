@@ -34,6 +34,9 @@ public abstract class CodeFileFactory {
             Barcode.QR_CODE,
             Barcode.PDF417,
             Barcode.AZTEC,
+            Barcode.ISBN,
+            Barcode.EAN_8,
+            Barcode.EAN_13,
     };
 
 
@@ -117,7 +120,7 @@ public abstract class CodeFileFactory {
                             if (codeImage == null) {
                                 Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
                             }
-                            Logger.logError("Code format not supported: " + encodingFormatName + ". " + "Currenty supported: " + Arrays.toString(SUPPORTED_BARCODE_FORMATS));
+                            Logger.logError("Code format not supported: " + encodingFormatName + ". " + "Currenty supported: " + getSupportedFormats());
                         }
                     }
                 }
@@ -316,6 +319,11 @@ public abstract class CodeFileFactory {
 
     private static boolean isBarcodeFormatSupported(int barcodeFormat) {
         return Arrays.asList(SUPPORTED_BARCODE_FORMATS).contains(barcodeFormat);
+    }
+
+    @NonNull
+    public static String getSupportedFormats() {
+        return Arrays.toString(SUPPORTED_BARCODE_FORMATS);
     }
 
     private static String getContentType(int barcodeValueFormat) {
