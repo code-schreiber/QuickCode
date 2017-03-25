@@ -30,13 +30,12 @@ import java.util.Arrays;
 public abstract class CodeFileFactory {
 
     private static final Integer[] SUPPORTED_BARCODE_FORMATS = {
+            Barcode.EAN_13,
+            Barcode.EAN_8,
             Barcode.DATA_MATRIX,
             Barcode.QR_CODE,
             Barcode.PDF417,
             Barcode.AZTEC,
-            Barcode.ISBN,
-            Barcode.EAN_8,
-            Barcode.EAN_13,
     };
 
 
@@ -323,7 +322,11 @@ public abstract class CodeFileFactory {
 
     @NonNull
     public static String getSupportedFormats() {
-        return Arrays.toString(SUPPORTED_BARCODE_FORMATS);
+        String supportedFormats = "";
+        for (Integer supportedBarcodeFormat : SUPPORTED_BARCODE_FORMATS) {
+            supportedFormats += getEncodingFormatName(supportedBarcodeFormat) + " ";
+        }
+        return supportedFormats;
     }
 
     private static String getContentType(int barcodeValueFormat) {
@@ -365,90 +368,36 @@ public abstract class CodeFileFactory {
         try {
             // create a new renderer
             ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
-            PdfRenderer renderer = new PdfRenderer(fileDescriptor);
+            if (fileDescriptor != null) {
+                PdfRenderer renderer = new PdfRenderer(fileDescriptor);
 
-            // let us just render all pages
-            int pageCount = renderer.getPageCount();
-            if (pageCount > 0) {
-                if (pageCount != 1) {
-                    Logger.logError("Pdf has " + pageCount + " pages.");
+                // let us just render all pages
+                int pageCount = renderer.getPageCount();
+                if (pageCount > 0) {
+                    if (pageCount != 1) {
+                        Logger.logError("Pdf has " + pageCount + " pages.");
+                    }
+                    PdfRenderer.Page page = renderer.openPage(pageNum);
+                    bitmap = Bitmap.createBitmap(
+                            page.getWidth(),
+                            page.getHeight(),
+                            Bitmap.Config.ARGB_8888);
+
+                    // say we render for showing on the screen
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+
+                    // close the page
+                    page.close();
                 }
-                PdfRenderer.Page page = renderer.openPage(pageNum);
-                bitmap = Bitmap.createBitmap(
-                        page.getWidth(),
-                        page.getHeight(),
-                        Bitmap.Config.ARGB_8888);
 
-                // say we render for showing on the screen
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-
-
-                // close the page
-                page.close();
+                // close the renderer
+                renderer.close();
             }
-
-            // close the renderer
-            renderer.close();
         } catch (IOException e) {
             Logger.logException(e);
         }
         return bitmap;
     }
-
-//    @Nullable
-//    private static Bitmap pdfToBitmap(Context context, Uri uri) {
-//        int pageNum = 0;// TODO
-//        try {
-//            ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
-//            PdfiumCore pdfiumCore = new PdfiumCore(context);
-//            PdfDocument pdfDocument = pdfiumCore.newDocument(fileDescriptor);
-//            pdfiumCore.openPage(pdfDocument, pageNum);
-//            if (pdfiumCore.getPageCount(pdfDocument) != 1) {
-//                Logger.logError("Pdf has " + pdfiumCore.getPageCount(pdfDocument) + " pages.");
-//            }
-//            int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNum);
-//            int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNum);
-//            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//            pdfiumCore.renderPageBitmap(pdfDocument, bitmap, pageNum, 0, 0, width, height);
-//
-//            printInfo(pdfiumCore, pdfDocument);
-//            pdfiumCore.closeDocument(pdfDocument);
-//
-//            return bitmap;
-//        } catch (IOException e) {
-//            Logger.logException(e);
-//        }
-//        return null;
-//    }
-//
-//    private static void printInfo(PdfiumCore core, PdfDocument doc) {
-//        PdfDocument.Meta meta = core.getDocumentMeta(doc);
-//        Logger.logDebug("title = " + meta.getTitle());
-//        Logger.logDebug("author = " + meta.getAuthor());
-//        Logger.logDebug("subject = " + meta.getSubject());
-//        Logger.logDebug("keywords = " + meta.getKeywords());
-//        Logger.logDebug("creator = " + meta.getCreator());
-//        Logger.logDebug("producer = " + meta.getProducer());
-//        Logger.logDebug("creationDate = " + meta.getCreationDate());
-//        Logger.logDebug("modDate = " + meta.getModDate());
-//
-//        printBookmarksTree(core.getTableOfContents(doc), "-");
-//
-//    }
-//
-//    private static void printBookmarksTree(List<PdfDocument.Bookmark> tree, String sep) {
-//        if (tree.isEmpty()) {
-//            Logger.logDebug("tree is empty");
-//        } else {
-//            for (PdfDocument.Bookmark b : tree) {
-//
-//                Logger.logDebug(String.format("%s %s, p %d", sep, b.getTitle(), b.getPageIdx()));
-//
-//                if (b.hasChildren()) {
-//                    printBookmarksTree(b.getChildren(), sep + "-");
-//                }
-//            }
-//        }
-//    }
 
 }

@@ -66,7 +66,6 @@ dependencies {
     //compile 'com.jakewharton:butterknife:6.1.0'
     compile "com.jakewharton.timber:timber:4.5.1"
 
-//    compile 'com.github.barteksc:pdfium-android:1.5.0'
     compile 'com.google.zxing:core:3.0.1'
 
     compile 'com.orhanobut:hawk:2.0.1'
