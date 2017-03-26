@@ -24,6 +24,12 @@ public class EncodingUtils {
     @Nullable
     @CheckResult
     public static Bitmap encode(BarcodeFormat format, String rawContent, int originalWidth, int originalHeight) {
+        if (originalWidth < originalHeight) {
+            // Most codes are wide
+            int tempWidth = originalWidth;
+            originalWidth = originalHeight;
+            originalHeight = tempWidth;
+        }
         Point dimensions = CodeFileFactory.getNewDimensions(WIDTH, originalWidth, originalHeight);
         return encodeAsBitmap(rawContent, format, dimensions.x, dimensions.y);
     }
