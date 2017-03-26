@@ -106,10 +106,13 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return TypeUtils.isEmpty(s) ? "" : prefix + s;
     }
 
+    public boolean isCodeThere(Context context) {
+        return getCodeImage(context) != null;
+    }
+
     @DrawableRes
-    public int getHasCodeResource() {
-        boolean hasCode = !TypeUtils.isEmpty(codeFile().codeRawContent());
-        return hasCode ? R.drawable.ic_visibility_black_24dp : 0;
+    public int getHasCodeResource(Context context) {
+        return isCodeThere(context) ? R.drawable.ic_visibility_black_24dp : 0;
     }
 
     @DrawableRes
