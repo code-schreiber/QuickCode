@@ -81,7 +81,7 @@ public class CodeFileDetailActivity extends BaseActivity {
 
     private void initFab(final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.activity_code_file_detail_fab);
-        if (codeFileViewModel.getCodeImage(this) == null) {
+        if (!codeFileViewModel.isCodeThere(this)) {
             // No code, let the user try again
             fab.setImageResource(R.drawable.ic_add_image_black_24dp);
             fab.setOnClickListener(new View.OnClickListener() {
