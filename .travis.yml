@@ -4,6 +4,9 @@ install: true
 
 sudo: true
 
+notifications:
+  email: false
+  
 addons:
   sonarqube:
     branches:
