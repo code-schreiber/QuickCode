@@ -37,7 +37,7 @@ public abstract class CodeFileFactory {
             Barcode.DATA_MATRIX,
             Barcode.EAN_13,
             Barcode.EAN_8,
-            // Barcode.ITF,
+            Barcode.ITF,
             Barcode.QR_CODE,
             Barcode.UPC_A,
             Barcode.UPC_E,
