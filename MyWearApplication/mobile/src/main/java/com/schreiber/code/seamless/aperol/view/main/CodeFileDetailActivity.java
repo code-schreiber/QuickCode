@@ -73,7 +73,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         findViewById(R.id.activity_code_file_detail_header).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getThumbnailImage(v.getContext())));
+                showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getOriginalThumbnailImage(v.getContext())));
             }
         });
         initFab(codeFileViewModel, originalImage);
@@ -81,7 +81,15 @@ public class CodeFileDetailActivity extends BaseActivity {
 
     private void initFab(final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.activity_code_file_detail_fab);
-        if (!codeFileViewModel.isCodeThere(this)) {
+        if (codeFileViewModel.isCodeAvailable(this)) {
+            fab.setImageBitmap(codeFileViewModel.getCodeThumbnailImage(this));
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileViewModel);
+                }
+            });
+        } else {
             // No code, let the user try again
             fab.setImageResource(R.drawable.ic_add_image_black_24dp);
             fab.setOnClickListener(new View.OnClickListener() {
@@ -99,14 +107,6 @@ public class CodeFileDetailActivity extends BaseActivity {
                     } else {
                         showSimpleDialog("No CodeFile could be created");
                     }
-                }
-            });
-        } else {
-            fab.setImageResource(R.drawable.ic_visibility_black_24dp);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileViewModel);
                 }
             });
         }
