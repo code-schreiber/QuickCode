@@ -24,16 +24,17 @@
         android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
         android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_horizontal_margin">
+        android:paddingBottom="@dimen/margin_medium"
+        android:paddingLeft="@dimen/margin_small"
+        android:paddingRight="@dimen/margin_small"
+        android:paddingTop="@dimen/margin_medium">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:gravity="center"
-            android:orientation="vertical"
-            android:paddingRight="@dimen/margin_small">
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="@dimen/size_thumbnail"
@@ -50,7 +51,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/margin_small"
+            android:paddingStart="@dimen/margin_small">
 
             <TextView
                 android:layout_width="match_parent"
@@ -72,18 +75,23 @@
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:gravity="center"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/activity_horizontal_margin">
+            android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_thumbnail_small"
+                android:layout_height="@dimen/size_thumbnail_small"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 app:imageBitmap="@{codeFileViewModel.getCodeThumbnailImage(context)}"
                 tools:src="@drawable/ic_add_image_black_24dp"/>
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/size_thumbnail_small"
+                android:layout_height="@dimen/size_thumbnail_small"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
                 app:imageResource="@{codeFileViewModel.getIsOnWatchResource()}"
                 tools:src="@drawable/ic_watch_black_24dp"/>
         </LinearLayout>
