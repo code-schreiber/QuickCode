@@ -85,64 +85,59 @@ public abstract class CodeFileFactory {
     @Nullable
     private static CodeFile createItem(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
         if (originalImage != null) {
-            Bitmap thumbnail = getThumbnail(originalImage);
-            if (thumbnail != null) {
-                SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
-                Bitmap codeImage = null;
-                Barcode barcode;
+            SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
+            Bitmap codeImage = null;
+            Barcode barcode;
 
-                String encodingFormatName = "";
-                String codeContentType = "";
-                String codeDisplayValue = "";
-                String codeRawValue = "";
+            String encodingFormatName = "";
+            String codeContentType = "";
+            String codeDisplayValue = "";
+            String codeRawValue = "";
 
-                if (barcodes.size() < 1) {
-                    Logger.logError("No barcodes detected in " + originalFilename);
-                } else {
-                    if (barcodes.size() > 1) {
-                        Logger.logError(barcodes.size() + " barcodes found in bitmap! Saving only one.");
-//                            TODO [Premium] create multiple files
-                    }
-                    for (int i = 0; i < barcodes.size(); i++) {
-                        int key = barcodes.keyAt(i);
-                        barcode = barcodes.get(key);
-
-                        BarcodeFormat encodingFormat = getEncodingFormat(barcode.format);
-                        encodingFormatName = getEncodingFormatName(barcode.format);
-                        codeContentType = getContentType(barcode.valueFormat);
-                        codeDisplayValue = barcode.displayValue;
-                        codeRawValue = barcode.rawValue;
-
-                        Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
-                        if (encodingFormat != null) {
-                            codeImage = EncodingUtils.encode(encodingFormat, codeRawValue, barcode.getBoundingBox().width(), barcode.getBoundingBox().height());
-                            if (codeImage == null) {
-                                Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
-                            }
-                        } else {
-                            Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedFormats());
-                        }
-                    }
-                }
-                OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
-                try {
-                    if (saveBitmapsToFile(context, codeFile, originalImage, thumbnail, codeImage)) {
-                        return codeFile;
-                    } else {
-                        Logger.logError("Couldn't save images from " + originalFilename);
-                    }
-                } catch (IOException e) {
-                    Logger.logException(e);
-                }
+            if (barcodes.size() < 1) {
+                Logger.logError("No barcodes detected in " + originalFilename);
             } else {
-                Logger.logError("Couldn't create thumbnail of " + originalFilename);
+                if (barcodes.size() > 1) {
+                    Logger.logError(barcodes.size() + " barcodes found in bitmap! Saving only one.");
+//                            TODO [Premium] create multiple files
+                }
+                for (int i = 0; i < barcodes.size(); i++) {
+                    int key = barcodes.keyAt(i);
+                    barcode = barcodes.get(key);
+
+                    BarcodeFormat encodingFormat = getEncodingFormat(barcode.format);
+                    encodingFormatName = getEncodingFormatName(barcode.format);
+                    codeContentType = getContentType(barcode.valueFormat);
+                    codeDisplayValue = barcode.displayValue;
+                    codeRawValue = barcode.rawValue;
+
+                    Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
+                    if (encodingFormat != null) {
+                        codeImage = EncodingUtils.encode(encodingFormat, codeRawValue, barcode.getBoundingBox().width(), barcode.getBoundingBox().height());
+                        if (codeImage == null) {
+                            Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
+                        }
+                    } else {
+                        Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedFormats());
+                    }
+                }
+            }
+            OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
+            CodeFile codeFile = CodeFile.create(originalCodeFile, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
+            try {
+                if (saveBitmapsToFile(context, codeFile, originalImage, codeImage)) {
+                    return codeFile;
+                } else {
+                    Logger.logError("Couldn't save images from " + originalFilename);
+                }
+            } catch (IOException e) {
+                Logger.logException(e);
             }
         }
         return null;
     }
 
-    private static Bitmap getThumbnail(Bitmap originalImage) {
+    private static Bitmap createThumbnail(Bitmap originalImage) {
         return resizeImage(originalImage, 200);
     }
 
@@ -182,17 +177,26 @@ public abstract class CodeFileFactory {
     }
 
     @CheckResult
-    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap thumbnail, Bitmap codeImage)
+    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap codeImage)
             throws IOException {
         CodeFileViewModel codeFileViewModel = CodeFileViewModel.create(codeFile);
         boolean allSaved = codeFileViewModel.saveOriginalImage(context, originalImage);
         if (allSaved) {
-            allSaved = codeFileViewModel.saveThumbnailImage(context, thumbnail);
-            if (allSaved) {
-                if (codeImage != null) {
-                    allSaved = codeFileViewModel.saveCodeImage(context, codeImage);
+            Bitmap thumbnail = createThumbnail(originalImage);
+            if (thumbnail != null) {
+                allSaved = codeFileViewModel.saveOriginalThumbnailImage(context, thumbnail);
+                if (allSaved) {
+                    if (codeImage != null) {
+                        allSaved = codeFileViewModel.saveCodeImage(context, codeImage);
+                        if (allSaved) {
+                            thumbnail = createThumbnail(codeImage);
+                            if (thumbnail != null) {
+                                allSaved = codeFileViewModel.saveCodeThumbnailImage(context, thumbnail);
+                            }// TODO else
+                        }
+                    }
                 }
-            }
+            }// TODO else
         }
         // TODO some type of rollback on fail
         return allSaved;
