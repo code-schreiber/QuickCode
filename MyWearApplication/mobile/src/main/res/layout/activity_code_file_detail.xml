@@ -46,7 +46,7 @@
                         android:scaleType="centerCrop"
                         android:tint="@color/transparent_black"
                         app:imageBitmap="@{codeFileViewModel.getOriginalImage(context)}"
-                        tools:src="@drawable/deleteme1"/>
+                        tools:src="@drawable/ic_add_image_black_24dp"/>
 
 
                 </FrameLayout>

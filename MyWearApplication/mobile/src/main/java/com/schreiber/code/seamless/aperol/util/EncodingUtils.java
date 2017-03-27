@@ -23,6 +23,7 @@ public class EncodingUtils {
 
     @Nullable
     @CheckResult
+    @SuppressWarnings("SuspiciousNameCombination")
     public static Bitmap encode(BarcodeFormat format, String rawContent, int originalWidth, int originalHeight) {
         if (originalWidth < originalHeight) {
             // Most codes are wide
@@ -37,6 +38,7 @@ public class EncodingUtils {
     @Nullable
     @CheckResult
     public static Bitmap encodeQRCode(String rawContent) {
+        //noinspection SuspiciousNameCombination
         return encodeAsBitmap(rawContent, BarcodeFormat.QR_CODE, WIDTH, WIDTH);
     }
 
