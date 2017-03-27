@@ -72,7 +72,7 @@
             android:layout_margin="@dimen/fab_margin"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
-            tools:src="@drawable/ic_visibility_black_24dp"/>
+            tools:src="@drawable/ic_add_image_black_24dp"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
