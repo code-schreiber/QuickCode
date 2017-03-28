@@ -1,37 +1,60 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.schreiber.code.seamless.aperol.view.main.FullscreenImageActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/activity_fullscreen_image_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/margin_large"
-        android:adjustViewBounds="true"
-        android:background="@color/white"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:scaleType="fitCenter"
-        tools:src="@drawable/ic_visibility_black_24dp"/>
+    <data>
 
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
+        <variable
+            name="codeFileViewModel"
+            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
+
+    </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        tools:context="com.schreiber.code.seamless.aperol.view.main.FullscreenImageActivity">
 
-        <LinearLayout
-            android:id="@+id/activity_fullscreen_image_content_controls"
+        <ImageView
+            android:id="@+id/activity_fullscreen_image_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent">
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:keepScreenOn="true"
+            android:padding="@dimen/margin_large"
+            android:scaleType="fitCenter"
+            app:imageBitmap="@{codeFileViewModel.getCodeImage(context)}"
+            tools:src="@drawable/ic_add_image_black_24dp"/>
 
-        </LinearLayout>
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:id="@+id/activity_fullscreen_image_content_controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{codeFileViewModel.getCodeDisplayContentSimple()}"
+                    tools:text="code display content"/>
+
+            </LinearLayout>
+        </FrameLayout>
+
     </FrameLayout>
-
-</FrameLayout>
+</layout>

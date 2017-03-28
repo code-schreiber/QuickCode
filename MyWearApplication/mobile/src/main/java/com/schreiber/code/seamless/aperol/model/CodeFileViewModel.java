@@ -96,7 +96,11 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getCodeDisplayContent() {
-        return createStringWithPrefix("Code display content: ", codeFile().codeDisplayContent());
+        return createStringWithPrefix("Code display content: ", getCodeDisplayContentSimple());
+    }
+
+    public String getCodeDisplayContentSimple() {
+        return codeFile().codeDisplayContent();
     }
 
     public String getCodeRawContent() {
