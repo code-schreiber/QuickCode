@@ -34,7 +34,7 @@ public class CodeFileDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCodeFileDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
-        final CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
         binding.setCodeFileViewModel(codeFileViewModel);
         binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
