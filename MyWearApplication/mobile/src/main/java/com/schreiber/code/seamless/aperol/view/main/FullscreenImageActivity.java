@@ -3,14 +3,15 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.databinding.ActivityFullscreenImageBinding;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 
 
@@ -45,10 +46,6 @@ public class FullscreenImageActivity extends BaseActivity {
         @Override
         public void run() {
             // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
@@ -88,7 +85,7 @@ public class FullscreenImageActivity extends BaseActivity {
     static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
         Intent intent = new Intent(context, FullscreenImageActivity.class);
         intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
-        context.startActivity(intent);
+        context.startActivity(intent);// TODO animate code in button getting bigger
         context.overridePendingTransitionFadeIn();
     }
 
@@ -96,15 +93,15 @@ public class FullscreenImageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_fullscreen_image);
+        ActivityFullscreenImageBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
+        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        binding.setCodeFileViewModel(codeFileViewModel);
+
         setDisplayHomeAsUpEnabled(true);
 
         mVisible = true;
-        mControlsView = findViewById(R.id.activity_fullscreen_image_content_controls);
-        mContentView = findViewById(R.id.activity_fullscreen_image_content);
-        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
-        setTitle(codeFileViewModel.getDisplayName());
-        ((ImageView) mContentView).setImageBitmap(codeFileViewModel.getCodeImage(this));
+        mControlsView = binding.activityFullscreenImageContentControls;
+        mContentView = binding.activityFullscreenImageContent;
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +110,8 @@ public class FullscreenImageActivity extends BaseActivity {
                 toggle();
             }
         });
+
+        setTitle(codeFileViewModel.getDisplayName());
     }
 
     @Override
@@ -158,7 +157,7 @@ public class FullscreenImageActivity extends BaseActivity {
     private void hide() {
         // Hide UI first
         hideActionBar();
-        mControlsView.setVisibility(View.GONE);
+        mControlsView.setVisibility(View.GONE);// TODO use animation
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -169,8 +168,8 @@ public class FullscreenImageActivity extends BaseActivity {
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
@@ -186,4 +185,5 @@ public class FullscreenImageActivity extends BaseActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
 }
