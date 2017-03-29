@@ -28,7 +28,7 @@ elif [ "$TRAVIS_BRANCH" != "develop" ]; then
 else
   echo "travis.sh: Running fastlane supply"
   fastlane supply --version
-  fastlane supply run -j "private_key.json" -p com.schreiber.code.seamless.aperol -b MyWearApplication/mobile/build/outputs/apk/mobile-prod-release.apk -a alpha
+  fastlane supply run -json_key private_key.json -package_name com.schreiber.code.seamless.aperol --apk MyWearApplication/mobile/build/outputs/apk/mobile-prod-release.apk --track alpha
   echo "travis.sh: Deployed to Google Play"
   exit $?
 fi
