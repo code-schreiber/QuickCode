@@ -92,9 +92,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return true;
     }
 
-    /**
-     * Fires an intent to spin up the "file chooser" UI and select an image.
-     */
     void performFileSearch() {
 
         BarcodeDetector detector = CodeFileFactory.setupBarcodeDetector(getActivity());
@@ -115,6 +112,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers, it would be "*/*".
         intent.setType("*/*");
+        // Fires an intent to spin up the "file chooser" UI and select a file.
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
@@ -148,8 +146,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             if (adapterData.isEmpty()) {
 //                showSimpleDialog("adapterData is empty after adding file, showing item that was not persisted");
                 adapter.addData(CodeFileViewModel.create(codeFile));
-            }else
-            adapter.replaceData(adapterData);
+            } else {
+                adapter.replaceData(adapterData);
+            }
         } else {
             showSnack(codeFile.displayName() + " already exists");
         }
