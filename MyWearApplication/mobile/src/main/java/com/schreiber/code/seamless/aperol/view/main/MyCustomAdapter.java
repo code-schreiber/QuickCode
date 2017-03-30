@@ -12,6 +12,7 @@ import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 // TODO generalize ViewHolder https://medium.com/google-developers/android-data-binding-recyclerview-db7c40d9f0e4
@@ -24,16 +25,19 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
     MyCustomAdapter(ArrayList<CodeFileViewModel> data, OnViewClickedListener listener) {
         this.data = data;
         this.clickListener = listener;
+        Collections.sort(this.data);
     }
 
     void replaceData(ArrayList<CodeFileViewModel> items) {
         data.clear();
         data.addAll(items);
+        Collections.sort(data);
         notifyDataSetChanged();
     }
 
     void addData(CodeFileViewModel item) {
         data.add(item);
+        Collections.sort(data);
         notifyDataSetChanged();
     }
 

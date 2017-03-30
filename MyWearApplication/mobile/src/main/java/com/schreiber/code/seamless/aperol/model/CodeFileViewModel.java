@@ -50,7 +50,6 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         for (CodeFile codeFile : data) {
             list.add(create(codeFile));
         }
-        Collections.sort(list);
         return list;
     }
 
