@@ -17,48 +17,48 @@ public class BaseFragment extends Fragment {
 
     }
 
-    void showSimpleDialog(String message) {
+    protected void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
     }
 
-    void showDialog(DialogFragment dialog) {
+    protected void showDialog(DialogFragment dialog) {
         if (getActivity() instanceof BaseActivity) {
             ((BaseActivity) getActivity()).showDialog(dialog);
         }
     }
 
-    static void logInfo(String message) {
+    protected static void logInfo(String message) {
         if (isMessageOk(message)) {
             Timber.i(message);
         }
     }
 
-    static void logDebug(String message) {
+    protected static void logDebug(String message) {
         if (isMessageOk(message)) {
             Timber.d(message);
         }
     }
 
-    static void logWarning(String message) {
+    protected static void logWarning(String message) {
         if (isMessageOk(message)) {
             Timber.w(message);
         }
     }
 
-    static void logError(String message) {
+    protected static void logError(String message) {
         if (isMessageOk(message)) {
             Timber.e(message);
         }
     }
 
-    static void logException(String message, Throwable e) {
+    protected static void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
             Timber.e(e, message);
         }
     }
 
-    static void logException(Exception e) {
+    protected static void logException(Exception e) {
         logException(e.getMessage(), e);
     }
 

@@ -25,7 +25,7 @@ public class CodeFileDetailActivity extends BaseActivity {
     private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
 
 
-    static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
+    public static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
         Intent intent = new Intent(context, CodeFileDetailActivity.class);
         intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
         context.startActivity(intent);
