@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.google.gms:google-services:3.0.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'org.ajoberstar:grgit:1.5.0'
 
@@ -40,6 +41,7 @@ ext {
     targetSdkVersion = 25
 
     googleSupportLibrary = "25.2.0"
+    googleServices = "10.2.1"
 }
 
 static def getVersionCode(version, git) {
