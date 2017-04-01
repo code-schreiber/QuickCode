@@ -28,6 +28,7 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
+import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
 

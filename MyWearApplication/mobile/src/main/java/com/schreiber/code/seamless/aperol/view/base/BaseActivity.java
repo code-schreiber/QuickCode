@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol.view.main;
+package com.schreiber.code.seamless.aperol.view.base;
 
 
 import android.support.v4.app.DialogFragment;
@@ -14,49 +14,49 @@ import timber.log.Timber;
 
 public class BaseActivity extends AppCompatActivity {
 
-    void overridePendingTransitionEnter() {
+    public void overridePendingTransitionEnter() {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    void overridePendingTransitionExit() {
+    protected void overridePendingTransitionExit() {
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 
-    void overridePendingTransitionFadeIn() {
+    public void overridePendingTransitionFadeIn() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    void overridePendingTransitionFadeOut() {
+    protected void overridePendingTransitionFadeOut() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-    void showActionBar() {
+    protected void showActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.show();
         }
     }
 
-    void hideActionBar() {
+    protected void hideActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
     }
 
-    void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+    protected void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
         }
     }
 
-    void showSimpleDialog(String message) {
+    protected void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
     }
 
-    void showDialog(DialogFragment dialog) {
+    protected void showDialog(DialogFragment dialog) {
         dialog.show(getSupportFragmentManager(), dialog.toString());
     }
 

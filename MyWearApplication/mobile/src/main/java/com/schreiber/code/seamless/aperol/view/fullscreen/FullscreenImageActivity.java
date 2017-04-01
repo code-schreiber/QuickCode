@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol.view.main;
+package com.schreiber.code.seamless.aperol.view.fullscreen;
 
 
 import android.annotation.SuppressLint;
@@ -13,6 +13,7 @@ import android.view.View;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityFullscreenImageBinding;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
+import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 
 
 /**
@@ -82,7 +83,7 @@ public class FullscreenImageActivity extends BaseActivity {
         }
     };
 
-    static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
+    public static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
         Intent intent = new Intent(context, FullscreenImageActivity.class);
         intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
         context.startActivity(intent);// TODO animate code in button getting bigger

@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/margin_extra_large"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.schreiber.code.seamless.aperol.view.main.CodeFileDetailActivity"
+        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"
         tools:showIn="@layout/activity_code_file_detail">
 
         <LinearLayout
