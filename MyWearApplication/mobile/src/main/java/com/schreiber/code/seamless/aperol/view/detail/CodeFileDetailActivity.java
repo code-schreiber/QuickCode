@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol.view.main;
+package com.schreiber.code.seamless.aperol.view.detail;
 
 
 import android.content.Intent;
@@ -15,7 +15,9 @@ import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBind
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
+import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
+import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
 
 public class CodeFileDetailActivity extends BaseActivity {

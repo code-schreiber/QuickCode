@@ -20,7 +20,10 @@ import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
 import com.schreiber.code.seamless.aperol.util.android.NetworkUtils;
+import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
+import com.schreiber.code.seamless.aperol.view.base.BaseFragment;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
+import com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity;
 
 import java.util.ArrayList;
 

@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.main.CodeFileDetailActivity"
+            android:name=".view.detail.CodeFileDetailActivity"
             android:parentActivityName=".view.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -42,13 +42,13 @@
                 android:value="com.schreiber.code.seamless.aperol.view.main.MainActivity"/>
         </activity>
         <activity
-            android:name=".view.main.FullscreenImageActivity"
+            android:name=".view.fullscreen.FullscreenImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName=".view.main.CodeFileDetailActivity"
+            android:parentActivityName=".view.detail.CodeFileDetailActivity"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.schreiber.code.seamless.aperol.view.main.CodeFileDetailActivity"/>
+                android:value="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"/>
         </activity>
     </application>
 

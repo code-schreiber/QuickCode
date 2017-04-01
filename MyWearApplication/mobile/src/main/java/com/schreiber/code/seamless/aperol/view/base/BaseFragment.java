@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol.view.main;
+package com.schreiber.code.seamless.aperol.view.base;
 
 
 import android.support.v4.app.DialogFragment;
