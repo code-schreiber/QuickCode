@@ -39,7 +39,6 @@ android {
             signingConfig signingConfigs.debugConfig
             versionCode rootProject.versionCode
             versionName rootProject.versionName
-            applicationId 'seamles.aperol.flavordev'
             versionNameSuffix '.dev'
         }
         prod {
@@ -56,7 +55,7 @@ android {
 dependencies {
     // wearApp project(':wear')
 
-    compile 'com.google.android.gms:play-services:10.0.1'
+    compile "com.google.android.gms:play-services:${rootProject.googleServices}"
 
     compile "com.android.support:design:${rootProject.googleSupportLibrary}"
     compile "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
@@ -66,10 +65,10 @@ dependencies {
     //compile 'com.jakewharton:butterknife:6.1.0'
     compile "com.jakewharton.timber:timber:4.5.1"
 
-    compile 'com.google.zxing:core:3.0.1'
-
     compile 'com.orhanobut:hawk:2.0.1'
 
+    compile "com.google.firebase:firebase-core:${rootProject.googleServices}"
+    compile 'com.google.zxing:core:3.0.1'
     provided 'com.google.auto.value:auto-value:1.2'
     apt 'com.google.auto.value:auto-value:1.2'
     apt 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
@@ -86,3 +85,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
 }
+
+apply plugin: 'com.google.gms.google-services'

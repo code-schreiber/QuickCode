@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "667384481817",
+    "firebase_url": "https://api-9184688792868913082-82736.firebaseio.com",
+    "project_id": "api-9184688792868913082-82736",
+    "storage_bucket": "api-9184688792868913082-82736.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667384481817:android:cb35f8c75b920e24",
+        "android_client_info": {
+          "package_name": "com.schreiber.code.seamless.aperol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667384481817-u3eviiecstcffb7kd5a125183gspnl60.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGt0FlgaaCDky_1fHo9dseY7jxRjUxDbw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
