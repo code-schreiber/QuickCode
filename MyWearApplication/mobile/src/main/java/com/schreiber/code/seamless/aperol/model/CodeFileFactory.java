@@ -17,7 +17,6 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.google.zxing.BarcodeFormat;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
@@ -30,17 +29,17 @@ import java.util.Arrays;
 public abstract class CodeFileFactory {
 
     private static final Integer[] SUPPORTED_BARCODE_FORMATS = {
-            Barcode.CODE_128,
-            Barcode.CODE_39,
-            Barcode.CODE_93,
-            Barcode.CODABAR,
-            Barcode.DATA_MATRIX,
-            Barcode.EAN_13,
-            Barcode.EAN_8,
-            Barcode.ITF,
+//            Barcode.CODE_128,
+//            Barcode.CODE_39,
+//            Barcode.CODE_93,
+//            Barcode.CODABAR,
+//            Barcode.DATA_MATRIX,
+//            Barcode.EAN_13,
+//            Barcode.EAN_8,
+//            Barcode.ITF,
             Barcode.QR_CODE,
-            Barcode.UPC_A,
-            Barcode.UPC_E,
+//            Barcode.UPC_A,
+//            Barcode.UPC_E,
             Barcode.PDF417,
             Barcode.AZTEC,
     };
@@ -105,20 +104,18 @@ public abstract class CodeFileFactory {
                     int key = barcodes.keyAt(i);
                     barcode = barcodes.get(key);
 
-                    BarcodeFormat encodingFormat = getEncodingFormat(barcode.format);
-                    encodingFormatName = getEncodingFormatName(barcode.format);
-                    codeContentType = getContentType(barcode.valueFormat);
+                    encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(barcode.format);
+                    codeContentType = BarcodeFormatMapper.getContentType(barcode.valueFormat);
                     codeDisplayValue = barcode.displayValue;
                     codeRawValue = barcode.rawValue;
 
-                    Logger.logDebug("Barcode found, encodingFormat: " + encodingFormat);
-                    if (encodingFormat != null) {
-                        codeImage = EncodingUtils.encode(encodingFormat, codeRawValue, barcode.getBoundingBox().width(), barcode.getBoundingBox().height());
+                    if (isBarcodeFormatSupported(barcode.format)) {
+                        codeImage = EncodingUtils.encode(BarcodeFormatMapper.getEncodingFormat(barcode.format), codeRawValue, barcode.getBoundingBox().width(), barcode.getBoundingBox().height());
                         if (codeImage == null) {
                             Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
                         }
                     } else {
-                        Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedFormats());
+                        Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedBarcodeFormatsAsString());
                     }
                 }
             }
@@ -253,126 +250,17 @@ public abstract class CodeFileFactory {
         return supportedBarcodeFormats;
     }
 
-    @Nullable
-    private static BarcodeFormat getEncodingFormat(int barcodeFormat) {
-        if (isBarcodeFormatSupported(barcodeFormat)) {
-            switch (barcodeFormat) {
-                case Barcode.CODE_128:
-                    return BarcodeFormat.CODE_128;
-                case Barcode.CODE_39:
-                    return BarcodeFormat.CODE_39;
-                case Barcode.CODE_93:
-                    return BarcodeFormat.CODE_93;
-                case Barcode.CODABAR:
-                    return BarcodeFormat.CODABAR;
-                case Barcode.DATA_MATRIX:
-                    return BarcodeFormat.DATA_MATRIX;
-                case Barcode.EAN_13:
-                    return BarcodeFormat.EAN_13;
-                case Barcode.EAN_8:
-                    return BarcodeFormat.EAN_8;
-                case Barcode.ITF:
-                    return BarcodeFormat.ITF;
-                case Barcode.QR_CODE:
-                    return BarcodeFormat.QR_CODE;
-                case Barcode.UPC_A:
-                    return BarcodeFormat.UPC_A;
-                case Barcode.UPC_E:
-                    return BarcodeFormat.UPC_E;
-                case Barcode.PDF417:
-                    return BarcodeFormat.PDF_417;
-                case Barcode.AZTEC:
-                    return BarcodeFormat.AZTEC;
-                default:
-                    Logger.logError("Unknown code format:" + barcodeFormat);
-                    return null;
-            }
-        }
-        Logger.logError("Unsupported code format: " + barcodeFormat);
-        return null;
-    }
-
-    private static String getEncodingFormatName(int barcodeFormat) {
-        if (isBarcodeFormatSupported(barcodeFormat)) {
-            switch (barcodeFormat) {
-                case Barcode.CODE_128:
-                    return "CODE 128";
-                case Barcode.CODE_39:
-                    return "CODE 39";
-                case Barcode.CODE_93:
-                    return "CODE 93";
-                case Barcode.CODABAR:
-                    return "CODABAR";
-                case Barcode.DATA_MATRIX:
-                    return "DATA MATRIX";
-                case Barcode.EAN_13:
-                    return "EAN 13 ";
-                case Barcode.EAN_8:
-                    return "EAN 8";
-                case Barcode.ITF:
-                    return "ITF";
-                case Barcode.QR_CODE:
-                    return "QR CODE";
-                case Barcode.UPC_A:
-                    return "UPC A";
-                case Barcode.UPC_E:
-                    return "UPC E";
-                case Barcode.PDF417:
-                    return "PDF 417";
-                case Barcode.AZTEC:
-                    return "AZTEC";
-                default:
-                    Logger.logError("Unknown code format:" + barcodeFormat);
-                    return "Unknown code format: " + barcodeFormat;
-            }
-        }
-        Logger.logError("Unsupported code format: " + barcodeFormat);
-        return "Unsupported code format: " + barcodeFormat;
-    }
-
-    private static String getContentType(int barcodeValueFormat) {
-        switch (barcodeValueFormat) {
-            case Barcode.CONTACT_INFO:
-                return "CONTACT_INFO";
-            case Barcode.EMAIL:
-                return "EMAIL";
-            case Barcode.ISBN:
-                return "ISBN";
-            case Barcode.PHONE:
-                return "PHONE";
-            case Barcode.PRODUCT:
-                return "PRODUCT";
-            case Barcode.SMS:
-                return "SMS";
-            case Barcode.TEXT:
-                return "TEXT";
-            case Barcode.URL:
-                return "URL";
-            case Barcode.WIFI:
-                return "WIFI";
-            case Barcode.GEO:
-                return "GEO";
-            case Barcode.CALENDAR_EVENT:
-                return "CALENDAR_EVENT";
-            case Barcode.DRIVER_LICENSE:
-                return "DRIVER_LICENSE";
-            default:
-                Logger.logError("Unknown barcodeValueFormat:" + barcodeValueFormat);
-                return "Unknown barcodeValueFormat: " + barcodeValueFormat;
-        }
-    }
-
     private static boolean isBarcodeFormatSupported(int barcodeFormat) {
         return Arrays.asList(SUPPORTED_BARCODE_FORMATS).contains(barcodeFormat);
     }
 
     @NonNull
-    public static String getSupportedFormats() {
+    public static String getSupportedBarcodeFormatsAsString() {
         String supportedFormats = "";
         for (Integer supportedBarcodeFormat : SUPPORTED_BARCODE_FORMATS) {
-            supportedFormats += getEncodingFormatName(supportedBarcodeFormat) + "\n";
+            supportedFormats += (supportedBarcodeFormat) + ", ";
         }
-        return supportedFormats.trim();
+        return supportedFormats.substring(0, supportedFormats.length() - 2);
     }
 
     @Nullable
