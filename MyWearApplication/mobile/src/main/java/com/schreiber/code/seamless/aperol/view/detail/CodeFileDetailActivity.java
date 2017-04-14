@@ -6,18 +6,20 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
+import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
+
+import java.util.ArrayList;
 
 
 public class CodeFileDetailActivity extends BaseActivity {
@@ -40,8 +42,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         binding.setCodeFileViewModel(codeFileViewModel);
         binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
 
         initViews(codeFileViewModel);
@@ -97,17 +98,18 @@ public class CodeFileDetailActivity extends BaseActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CodeFile codeFile = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile(), originalImage);
-                    if (codeFile != null) {
+                    ArrayList<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile(), originalImage);
+                    if (!codeFiles.isEmpty()) {
+                        CodeFile codeFile = codeFiles.get(0);// TODO handle multiple codes
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                         if (newCodeFileViewModel.getCodeImage(view.getContext()) != null) {
                             // TODO persist
                             initFab(newCodeFileViewModel, originalImage);
                         } else {
-                            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileFactory.getSupportedBarcodeFormatsAsString() + ".");
+                            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                         }
                     } else {
-                        showSimpleDialog("No CodeFile could be created");
+                        showSimpleDialog("No Code could be created");
                     }
                 }
             });

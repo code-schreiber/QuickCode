@@ -2,12 +2,10 @@ package com.schreiber.code.seamless.aperol.util;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
-import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 
 
 public class EncodingUtils {
@@ -28,8 +26,8 @@ public class EncodingUtils {
             originalWidth = originalHeight;
             originalHeight = tempWidth;
         }
-        Point dimensions = CodeFileFactory.getNewDimensions(WIDTH, originalWidth, originalHeight);
-        return encodeAsBitmap(rawContent, format, dimensions.x, dimensions.y);
+        BitmapUtils.Dimensions dimensions = BitmapUtils.getNewDimensions(WIDTH, originalWidth, originalHeight);
+        return encodeAsBitmap(rawContent, format, dimensions.width, dimensions.height);
     }
 
     @Nullable

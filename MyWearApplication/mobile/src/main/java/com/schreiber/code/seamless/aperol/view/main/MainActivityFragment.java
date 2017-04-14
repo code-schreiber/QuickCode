@@ -16,6 +16,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
+import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
@@ -97,10 +98,10 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     void performFileSearch() {
 
-        BarcodeDetector detector = CodeFileFactory.setupBarcodeDetector(getActivity());
+        BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            showSimpleDialog("Could not set up the detector! Was offline: " + !NetworkUtils.isOnline(getActivity()));
+            showSimpleDialog("Could not set up the barcode detector! Was offline: " + !NetworkUtils.isOnline(getActivity()));
             return;
         }
 
@@ -123,21 +124,16 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         ArrayList<CodeFile> assets = new ArrayList<>();
         for (String path : paths) {
-            CodeFile item = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
-            if (item != null) {
-                assets.add(item);
+            ArrayList<CodeFile> item = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
+            if (!item.isEmpty()) {
+                assets.addAll(item);
             } else {
-                showSimpleDialog("Error: See backstrace. Not adding " + path);
+                showSimpleDialog("Error: Not adding " + path);
             }
         }
 
-        if (assets.isEmpty()) {
-            showSimpleDialog("No Assets to import");
-        } else {
-            for (CodeFile codeFile : assets) {
-                addItemToAdapter(codeFile);
-            }
-
+        for (CodeFile codeFile : assets) {
+            addItemToAdapter(codeFile);
         }
     }
 
