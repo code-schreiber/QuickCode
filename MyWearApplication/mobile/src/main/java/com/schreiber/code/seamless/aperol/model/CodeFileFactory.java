@@ -78,7 +78,7 @@ public class CodeFileFactory {
 
     @NonNull
     private static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
-        ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles2(context, originalFilename, fileType, size, originalImage, importedFrom);
+        ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
         if (codeFiles.size() > 1 && !PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT) {
             Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one.");
             return createListFromSingleItem(codeFiles.get(0));
@@ -112,9 +112,9 @@ public class CodeFileFactory {
     @NonNull
     private static <T> ArrayList<T> createListFromSingleItem(T t) {
         if (t == null) {
-            return (ArrayList<T>) Collections.EMPTY_LIST;
+            return new ArrayList<>();
         } else {
-            return (ArrayList<T>) Collections.singletonList(t);
+            return new ArrayList<>(Collections.singletonList(t));
         }
     }
 
