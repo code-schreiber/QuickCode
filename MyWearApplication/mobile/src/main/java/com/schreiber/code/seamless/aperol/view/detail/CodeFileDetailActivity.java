@@ -104,7 +104,7 @@ public class CodeFileDetailActivity extends BaseActivity {
                             // TODO persist
                             initFab(newCodeFileViewModel, originalImage);
                         } else {
-                            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileFactory.getSupportedFormats());
+                            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileFactory.getSupportedBarcodeFormatsAsString() + ".");
                         }
                     } else {
                         showSimpleDialog("No CodeFile could be created");
