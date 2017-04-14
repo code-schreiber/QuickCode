@@ -53,7 +53,7 @@ android {
 }
 
 dependencies {
-    // wearApp project(':wear')
+    //  wearApp project(':wear')
 
     compile "com.google.android.gms:play-services:${rootProject.googleServices}"
 
