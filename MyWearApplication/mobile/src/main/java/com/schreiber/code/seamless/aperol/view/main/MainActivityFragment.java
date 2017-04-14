@@ -164,9 +164,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     void handleFile(Uri uri) {
         if (uri != null) {
-            CodeFile item = CodeFileFactory.createCodeFileFromUri(getActivity(), uri);
-            if (item != null) {
-                addItemToAdapter(item);
+            ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
+            if (items.isEmpty()) {
+                showSimpleDialog("No codes found in file.");
+            } else {
+                for (CodeFile item : items) {
+                    addItemToAdapter(item);
+                }
             }
         }
     }
