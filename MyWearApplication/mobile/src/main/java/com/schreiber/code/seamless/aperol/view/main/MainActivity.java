@@ -2,11 +2,11 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -27,6 +27,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
@@ -43,25 +44,26 @@ public class MainActivity extends BaseActivity implements
 
     private static final String COUNT_KEY = "TODO_FIND_A_WAY_TO_READ_FROM_ONE_SOURCE";//TODO
 
+    private DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar_main_toolbar);
-        setSupportActionBar(toolbar);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        Toolbar toolbar = binding.activityMainAppBarMain.appBarMainToolbar;
+        setSupportActionBar(toolbar);
+        drawerLayout = binding.activityMainDrawerLayout;
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
+        NavigationView navigationView = binding.activityMainNavView;
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.app_bar_main_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.activityMainAppBarMain.appBarMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MainActivityFragment fragment = getMainActivityFragment();
@@ -70,7 +72,6 @@ public class MainActivity extends BaseActivity implements
                 }
             }
         });
-
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -102,9 +103,8 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -132,8 +132,7 @@ public class MainActivity extends BaseActivity implements
         // Handle navigation view item clicks here.
         onMenuItemSelected(item);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_main_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -179,7 +178,7 @@ public class MainActivity extends BaseActivity implements
 
     private void showSnack(String m) {
         logInfo(m);
-        Snackbar.make(findViewById(R.id.app_bar_main_fab), m, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
