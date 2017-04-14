@@ -19,7 +19,6 @@ import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 
@@ -59,6 +58,11 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
 
     public String getDisplayName() {
         return codeFile().displayName();
+    }
+
+    public String getTags() {
+        ArrayList<String> tags = codeFile().tags();
+        return TypeUtils.getCommaSeparatedStringsFromList(tags);
     }
 
     public String getOriginalFilePath() {

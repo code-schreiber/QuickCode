@@ -2,6 +2,9 @@ package com.schreiber.code.seamless.aperol.util;
 
 
 import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
 
 
 public class TypeUtils {
@@ -10,6 +13,15 @@ public class TypeUtils {
 
     private TypeUtils() {
         // Hide utility class constructor
+    }
+
+    @NonNull
+    public static String getCommaSeparatedStringsFromList(ArrayList<String> strings) {
+        String commaSeparatedStrings = "";
+        for (String string : strings) {
+            commaSeparatedStrings += string + ", ";
+        }
+        return commaSeparatedStrings.substring(0, commaSeparatedStrings.length() - 2);
     }
 
     @CheckResult
@@ -21,5 +33,4 @@ public class TypeUtils {
     public static boolean isEmpty(String s) {
         return s == null || s.length() == 0;
     }
-
 }
