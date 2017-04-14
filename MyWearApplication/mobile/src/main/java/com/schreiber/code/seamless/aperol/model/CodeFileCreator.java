@@ -14,6 +14,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.util.BitmapUtils;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
+import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,11 +81,12 @@ public class CodeFileCreator {
 
     @NonNull
     public static String getSupportedBarcodeFormatsAsString() {
-        String supportedFormats = "";
+        ArrayList<String> supportedFormats = new ArrayList<>();
         for (Integer supportedBarcodeFormat : SUPPORTED_BARCODE_FORMATS) {
-            supportedFormats += BarcodeFormatMapper.getEncodingFormatName(supportedBarcodeFormat) + ", ";
+            String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(supportedBarcodeFormat);
+            supportedFormats.add(encodingFormatName);
         }
-        return supportedFormats.substring(0, supportedFormats.length() - 2);
+        return TypeUtils.getCommaSeparatedStringsFromList(supportedFormats);
     }
 
     @Nullable
