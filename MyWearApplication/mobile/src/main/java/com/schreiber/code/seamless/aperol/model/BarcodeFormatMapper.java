@@ -9,7 +9,11 @@ import com.google.zxing.BarcodeFormat;
 import com.schreiber.code.seamless.aperol.util.Logger;
 
 
-abstract class BarcodeFormatMapper {
+class BarcodeFormatMapper {
+
+    private BarcodeFormatMapper() {
+        // Hide utility class constructor
+    }
 
     @Nullable
     static BarcodeFormat getEncodingFormat(int barcodeFormat) {
