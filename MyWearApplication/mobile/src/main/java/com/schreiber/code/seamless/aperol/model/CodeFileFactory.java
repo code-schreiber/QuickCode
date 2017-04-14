@@ -23,10 +23,15 @@ import com.schreiber.code.seamless.aperol.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 public abstract class CodeFileFactory {
+
+    private static final boolean PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT = true;
+    private static final boolean PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT = true;
 
     private static final Integer[] SUPPORTED_BARCODE_FORMATS = {
 //            Barcode.CODE_128,
@@ -60,13 +65,27 @@ public abstract class CodeFileFactory {
         return createItem(context, originalFilename, fileType, size, originalImage, importedFrom);
     }
 
-    public static CodeFile createCodeFileFromUri(Context context, Uri uri) {
+    @NonNull
+    public static ArrayList<CodeFile> createCodeFilesFromUri(Context context, Uri uri) {
         ContentResolver contentResolver = context.getContentResolver();
         String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
         String fileType = contentResolver.getType(uri);
         String size = UriUtils.getSize(contentResolver, uri);
-        Bitmap originalImage = getBitmapFromUri(context, uri);
-        return createItem(context, originalFilename, fileType, size, originalImage, uri.toString());
+
+        ArrayList<CodeFile> codeFiles = new ArrayList<>();
+        ArrayList<Bitmap> originalImages = getBitmapsFromUri(context, uri);
+        if (originalImages != null && !originalImages.isEmpty()) {
+            if (originalImages.size() > 1 && !PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT) {
+                Logger.logWarning("PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT is disabled, returning only one codefile out of " + originalImages.size());
+                CodeFile codeFile = createItem(context, originalFilename, fileType, size, originalImages.get(0), uri.toString());
+                return createListFromSingleItem(codeFile);
+            }
+            for (Bitmap originalImage : originalImages) {
+                CodeFile codeFile = createItem(context, originalFilename, fileType, size, originalImage, uri.toString());
+                codeFiles.add(codeFile);
+            }
+        }
+        return codeFiles;
     }
 
     public static CodeFile createCodeFileFromCodeFile(Context context, CodeFile codeFile, Bitmap originalImage) {
@@ -200,17 +219,19 @@ public abstract class CodeFileFactory {
     }
 
     @Nullable
-    private static Bitmap getBitmapFromUri(Context context, Uri uri) {
+    private static ArrayList<Bitmap> getBitmapsFromUri(Context context, Uri uri) {
         ContentResolver resolver = context.getContentResolver();
         if (UriUtils.fileExists(resolver, uri)) {
             if (UriUtils.isPdf(resolver, uri)) {
-                return pdfToBitmap(context, uri);
+                return pdfToBitmaps(context, uri);
             } else if (UriUtils.isImage(resolver, uri)) {
-                return UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
+                Bitmap bitmap = UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
+                return createListFromSingleItem(bitmap);
             } else if (UriUtils.isText(resolver, uri)) {
                 // TODO
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                return EncodingUtils.encodeQRCode(textContent);
+                Bitmap bitmap = EncodingUtils.encodeQRCode(textContent);
+                return createListFromSingleItem(bitmap);
             } else {
                 Logger.logError("No known file type: " + uri);
             }
@@ -219,6 +240,25 @@ public abstract class CodeFileFactory {
         }
         return null;
     }
+
+    @NonNull
+    private static <T> ArrayList<T> createListFromSingleItem(T t) {
+        if (t == null) {
+            return (ArrayList<T>) Collections.EMPTY_LIST;
+        } else {
+            return (ArrayList<T>) Collections.singletonList(t);
+        }
+    }
+
+// TODO when E and when T
+//    @NonNull
+//    private static <E> ArrayList<E> createSingleBitmapListWithE(E t) {
+//        if (t == null) {
+//            return (ArrayList<E>) Collections.EMPTY_LIST;
+//        } else {
+//            return (ArrayList<E>) Collections.singletonList(t);
+//        }
+//    }
 
     private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
         BarcodeDetector detector = setupBarcodeDetector(context);
@@ -263,36 +303,28 @@ public abstract class CodeFileFactory {
         return supportedFormats.substring(0, supportedFormats.length() - 2);
     }
 
-    @Nullable
-    private static Bitmap pdfToBitmap(Context context, Uri uri) {
-        Bitmap bitmap = null;
-        int pageNum = 0;
+    @NonNull
+    private static ArrayList<Bitmap> pdfToBitmaps(Context context, Uri uri) {
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
         try {
             // create a new renderer
             ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, UriUtils.MODE_READ);
             if (fileDescriptor != null) {
                 PdfRenderer renderer = new PdfRenderer(fileDescriptor);
-
-                // let us just render all pages
                 int pageCount = renderer.getPageCount();
-                if (pageCount > 0) {
-                    if (pageCount != 1) {
-                        Logger.logError("Pdf has " + pageCount + " pages.");
-                        // TODO [Premium] create multiple files
-                    }
-                    PdfRenderer.Page page = renderer.openPage(pageNum);
-                    bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
-
-                    // say we render for showing on the screen
+                for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                    PdfRenderer.Page page = renderer.openPage(pageIndex);
+                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
                     page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
                     page.close();
+                    bitmaps.add(bitmap);
                 }
                 renderer.close();
             }
         } catch (IOException e) {
             Logger.logException(e);
         }
-        return bitmap;
+        return bitmaps;
     }
 
 }
