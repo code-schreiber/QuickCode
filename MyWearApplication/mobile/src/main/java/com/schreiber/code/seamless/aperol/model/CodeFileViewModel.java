@@ -3,7 +3,6 @@ package com.schreiber.code.seamless.aperol.model;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
-import android.databinding.repacked.apache.commons.io.FileUtils;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
@@ -80,7 +79,8 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
 
     public String getOriginalFileSizeInMegabytes() {
         int sizeInBytes = codeFile().originalCodeFile().size();
-        return FileUtils.byteCountToDisplaySize(sizeInBytes);
+        // TODO return FileUtils.byteCountToDisplaySize(sizeInBytes);
+        return sizeInBytes + " bytes";
     }
 
     public String getOriginalFileType() {
