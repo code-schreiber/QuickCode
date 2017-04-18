@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity">
 
     <data>
 
@@ -14,8 +15,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity">
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
@@ -46,7 +46,7 @@
                         android:scaleType="centerCrop"
                         android:tint="@color/transparent_black"
                         app:imageBitmap="@{codeFileViewModel.getOriginalImage(context)}"
-                        tools:src="@drawable/ic_add_image_black_24dp"/>
+                        tools:src="@drawable/ic_file_black_24dp"/>
 
 
                 </FrameLayout>
@@ -73,7 +73,7 @@
             app:backgroundTint="@color/white"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
-            tools:src="@drawable/ic_add_image_black_24dp"/>
+            tools:src="@drawable/ic_retry_black_24dp"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

@@ -26,8 +26,12 @@
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                <ImageView
+                    style="@style/CodeFileDetailImageView"
+                    android:src="@drawable/ic_tag_black_24dp"/>
+
                 <TextView
-                    style="@style/CodeFileDetailTextView"
+                    style="@style/CodeFileDetailTextView.Title"
                     android:text="@string/code_fie_detail_tags"/>
 
                 <TextView
@@ -38,8 +42,12 @@
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                <ImageView
+                    style="@style/CodeFileDetailImageView"
+                    android:src="@drawable/ic_file_black_24dp"/>
+
                 <TextView
-                    style="@style/CodeFileDetailTextView"
+                    style="@style/CodeFileDetailTextView.Title"
                     android:text="@string/code_fie_detail_original_file"/>
 
                 <TextView
@@ -50,8 +58,12 @@
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                <ImageView
+                    style="@style/CodeFileDetailImageView"
+                    android:src="@drawable/ic_date_black_24dp"/>
+
                 <TextView
-                    style="@style/CodeFileDetailTextView"
+                    style="@style/CodeFileDetailTextView.Title"
                     android:text="@string/code_fie_detail_creation_date"/>
 
                 <TextView
@@ -62,8 +74,12 @@
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                <ImageView
+                    style="@style/CodeFileDetailImageView"
+                    android:src="@drawable/ic_size_black_24dp"/>
+
                 <TextView
-                    style="@style/CodeFileDetailTextView"
+                    style="@style/CodeFileDetailTextView.Title"
                     android:text="@string/code_fie_detail_file_size"/>
 
                 <TextView
@@ -74,8 +90,12 @@
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                <ImageView
+                    style="@style/CodeFileDetailImageView"
+                    android:src="@drawable/ic_file_black_24dp"/>
+
                 <TextView
-                    style="@style/CodeFileDetailTextView"
+                    style="@style/CodeFileDetailTextView.Title"
                     android:text="@string/code_fie_detail_file_type"/>
 
                 <TextView
@@ -94,8 +114,12 @@
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <ImageView
+                        style="@style/CodeFileDetailImageView"
+                        android:src="@drawable/ic_file_content_black_24dp"/>
+
                     <TextView
-                        style="@style/CodeFileDetailTextView"
+                        style="@style/CodeFileDetailTextView.Title"
                         android:text="@string/code_fie_detail_code_type"/>
 
                     <TextView
@@ -106,8 +130,12 @@
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <ImageView
+                        style="@style/CodeFileDetailImageView"
+                        android:src="@drawable/ic_file_content_black_24dp"/>
+
                     <TextView
-                        style="@style/CodeFileDetailTextView"
+                        style="@style/CodeFileDetailTextView.Title"
                         android:text="@string/code_fie_detail_code_content_type"/>
 
                     <TextView
@@ -118,8 +146,12 @@
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <ImageView
+                        style="@style/CodeFileDetailImageView"
+                        android:src="@drawable/ic_file_content_black_24dp"/>
+
                     <TextView
-                        style="@style/CodeFileDetailTextView"
+                        style="@style/CodeFileDetailTextView.Title"
                         android:text="@string/code_fie_detail_code_display_content"/>
 
                     <TextView
@@ -131,8 +163,12 @@
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <ImageView
+                        style="@style/CodeFileDetailImageView"
+                        android:src="@drawable/ic_file_content_black_24dp"/>
+
                     <TextView
-                        style="@style/CodeFileDetailTextView"
+                        style="@style/CodeFileDetailTextView.Title"
                         android:text="@string/code_fie_detail_code_raw_content"/>
 
                     <TextView
