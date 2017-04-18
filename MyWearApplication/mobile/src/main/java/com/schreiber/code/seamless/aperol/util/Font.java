@@ -21,7 +21,7 @@ class Font {
     }
 
     public void addStyle(Typeface typeface) {
-        this.styles.put(typeface.getStyle(), typeface);//TODO make inmutable
+        this.styles.put(typeface.getStyle(), typeface);
     }
 
     public Typeface getStyle(int style) {
