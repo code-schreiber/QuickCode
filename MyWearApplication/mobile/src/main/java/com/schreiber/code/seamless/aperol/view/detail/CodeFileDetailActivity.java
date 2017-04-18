@@ -97,7 +97,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         } else {
             // No code, let the user try again
             codeLayout.setVisibility(View.GONE);
-            fab.setImageResource(R.drawable.ic_add_image_black_24dp);
+            fab.setImageResource(R.drawable.ic_retry_black_24dp);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

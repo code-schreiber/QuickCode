@@ -43,7 +43,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:imageBitmap="@{codeFileViewModel.getOriginalThumbnailImage(context)}"
-                tools:src="@drawable/ic_add_image_black_24dp"/>
+                tools:src="@drawable/ic_file_black_24dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -84,7 +84,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 app:imageBitmap="@{codeFileViewModel.getCodeThumbnailImage(context)}"
-                tools:src="@drawable/ic_add_image_black_24dp"/>
+                tools:src="@drawable/ic_file_content_black_24dp"/>
 
             <ImageView
                 android:layout_width="@dimen/size_thumbnail_small"

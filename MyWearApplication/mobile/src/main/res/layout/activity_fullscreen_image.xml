@@ -27,7 +27,7 @@
             android:padding="@dimen/margin_large"
             android:scaleType="fitCenter"
             app:imageBitmap="@{codeFileViewModel.getCodeImage(context)}"
-            tools:src="@drawable/ic_add_image_black_24dp"/>
+            tools:src="@drawable/ic_file_content_black_24dp"/>
 
         <!-- This FrameLayout insets its children based on system windows using
              android:fitsSystemWindows. -->
