@@ -11,7 +11,7 @@ import java.util.Date;
 @AutoValue
 public abstract class OriginalCodeFile implements Parcelable {
 
-    public static OriginalCodeFile create(String filename, String fileType, String size, String importedFrom) {
+    public static OriginalCodeFile create(String filename, String fileType, int size, String importedFrom) {
         long importedOn = new Date().getTime();
         return new AutoValue_OriginalCodeFile(filename, fileType, size, importedOn, importedFrom);
     }
@@ -20,7 +20,7 @@ public abstract class OriginalCodeFile implements Parcelable {
 
     public abstract String fileType();
 
-    public abstract String size();
+    public abstract int size();
 
     public abstract long importedOn();
 

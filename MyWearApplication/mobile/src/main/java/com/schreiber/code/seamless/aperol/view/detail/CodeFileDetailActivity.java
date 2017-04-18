@@ -45,7 +45,7 @@ public class CodeFileDetailActivity extends BaseActivity {
         setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
 
-        initViews(codeFileViewModel);
+        initViews(binding, codeFileViewModel);
     }
 
     @Override
@@ -70,21 +70,23 @@ public class CodeFileDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initViews(final CodeFileViewModel codeFileViewModel) {
+    private void initViews(ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel) {
         setTitle(codeFileViewModel.getDisplayName());
         final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
-        findViewById(R.id.activity_code_file_detail_header).setOnClickListener(new View.OnClickListener() {
+        binding.activityCodeFileDetailHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getOriginalThumbnailImage(v.getContext())));
             }
         });
-        initFab(codeFileViewModel, originalImage);
+        initFab(binding, codeFileViewModel, originalImage);
     }
 
-    private void initFab(final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.activity_code_file_detail_fab);
+    private void initFab(final ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
+        final FloatingActionButton fab = binding.activityCodeFileDetailFab;
+        View codeLayout = binding.activityCodeFileDetailContent.contentCodeFileDetailCodeLayout;
         if (codeFileViewModel.isCodeAvailable(this)) {
+            codeLayout.setVisibility(View.VISIBLE);
             fab.setImageBitmap(codeFileViewModel.getCodeThumbnailImage(this));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,6 +96,7 @@ public class CodeFileDetailActivity extends BaseActivity {
             });
         } else {
             // No code, let the user try again
+            codeLayout.setVisibility(View.GONE);
             fab.setImageResource(R.drawable.ic_add_image_black_24dp);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -104,7 +107,7 @@ public class CodeFileDetailActivity extends BaseActivity {
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                         if (newCodeFileViewModel.getCodeImage(view.getContext()) != null) {
                             // TODO persist
-                            initFab(newCodeFileViewModel, originalImage);
+                            initFab(binding, newCodeFileViewModel, originalImage);
                         } else {
                             showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                         }
