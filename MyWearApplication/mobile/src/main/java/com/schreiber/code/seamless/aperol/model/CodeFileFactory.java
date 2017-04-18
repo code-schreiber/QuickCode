@@ -32,7 +32,7 @@ public class CodeFileFactory {
         Uri uri = Uri.parse(path);
         String originalFilename = uri.getLastPathSegment();
         String fileType = getFileSuffix(originalFilename);
-        String size = "-1";// TODO get size from uri or path
+        int size = UriUtils.SIZE_UNKNOWN;// TODO get size from uri or path
         Bitmap originalImage = null;
         try {
             originalImage = BitmapFactory.decodeStream(context.getAssets().open(path));
@@ -48,7 +48,7 @@ public class CodeFileFactory {
         ContentResolver contentResolver = context.getContentResolver();
         String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
         String fileType = contentResolver.getType(uri);
-        String size = UriUtils.getSize(contentResolver, uri);
+        int size = UriUtils.getSizeInBytes(contentResolver, uri);
 
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         ArrayList<Bitmap> originalImages = getBitmapsFromUri(context, uri);
@@ -67,7 +67,7 @@ public class CodeFileFactory {
     public static ArrayList<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile, Bitmap originalImage) {
         String originalFilename = codeFile.originalCodeFile().filename();
         String fileType = codeFile.originalCodeFile().fileType();
-        String size = codeFile.originalCodeFile().size();
+        int size = codeFile.originalCodeFile().size();
         return createCodeFiles(context, originalFilename, fileType, size, originalImage, "CodeFile of " + originalFilename);
     }
 
@@ -77,7 +77,7 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    private static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
+    private static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
         ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
         if (codeFiles.size() > 1 && !PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT) {
             Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one.");

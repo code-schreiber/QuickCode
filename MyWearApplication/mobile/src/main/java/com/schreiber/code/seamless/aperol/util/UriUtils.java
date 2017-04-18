@@ -26,6 +26,7 @@ public class UriUtils {
     public static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
     public static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
     public static final String TYPE_RELATIVE_IMAGE = "image/";
+    public static final int SIZE_UNKNOWN = -1;
 
     private UriUtils() {
         // Hide utility class constructor
@@ -106,11 +107,12 @@ public class UriUtils {
                 cursor.close();
             }
         }
+        Logger.logWarning("Couldn't get display name from Uri: " + uri);
         return "";
     }
 
     @CheckResult
-    public static String getSize(ContentResolver contentResolver, Uri uri) {
+    public static int getSizeInBytes(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
         if (cursor != null) {
             if (cursor.getCount() > 1) {
@@ -128,16 +130,15 @@ public class UriUtils {
                     // happen often:  The storage API allows for remote files, whose
                     // size might not be locally known.
                     if (!cursor.isNull(sizeIndex)) {
-                        // Technically the column stores an int, but cursor.getString()
-                        // will do the conversion automatically.
-                        return cursor.getString(sizeIndex) + " bytes";
+                        return cursor.getInt(sizeIndex);
                     }
                 }
             } finally {
                 cursor.close();
             }
         }
-        return "Unknown";
+        Logger.logWarning("Couldn't get file size from Uri: " + uri);
+        return SIZE_UNKNOWN;
     }
 
     @CheckResult

@@ -3,6 +3,7 @@ package com.schreiber.code.seamless.aperol.model;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
+import android.databinding.repacked.apache.commons.io.FileUtils;
 import android.graphics.Bitmap;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
@@ -66,40 +67,40 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getOriginalFilePath() {
-        return "Original File: " + codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
+        return codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
     }
 
     public String getCreationDateLong(Context context) {
-        return "Imported on " + getCreationDate(context);
+        return getCreationDate(context);
     }
 
     public String getCreationDateShort(Context context) {
         return getCreationDate(context);
     }
 
-    public String getOriginalFileSize() {
-        return "Original File Size: " + codeFile().originalCodeFile().size();
+    public String getOriginalFileSizeInMegabytes() {
+        int sizeInBytes = codeFile().originalCodeFile().size();
+        return FileUtils.byteCountToDisplaySize(sizeInBytes);
     }
-
 
     public String getOriginalFileType() {
         String mimeType = getMimeType();
         if (!TypeUtils.isEmpty(mimeType)) {
             mimeType = " (" + mimeType + ")";
         }
-        return "Original File Type: " + codeFile().originalCodeFile().fileType() + mimeType;
+        return codeFile().originalCodeFile().fileType() + mimeType;
     }
 
     public String getCodeType() {
-        return createStringWithPrefix("Code type: ", codeFile().codeType());
+        return codeFile().codeType();
     }
 
     public String getCodeContentType() {
-        return createStringWithPrefix("Code content type: ", codeFile().codeContentType());
+        return codeFile().codeContentType();
     }
 
     public String getCodeDisplayContent() {
-        return createStringWithPrefix("Code display content: ", getCodeDisplayContentSimple());
+        return getCodeDisplayContentSimple();
     }
 
     public String getCodeDisplayContentSimple() {
@@ -107,12 +108,7 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getCodeRawContent() {
-        return createStringWithPrefix("Code raw content: ", codeFile().codeRawContent());
-    }
-
-    @NonNull
-    private String createStringWithPrefix(String prefix, String s) {
-        return TypeUtils.isEmpty(s) ? "" : prefix + s;
+        return codeFile().codeRawContent();
     }
 
     public boolean isCodeAvailable(Context context) {

@@ -44,7 +44,7 @@ public class CodeFileCreator {
     }
 
     @NonNull
-    static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom) {
+    static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
@@ -90,7 +90,7 @@ public class CodeFileCreator {
     }
 
     @Nullable
-    private static CodeFile getCodeFileFromBarcode(Context context, String originalFilename, String fileType, String size, Bitmap originalImage, String importedFrom, Barcode barcode) {
+    private static CodeFile getCodeFileFromBarcode(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom, Barcode barcode) {
         String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(barcode.format);
         String codeContentType = BarcodeFormatMapper.getContentType(barcode.valueFormat);
         String codeDisplayValue = barcode.displayValue;

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"
+        tools:showIn="@layout/activity_code_file_detail">
 
     <data>
 
@@ -15,77 +17,135 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/margin_extra_large"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"
-        tools:showIn="@layout/activity_code_file_detail">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@string/code_fie_detail_tags"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@{codeFileViewModel.getTags()}"
+                    tools:text="some, tags"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@string/code_fie_detail_original_file"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@{codeFileViewModel.getOriginalFilePath()}"
+                    tools:text="original file"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@string/code_fie_detail_creation_date"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@{codeFileViewModel.getCreationDateLong(context)}"
+                    tools:text="creation date"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@string/code_fie_detail_file_size"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@{codeFileViewModel.getOriginalFileSizeInMegabytes()}"
+                    tools:text="original file size"/>
+            </LinearLayout>
+
+            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@string/code_fie_detail_file_type"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView"
+                    android:text="@{codeFileViewModel.getOriginalFileType()}"
+                    tools:text="Original file type"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/content_code_file_detail_code_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getOriginalFilePath()}"
-                tools:text="original file"/>
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getCreationDateLong(context)}"
-                tools:text="creation date"/>
+                <View style="@style/Divider"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getOriginalFileSize()}"
-                tools:text="original file size"/>
+                <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@string/code_fie_detail_code_type"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getOriginalFileType()}"
-                tools:text="Original fileType"/>
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@{codeFileViewModel.getCodeType()}"
+                        tools:text="code type"/>
+                </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getCodeType()}"
-                tools:text="codeType"/>
+                <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@string/code_fie_detail_code_content_type"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:text="@{codeFileViewModel.getCodeContentType()}"
-                tools:text="codeContentType"/>
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@{codeFileViewModel.getCodeContentType()}"
+                        tools:text="codeContentType"/>
+                </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:autoLink="all"
-                android:text="@{codeFileViewModel.getCodeDisplayContent()}"
-                tools:text="codeDisplayContent"/>
+                <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:autoLink="all"
-                android:text="@{codeFileViewModel.getCodeRawContent()}"
-                tools:text="codeRawContent"/>
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@string/code_fie_detail_code_display_content"/>
 
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:autoLink="all"
+                        android:text="@{codeFileViewModel.getCodeDisplayContent()}"
+                        tools:text="codeDisplayContent"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/CodeFileDetailLinearLayout">
+
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:text="@string/code_fie_detail_code_raw_content"/>
+
+                    <TextView
+                        style="@style/CodeFileDetailTextView"
+                        android:autoLink="all"
+                        android:text="@{codeFileViewModel.getCodeRawContent()}"
+                        tools:text="codeRawContent"/>
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
 </layout>
