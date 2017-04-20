@@ -4,6 +4,7 @@ package com.schreiber.code.seamless.aperol.model;
 import android.os.Parcelable;
 
 import com.google.auto.value.AutoValue;
+import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,16 +28,22 @@ public abstract class CodeFile implements Parcelable {
         String originalFilename = originalCodeFile.filename();
         String suffix = CodeFileFactory.getFileSuffix(originalFilename);
         String displayName = originalFilename.replace("." + suffix, "");
-        ArrayList<String> tags = createTags(originalCodeFile, suffix);
+        ArrayList<String> tags = createTags(originalCodeFile, suffix, codeType, codeContentType);
         return new AutoValue_CodeFile(displayName, tags, codeType, codeContentType, codeDisplayContent, codeRawContent, originalCodeFile, NOT_ON_WATCH);
     }
 
-    private static ArrayList<String> createTags(OriginalCodeFile originalCodeFile, String suffix) {
+    private static ArrayList<String> createTags(OriginalCodeFile originalCodeFile, String suffix, String codeType, String codeContentType) {
         List<String> tags = Arrays.asList(
                 originalCodeFile.filename(),
                 suffix,
                 originalCodeFile.fileType(),
                 originalCodeFile.importedFrom());
+        if (!TypeUtils.isEmpty(codeType)) {
+            tags.add(codeType);
+        }
+        if (!TypeUtils.isEmpty(codeContentType)) {
+            tags.add(codeContentType);
+        }
         return new ArrayList<>(tags);
     }
 
