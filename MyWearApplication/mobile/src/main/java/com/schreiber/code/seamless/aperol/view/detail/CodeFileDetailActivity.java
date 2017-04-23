@@ -72,17 +72,22 @@ public class CodeFileDetailActivity extends BaseActivity {
 
     private void initViews(ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel) {
         setTitle(codeFileViewModel.getDisplayName());
-        final Bitmap originalImage = codeFileViewModel.getOriginalImage(this);
         binding.activityCodeFileDetailHeader.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showDialog(ImageDialogFragment.newInstance(codeFileViewModel.toString(), originalImage, codeFileViewModel.getCodeImage(v.getContext()), codeFileViewModel.getOriginalThumbnailImage(v.getContext())));
+            public void onClick(View view) {
+                String objectAsNiceJson = codeFileViewModel.toString().replace("{", "{\n").replace(",", ",\n");
+                Bitmap original = codeFileViewModel.getOriginalImage(view.getContext());
+                Bitmap thumbnail = codeFileViewModel.getOriginalThumbnailImage(view.getContext());
+                Bitmap code = codeFileViewModel.getCodeImage(view.getContext());
+                Bitmap codeThumb = codeFileViewModel.getCodeThumbnailImage(view.getContext());
+                ImageDialogFragment dialog = ImageDialogFragment.newInstance(objectAsNiceJson, original, thumbnail, code, codeThumb);
+                showDialog(dialog);
             }
         });
-        initFab(binding, codeFileViewModel, originalImage);
+        initFab(binding, codeFileViewModel);
     }
 
-    private void initFab(final ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel, final Bitmap originalImage) {
+    private void initFab(final ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel) {
         final FloatingActionButton fab = binding.activityCodeFileDetailFab;
         View codeLayout = binding.activityCodeFileDetailContent.contentCodeFileDetailCodeLayout;
         if (codeFileViewModel.isCodeAvailable(this)) {
@@ -94,6 +99,10 @@ public class CodeFileDetailActivity extends BaseActivity {
                     FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileViewModel);
                 }
             });
+            if (codeFileViewModel.getCodeDisplayContent().equals(codeFileViewModel.getCodeRawContent())) {
+                // Don't display double infos
+                binding.activityCodeFileDetailContent.contentCodeFileDetailCodeRawContentLayout.setVisibility(View.GONE);
+            }
         } else {
             // No code, let the user try again
             codeLayout.setVisibility(View.GONE);
@@ -101,18 +110,31 @@ public class CodeFileDetailActivity extends BaseActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ArrayList<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile(), originalImage);
-                    if (!codeFiles.isEmpty()) {
-                        CodeFile codeFile = codeFiles.get(0);// TODO handle multiple codes
-                        CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                        if (newCodeFileViewModel.getCodeImage(view.getContext()) != null) {
-                            // TODO persist
-                            initFab(binding, newCodeFileViewModel, originalImage);
-                        } else {
-                            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
-                        }
+                    handleFile(view);
+                }
+
+                private void handleFile(View view) {
+                    ArrayList<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile());
+                    if (codeFiles.isEmpty()) {
+                        showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                     } else {
-                        showSimpleDialog("No Code could be created");
+                        for (CodeFile codeFile : codeFiles) {
+                            CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
+                            if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
+                                // TODO persist
+                            } else {
+                                showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+                            }
+                        }
+                        if (codeFiles.size() > 1) {
+                            // TODO handle multiple codes
+                            logError("Ignoring multiple codes: " + codeFiles.size());
+                        }
+                        CodeFile codeFile = codeFiles.get(0);
+                        CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
+                        if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
+                            initFab(binding, newCodeFileViewModel);
+                        }
                     }
                 }
             });

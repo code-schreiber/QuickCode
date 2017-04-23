@@ -64,10 +64,11 @@ public class CodeFileFactory {
         return codeFiles;
     }
 
-    public static ArrayList<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile, Bitmap originalImage) {
+    public static ArrayList<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile) {
         String originalFilename = codeFile.originalCodeFile().filename();
         String fileType = codeFile.originalCodeFile().fileType();
         int size = codeFile.originalCodeFile().size();
+        Bitmap originalImage = CodeFileViewModel.create(codeFile).getOriginalImage(context);
         return createCodeFiles(context, originalFilename, fileType, size, originalImage, "CodeFile of " + originalFilename);
     }
 
@@ -117,15 +118,5 @@ public class CodeFileFactory {
             return new ArrayList<>(Collections.singletonList(t));
         }
     }
-
-// TODO when E and when T
-//    @NonNull
-//    private static <E> ArrayList<E> createSingleBitmapListWithE(E t) {
-//        if (t == null) {
-//            return (ArrayList<E>) Collections.EMPTY_LIST;
-//        } else {
-//            return (ArrayList<E>) Collections.singletonList(t);
-//        }
-//    }
 
 }
