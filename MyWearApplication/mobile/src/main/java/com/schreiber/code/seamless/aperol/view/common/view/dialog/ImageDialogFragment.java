@@ -18,17 +18,19 @@ public class ImageDialogFragment extends DialogFragment {
 
     private static final String INFO = "INFO";
     private static final String IMAGE_ORIGINAL = "IMAGE_ORIGINAL";
+    private static final String IMAGE_ORIGINAL_THUMBNAIL = "IMAGE_ORIGINAL_THUMBNAIL";
     private static final String IMAGE_CODE = "IMAGE_CODE";
-    private static final String IMAGE_THUMBNAIL = "IMAGE_THUMBNAIL";
+    private static final String IMAGE_CODE_THUMBNAIL = "IMAGE_CODE_THUMBNAIL";
 
 
-    public static ImageDialogFragment newInstance(String info, Bitmap fileAsImage, Bitmap code, Bitmap thumbnail) {
+    public static ImageDialogFragment newInstance(String info, Bitmap fileAsImage, Bitmap thumbnail, Bitmap code, Bitmap codeThumbnail) {
         ImageDialogFragment fragment = new ImageDialogFragment();
         Bundle args = new Bundle();
         args.putString(INFO, info);
         args.putParcelable(IMAGE_ORIGINAL, fileAsImage);
+        args.putParcelable(IMAGE_ORIGINAL_THUMBNAIL, thumbnail);
         args.putParcelable(IMAGE_CODE, code);
-        args.putParcelable(IMAGE_THUMBNAIL, thumbnail);
+        args.putParcelable(IMAGE_CODE_THUMBNAIL, codeThumbnail);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,12 +47,15 @@ public class ImageDialogFragment extends DialogFragment {
         ImageView original = new ImageView(context);
         original.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_ORIGINAL));
         layout.addView(original);
+        ImageView thumb = new ImageView(context);
+        thumb.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_ORIGINAL_THUMBNAIL));
+        layout.addView(thumb);
         ImageView code = new ImageView(context);
         code.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_CODE));
         layout.addView(code);
-        ImageView thumb = new ImageView(context);
-        thumb.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_THUMBNAIL));
-        layout.addView(thumb);
+        ImageView codeThumb = new ImageView(context);
+        codeThumb.setImageBitmap((Bitmap) getArguments().getParcelable(IMAGE_CODE_THUMBNAIL));
+        layout.addView(codeThumb);
         ScrollView scrollView = new ScrollView(context);
         scrollView.addView(layout);
         return new AlertDialog.Builder(context)

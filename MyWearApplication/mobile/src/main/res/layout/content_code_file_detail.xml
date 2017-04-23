@@ -161,7 +161,9 @@
                         tools:text="codeDisplayContent"/>
                 </LinearLayout>
 
-                <LinearLayout style="@style/CodeFileDetailLinearLayout">
+                <LinearLayout
+                    android:id="@+id/content_code_file_detail_code_raw_content_layout"
+                    style="@style/CodeFileDetailLinearLayout">
 
                     <ImageView
                         style="@style/CodeFileDetailImageView"

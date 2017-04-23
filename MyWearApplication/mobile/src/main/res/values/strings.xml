@@ -17,7 +17,7 @@
     <string name="code_fie_detail_file_type">Original file type</string>
     <string name="code_fie_detail_code_type">Code type</string>
     <string name="code_fie_detail_code_content_type">Code content type</string>
-    <string name="code_fie_detail_code_display_content">Code display content</string>
+    <string name="code_fie_detail_code_display_content">Code content</string>
     <string name="code_fie_detail_code_raw_content">Code raw content</string>
 
 </resources>
