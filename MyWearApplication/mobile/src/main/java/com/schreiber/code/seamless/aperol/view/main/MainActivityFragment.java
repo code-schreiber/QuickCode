@@ -32,7 +32,6 @@ import java.util.ArrayList;
 public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
 
     private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
     private MyCustomAdapter adapter;
 
     private static final int READ_REQUEST_CODE = 111;
@@ -47,7 +46,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new MyCustomAdapter(getAdapterData(), this);
@@ -68,6 +67,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 }
             }
         }
+        logError("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
         showSnack("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
     }
 
@@ -124,11 +124,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         ArrayList<CodeFile> assets = new ArrayList<>();
         for (String path : paths) {
-            ArrayList<CodeFile> item = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
-            if (!item.isEmpty()) {
-                assets.addAll(item);
-            } else {
+            ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
+            if (items.isEmpty()) {
                 showSimpleDialog("Error: Not adding " + path);
+            } else {
+                assets.addAll(items);
             }
         }
 
@@ -143,7 +143,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
             ArrayList<CodeFileViewModel> adapterData = getAdapterData();
             if (adapterData.isEmpty()) {
-//                showSimpleDialog("adapterData is empty after adding file, showing item that was not persisted");
+                logError("adapterData is empty after adding file, showing item that was not persisted");
                 adapter.addData(CodeFileViewModel.create(codeFile));
             } else {
                 adapter.replaceData(adapterData);
@@ -159,14 +159,16 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     void handleFile(Uri uri) {
-        if (uri != null) {
-            ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
-            if (items.isEmpty()) {
-                showSimpleDialog("No codes found in file.");
-            } else {
-                for (CodeFile item : items) {
-                    addItemToAdapter(item);
+        ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
+        if (items.isEmpty()) {
+            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+        } else {
+            for (CodeFile codeFile : items) {
+                CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
+                if (!newCodeFileViewModel.isCodeAvailable(getActivity())) {
+                    showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                 }
+                addItemToAdapter(codeFile);
             }
         }
     }

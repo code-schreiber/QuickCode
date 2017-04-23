@@ -151,19 +151,19 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return getBitmapFromFile(context, SUFFIX_CODE);
     }
 
-    public boolean saveOriginalThumbnailImage(Context context, Bitmap image) throws IOException {
+    boolean saveOriginalThumbnailImage(Context context, Bitmap image) throws IOException {
         return saveBitmapToFile(context, image, SUFFIX_ORIGINAL_THUMBNAIL);
     }
 
-    public boolean saveCodeThumbnailImage(Context context, Bitmap image) throws IOException {
+    boolean saveCodeThumbnailImage(Context context, Bitmap image) throws IOException {
         return saveBitmapToFile(context, image, SUFFIX_CODE_THUMBNAIL);
     }
 
-    public boolean saveOriginalImage(Context context, Bitmap image) throws IOException {
+    boolean saveOriginalImage(Context context, Bitmap image) throws IOException {
         return saveBitmapToFile(context, image, SUFFIX_ORIGINAL);
     }
 
-    public boolean saveCodeImage(Context context, Bitmap image) throws IOException {
+    boolean saveCodeImage(Context context, Bitmap image) throws IOException {
         return saveBitmapToFile(context, image, SUFFIX_CODE);
     }
 
