@@ -7,8 +7,6 @@ import com.google.auto.value.AutoValue;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 @AutoValue
@@ -33,11 +31,11 @@ public abstract class CodeFile implements Parcelable {
     }
 
     private static ArrayList<String> createTags(OriginalCodeFile originalCodeFile, String suffix, String codeType, String codeContentType) {
-        List<String> tags = Arrays.asList(
-                originalCodeFile.filename(),
-                suffix,
-                originalCodeFile.fileType(),
-                originalCodeFile.importedFrom());
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add(originalCodeFile.filename());
+        tags.add(suffix);
+        tags.add(originalCodeFile.fileType());
+        tags.add(originalCodeFile.importedFrom());
         if (!TypeUtils.isEmpty(codeType)) {
             tags.add(codeType);
         }

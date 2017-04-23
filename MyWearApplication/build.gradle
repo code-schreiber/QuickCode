@@ -46,7 +46,7 @@ static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
     def postfix = git.tag.list().size()
     def completeVersionCode = versionCode + postfix
-    completeVersionCode += 490101 // Temporary fix for Google Play VersionCode Update
+    completeVersionCode += 490102 // Temporary fix for Google Play VersionCode Update
     return Integer.parseInt(completeVersionCode)
 }
 
