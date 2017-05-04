@@ -4,7 +4,7 @@ package com.schreiber.code.seamless.aperol.util;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class TypeUtils {
@@ -16,7 +16,7 @@ public class TypeUtils {
     }
 
     @NonNull
-    public static String getCommaSeparatedStringsFromList(ArrayList<String> strings) {
+    public static String getCommaSeparatedStringsFromList(List<String> strings) {
         String commaSeparatedStrings = "";
         for (String string : strings) {
             commaSeparatedStrings += string + ", ";

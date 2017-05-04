@@ -7,8 +7,11 @@ import com.google.auto.value.AutoValue;
 
 import java.util.Date;
 
+import me.mattlogan.auto.value.firebase.annotation.FirebaseValue;
+
 
 @AutoValue
+@FirebaseValue
 public abstract class OriginalCodeFile implements Parcelable {
 
     public static OriginalCodeFile create(String filename, String fileType, int size, String importedFrom) {

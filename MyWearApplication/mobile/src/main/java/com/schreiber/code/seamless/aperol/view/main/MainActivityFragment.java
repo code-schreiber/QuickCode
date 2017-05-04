@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
+import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
@@ -36,6 +36,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     private static final int READ_REQUEST_CODE = 111;
 
+    private DatabaseReferenceWrapper.OnCodeFilesChangedListener onCodeFilesChangedListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -49,12 +51,33 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new MyCustomAdapter(getAdapterData(), this);
-        recyclerView.setAdapter(adapter);
 
+        onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
+            @Override
+            public void codeFilesChanged(CodeFile codeFile) {
+                adapter.addData(CodeFileViewModel.create(codeFile));
+            }
+        };
+        DatabaseReferenceWrapper.addOnCodeFilesChangedListener(onCodeFilesChangedListener);//TODO get reference to use later
+        DatabaseReferenceWrapper.loadCodeFiles(new DatabaseReferenceWrapper.OnCodeFilesLoadedListener() {
+            @Override
+            public void codeFilesLoaded(ArrayList<CodeFile> codeFiles) {
+                ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+                adapter.replaceData(adapterData);
+            }
+        });
+
+        adapter = new MyCustomAdapter(new ArrayList<CodeFileViewModel>(), MainActivityFragment.this);
+        recyclerView.setAdapter(adapter);
         return rootView;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        //TODO
+//        DatabaseReferenceWrapper.removeOnCodeFilesChangedListener(onCodeFilesChangedListener); TODO
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
@@ -79,7 +102,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        if (SharedPreferencesWrapper.deleteListItem(getActivity(), codeFile)) {
+        if (DatabaseReferenceWrapper.deleteListItem(codeFile)) {
             Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
                     .setAction("Undo", new View.OnClickListener() {
                         @Override
@@ -92,7 +115,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             Snackbar.make(recyclerView, "Problem deleting " + codeFile.displayName(), Snackbar.LENGTH_LONG)
                     .show();
         }
-        adapter.replaceData(getAdapterData());
         return true;
     }
 
@@ -138,30 +160,17 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     private void addItemToAdapter(CodeFile codeFile) {
-        ArrayList<CodeFile> itemsBefore = SharedPreferencesWrapper.getListItems(getActivity());
-        if (!itemsBefore.contains(codeFile)) {
-            SharedPreferencesWrapper.addListItem(getActivity(), codeFile);
-            ArrayList<CodeFileViewModel> adapterData = getAdapterData();
-            if (adapterData.isEmpty()) {
-                logError("adapterData is empty after adding file, showing item that was not persisted");
-                adapter.addData(CodeFileViewModel.create(codeFile));
-            } else {
-                adapter.replaceData(adapterData);
-            }
+        if (!adapter.contains(codeFile)) {
+            DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
         } else {
             showSnack(codeFile.displayName() + " already exists");
         }
     }
 
-    private ArrayList<CodeFileViewModel> getAdapterData() {
-        ArrayList<CodeFile> data = SharedPreferencesWrapper.getListItems(getActivity());
-        return CodeFileViewModel.createList(data);
-    }
-
     void handleFile(Uri uri) {
         ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
         if (items.isEmpty()) {
-            showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+            showSimpleDialog("No file added: No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
         } else {
             for (CodeFile codeFile : items) {
                 CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
@@ -173,6 +182,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }
     }
 
+    @Deprecated
     private void showSnack(String m) {
         logInfo(m);
         Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();

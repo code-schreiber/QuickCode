@@ -49,6 +49,7 @@ public class CodeFileCreator {
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
             if (barcodes.size() < 1) {
+                // FIXME bug when unsuported code is still detected
                 Logger.logError("No barcodes detected, creating CodeFile without barcode: " + originalFilename);
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
                 CodeFile codeFile = CodeFile.create(originalCodeFile);

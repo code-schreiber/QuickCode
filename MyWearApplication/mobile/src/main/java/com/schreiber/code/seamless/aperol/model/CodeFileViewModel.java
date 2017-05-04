@@ -20,6 +20,7 @@ import com.schreiber.code.seamless.aperol.util.TypeUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @AutoValue
@@ -61,7 +62,7 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getTags() {
-        ArrayList<String> tags = codeFile().tags();
+        List<String> tags = codeFile().tags();
         return TypeUtils.getCommaSeparatedStringsFromList(tags);
     }
 
