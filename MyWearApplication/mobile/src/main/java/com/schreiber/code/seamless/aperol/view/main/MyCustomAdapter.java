@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ItemListBinding;
+import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
@@ -28,7 +29,7 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
         Collections.sort(this.data);
     }
 
-    void replaceData(ArrayList<CodeFileViewModel> items) {
+    void replaceData(ArrayList<CodeFileViewModel> items) {// TODO delete?
         data.clear();
         data.addAll(items);
         Collections.sort(data);
@@ -57,6 +58,10 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public boolean contains(CodeFile codeFile) {
+        return data.contains(CodeFileViewModel.create(codeFile));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
