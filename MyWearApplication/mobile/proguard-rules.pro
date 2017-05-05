@@ -17,3 +17,15 @@
 #}
 
 -keepattributes LineNumberTable
+
+# Firebase Realtime Database
+-keepattributes Signature
+#-keepclassmembers class com.yourcompany.models.** {
+#  *;
+#}
+-keepclassmembers com.schreiber.code.seamless.aperol.model.CodeFile {
+  *;
+}
+-keepclassmembers com.schreiber.code.seamless.aperol.model.OriginalCodeFile {
+  *;
+}
