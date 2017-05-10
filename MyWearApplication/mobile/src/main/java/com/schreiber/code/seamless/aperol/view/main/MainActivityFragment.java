@@ -54,8 +54,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
         onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
             @Override
-            public void codeFilesChanged(CodeFile codeFile) {
-                adapter.addData(CodeFileViewModel.create(codeFile));
+            public void codeFilesChanged(ArrayList<CodeFile> codeFiles) {
+                ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+                adapter.replaceData(adapterData);// TODO refactoring
             }
         };
         DatabaseReferenceWrapper.addOnCodeFilesChangedListener(onCodeFilesChangedListener);//TODO get reference to use later
@@ -112,8 +113,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     })
                     .show();
         } else {
-            Snackbar.make(recyclerView, "Problem deleting " + codeFile.displayName(), Snackbar.LENGTH_LONG)
-                    .show();
+            showSnack("Problem deleting " + codeFile.displayName());
         }
         return true;
     }
@@ -146,7 +146,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
         ArrayList<CodeFile> assets = new ArrayList<>();
         for (String path : paths) {
-            ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromPath(getActivity(), path);
+            ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromAssets(getActivity(), path);
             if (items.isEmpty()) {
                 showSimpleDialog("Error: Not adding " + path);
             } else {
