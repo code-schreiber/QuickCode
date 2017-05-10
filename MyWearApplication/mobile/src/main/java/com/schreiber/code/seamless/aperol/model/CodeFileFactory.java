@@ -28,7 +28,7 @@ public class CodeFileFactory {
         // Hide utility class constructor
     }
 
-    public static ArrayList<CodeFile> createCodeFileFromPath(Context context, String path) {
+    public static ArrayList<CodeFile> createCodeFileFromAssets(Context context, String path) {
         Uri uri = Uri.parse(path);
         String originalFilename = uri.getLastPathSegment();
         String fileType = getFileSuffix(originalFilename);

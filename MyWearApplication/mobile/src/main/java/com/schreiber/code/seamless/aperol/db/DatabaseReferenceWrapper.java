@@ -32,7 +32,7 @@ public final class DatabaseReferenceWrapper {
 
     public interface OnCodeFilesChangedListener {
 
-        void codeFilesChanged(CodeFile codeFile);
+        void codeFilesChanged(ArrayList<CodeFile> codeFiles);
 
     }
 
@@ -142,19 +142,9 @@ public final class DatabaseReferenceWrapper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<CodeFile> codeFiles = new ArrayList<>();
-                Logger.logInfo("Count " + dataSnapshot.getChildrenCount());
+                Logger.logInfo("onDataChange in loadCodeFiles. Count " + dataSnapshot.getChildrenCount());
                 if (dataSnapshot.getChildren() != null) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        CodeFile codeFile = null;
-                        try {
-                            codeFile = CodeFile.create(snapshot);
-                        } catch (NullPointerException e) {
-                            Logger.logError(e.getMessage());
-                        }
-                        if (codeFile != null) {
-                            codeFiles.add(codeFile);
-                        }
-                    }
+                    getCodeFilesFromDataSnapshot(dataSnapshot, codeFiles);
                 } else {
                     Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
                 }
@@ -173,19 +163,14 @@ public final class DatabaseReferenceWrapper {
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                CodeFile codeFile = null;
-                if (dataSnapshot.exists()) {
-                    try {
-                        codeFile = CodeFile.create(dataSnapshot);//TODO somehow this is not working
-                    } catch (NullPointerException e) {
-                        Logger.logError(e.getMessage());
-                    }
-                    if (codeFile != null) {
-                        onCodeFilesChangedListener.codeFilesChanged(codeFile);
-                    } else {
-                        Logger.logError("codeFile is null in onDataChange: " + dataSnapshot);
-                    }
+                ArrayList<CodeFile> codeFiles = new ArrayList<>();
+                Logger.logInfo("onDataChange in addOnCodeFilesChangedListener. Count " + dataSnapshot.getChildrenCount());
+                if (dataSnapshot.getChildren() != null) {
+                    getCodeFilesFromDataSnapshot(dataSnapshot, codeFiles);
+                } else {
+                    Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
                 }
+                onCodeFilesChangedListener.codeFilesChanged(codeFiles);
             }
 
             @Override
@@ -196,6 +181,20 @@ public final class DatabaseReferenceWrapper {
         getDbReference().getRef().child(CODE_FILES_KEY).addValueEventListener(listener);
         codeFilesChangedListeners.add(listener);
         return listener;
+    }
+
+    private static void getCodeFilesFromDataSnapshot(DataSnapshot dataSnapshot, ArrayList<CodeFile> codeFiles) {
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            CodeFile codeFile = null;
+            try {
+                codeFile = CodeFile.create(snapshot);
+            } catch (NullPointerException e) {
+                Logger.logError(e.getMessage());// TODO delete try catch block
+            }
+            if (codeFile != null) {
+                codeFiles.add(codeFile);
+            }
+        }
     }
 
     public static void removeOnCodeFilesChangedListener(ValueEventListener listener) {

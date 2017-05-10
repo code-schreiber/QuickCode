@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
+import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
@@ -121,14 +122,10 @@ public class CodeFileDetailActivity extends BaseActivity {
                         for (CodeFile codeFile : codeFiles) {
                             CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                             if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
-                                // TODO persist
+                                DatabaseReferenceWrapper.addListItemAuthFirst(codeFile); // TODO check that this handles multiple codes
                             } else {
                                 showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                             }
-                        }
-                        if (codeFiles.size() > 1) {
-                            // TODO handle multiple codes
-                            logError("Ignoring multiple codes: " + codeFiles.size());
                         }
                         CodeFile codeFile = codeFiles.get(0);
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
