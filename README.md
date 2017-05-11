@@ -9,7 +9,7 @@ Develop
 
 
 
-<img align=‘center’ src='https://raw.githubusercontent.com/code-schreiber/seamless-aperol/develop/MyWearApplication/mobile/src/main/res/mipmap-xxhdpi/ic_launcher.png' width='100’ height='100’/>
+<img align='center' src='https://raw.githubusercontent.com/code-schreiber/seamless-aperol/develop/MyWearApplication/mobile/src/main/res/mipmap-xxhdpi/ic_launcher.png' width='100' height='100'/>
 
 ### Seamless Aperol
 
