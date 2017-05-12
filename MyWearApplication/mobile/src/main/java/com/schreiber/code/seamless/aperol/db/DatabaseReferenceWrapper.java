@@ -28,7 +28,7 @@ public final class DatabaseReferenceWrapper {
 
     private static final String CODE_FILES_KEY = "CODE_FILES_KEY";
 
-    private static List<ValueEventListener> codeFilesChangedListeners = new ArrayList<>();
+    private static final List<ValueEventListener> codeFilesChangedListeners = new ArrayList<>();
 
     public interface OnCodeFilesChangedListener {
 
@@ -46,49 +46,6 @@ public final class DatabaseReferenceWrapper {
         // Hide utility class constructor
     }
 
-    private static void deleteAll() {
-        Query applesQuery = getDbReference().child(CODE_FILES_KEY);
-
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            Logger.logInfo("onComplete " + databaseError + databaseReference);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Logger.logError("onCancelled" + databaseError.toException().getMessage());
-            }
-        });
-
-        applesQuery = getDbReference();
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            Logger.logInfo("onComplete " + databaseError + databaseReference);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Logger.logError("onCancelled" + databaseError.toException().getMessage());
-            }
-        });
-    }
-
     public static void addListItemAuthFirst(final CodeFile codeFile) {
         final FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -103,7 +60,7 @@ public final class DatabaseReferenceWrapper {
                                 addListItem(codeFile);
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Logger.logError("signInAnonymously:failure: " + task.getException().getMessage());
+                                Logger.logException("signInAnonymously:failure: ", task.getException());
                             }
                         }
                     });
@@ -203,9 +160,17 @@ public final class DatabaseReferenceWrapper {
         }
     }
 
-    public static boolean deleteListItem(CodeFile codeFile) {
-        // TODO
-        return false;
+    public static void deleteListItem(final CodeFile codeFile) {
+        getDbReference().child(CODE_FILES_KEY).child(codeFile.id()).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    Logger.logInfo("Codefile deleted " + codeFile.displayName());
+                } else {
+                    Logger.logException("Codefile not deleted " + codeFile.displayName(), databaseError.toException());
+                }
+            }
+        });
     }
 
     public static <T> boolean containsListItem(Context context) {
@@ -213,8 +178,47 @@ public final class DatabaseReferenceWrapper {
         return false;
     }
 
-    public static void clearAll(Context context) {
-        // TODO
+    public static void clearAll() {
+        Query applesQuery = getDbReference().child(CODE_FILES_KEY);
+
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            Logger.logInfo("onComplete " + databaseError + databaseReference);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Logger.logError("onCancelled" + databaseError.toException().getMessage());
+            }
+        });
+
+        applesQuery = getDbReference();
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            Logger.logInfo("onComplete " + databaseError + databaseReference);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Logger.logError("onCancelled" + databaseError.toException().getMessage());
+            }
+        });
     }
 
     private static DatabaseReference getDbReference() {

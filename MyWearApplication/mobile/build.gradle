@@ -65,8 +65,6 @@ dependencies {
 
     compile "com.jakewharton.timber:timber:4.5.1"
 
-    compile 'com.orhanobut:hawk:2.0.1'
-
     compile "com.google.firebase:firebase-auth:${rootProject.googleServices}"
     compile "com.google.firebase:firebase-database:${rootProject.googleServices}"
     compile "com.google.firebase:firebase-core:${rootProject.googleServices}"
