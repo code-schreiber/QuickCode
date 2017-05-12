@@ -5,13 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.orhanobut.hawk.Hawk;
-import com.orhanobut.hawk.LogInterceptor;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
-import com.schreiber.code.seamless.aperol.util.Logger;
-
-import java.util.ArrayList;
-
 
 public final class SharedPreferencesWrapper {
 
@@ -31,51 +24,8 @@ public final class SharedPreferencesWrapper {
         getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).apply();
     }
 
-    public static boolean addListItem(Context context, CodeFile codeFile) {
-        initHawk(context);
-        ArrayList<CodeFile> items = getListItems(context);
-        items.add(codeFile);
-        return Hawk.put(LIST_ITEMS_KEY, items);
-    }
-
-    public static ArrayList<CodeFile> getListItems(Context context) {
-        initHawk(context);
-        ArrayList<CodeFile> codeFiles = Hawk.get(LIST_ITEMS_KEY);
-        if (codeFiles == null) {
-            codeFiles = new ArrayList<>();
-        }
-        return codeFiles;
-    }
-
-    public static boolean deleteListItem(Context context, CodeFile codeFile) {
-        initHawk(context);
-        ArrayList<CodeFile> items = getListItems(context);
-        boolean removed = items.remove(codeFile);
-        boolean put = Hawk.put(LIST_ITEMS_KEY, items);
-        return removed && put;
-    }
-
-    public static <T> boolean containsListItem(Context context, T t) {
-        initHawk(context);
-        return Hawk.contains(LIST_ITEMS_KEY);
-    }
-
-    private static void initHawk(Context context) {
-        if (!Hawk.isBuilt()) {
-            Hawk.init(context)
-                    .setLogInterceptor(new LogInterceptor() {
-                        @Override
-                        public void onLog(String message) {
-                            Logger.logDebug("Hawk says: " + message);
-                        }
-                    })
-                    .build();
-        }
-    }
-
     public static void clearAll(Context context) {
         getDefaultPreferences(context).edit().clear().commit();
-        Hawk.deleteAll();
     }
 
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {

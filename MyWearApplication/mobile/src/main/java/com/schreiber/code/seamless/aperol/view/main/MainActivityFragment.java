@@ -60,6 +60,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
         };
         DatabaseReferenceWrapper.addOnCodeFilesChangedListener(onCodeFilesChangedListener);//TODO get reference to use later
+
         DatabaseReferenceWrapper.loadCodeFiles(new DatabaseReferenceWrapper.OnCodeFilesLoadedListener() {
             @Override
             public void codeFilesLoaded(ArrayList<CodeFile> codeFiles) {
@@ -103,18 +104,20 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        if (DatabaseReferenceWrapper.deleteListItem(codeFile)) {
-            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                    .setAction("Undo", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            addItemToAdapter(codeFile);
-                        }
-                    })
-                    .show();
-        } else {
-            showSnack("Problem deleting " + codeFile.displayName());
-        }
+        DatabaseReferenceWrapper.deleteListItem(codeFile);
+        // TODO add undo functionality
+//        {
+//            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+//                    .setAction("Undo", new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            addItemToAdapter(codeFile);
+//                        }
+//                    })
+//                    .show();
+//        } else {
+//            showSnack("Problem deleting " + codeFile.displayName());
+//        }
         return true;
     }
 
