@@ -10,6 +10,10 @@
             name="codeFileViewModel"
             type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
 
+        <variable
+            name="clickListener"
+            type="com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListener"/>
+
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -40,6 +44,7 @@
                     app:layout_collapseMode="parallax">
 
                     <ImageView
+                        android:onClick="@{()->clickListener.onImageClicked()}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -47,7 +52,6 @@
                         android:tint="@color/transparent_black"
                         app:imageBitmap="@{codeFileViewModel.getOriginalImage(context)}"
                         tools:src="@drawable/ic_file_black_24dp"/>
-
 
                 </FrameLayout>
 
