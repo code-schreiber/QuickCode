@@ -29,15 +29,9 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
         Collections.sort(this.data);
     }
 
-    void replaceData(ArrayList<CodeFileViewModel> items) {// TODO delete?
+    void replaceData(ArrayList<CodeFileViewModel> items) {
         data.clear();
         data.addAll(items);
-        Collections.sort(data);
-        notifyDataSetChanged();
-    }
-
-    void addData(CodeFileViewModel item) {
-        data.add(item);
         Collections.sort(data);
         notifyDataSetChanged();
     }

@@ -42,6 +42,12 @@ public final class DatabaseReferenceWrapper {
 
     }
 
+    public interface OnCodeFileDeletedListener {
+
+        void codeFileDeleted(Exception exception);
+
+    }
+
     private DatabaseReferenceWrapper() {
         // Hide utility class constructor
     }
@@ -160,14 +166,14 @@ public final class DatabaseReferenceWrapper {
         }
     }
 
-    public static void deleteListItem(final CodeFile codeFile) {
+    public static void deleteListItem(final CodeFile codeFile, final OnCodeFileDeletedListener onCodeFileDeletedListener) {
         getDbReference().child(CODE_FILES_KEY).child(codeFile.id()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
                 if (databaseError == null) {
-                    Logger.logInfo("Codefile deleted " + codeFile.displayName());
+                    onCodeFileDeletedListener.codeFileDeleted(null);
                 } else {
-                    Logger.logException("Codefile not deleted " + codeFile.displayName(), databaseError.toException());
+                    onCodeFileDeletedListener.codeFileDeleted(databaseError.toException());
                 }
             }
         });
@@ -179,9 +185,9 @@ public final class DatabaseReferenceWrapper {
     }
 
     public static void clearAll() {
-        Query applesQuery = getDbReference().child(CODE_FILES_KEY);
+        Query query = getDbReference().child(CODE_FILES_KEY);
 
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
@@ -200,8 +206,8 @@ public final class DatabaseReferenceWrapper {
             }
         });
 
-        applesQuery = getDbReference();
-        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        query = getDbReference();
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {

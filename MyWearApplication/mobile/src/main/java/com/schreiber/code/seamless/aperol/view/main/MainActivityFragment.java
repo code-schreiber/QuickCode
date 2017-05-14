@@ -20,11 +20,13 @@ import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
+import com.schreiber.code.seamless.aperol.util.Tracker;
 import com.schreiber.code.seamless.aperol.util.android.NetworkUtils;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.base.BaseFragment;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 import com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity;
+import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
 import java.util.ArrayList;
 
@@ -99,25 +101,37 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public void onItemClicked(CodeFileViewModel item) {
         CodeFileDetailActivity.start((BaseActivity) getActivity(), item);
+        Tracker.trackOnClick(getActivity(), "onItemClicked");
+    }
+
+    @Override
+    public void onCodeInItemClicked(CodeFileViewModel item) {
+        FullscreenImageActivity.start((BaseActivity) getActivity(), item);
+        Tracker.trackOnClick(getActivity(), "onCodeInItemClicked");
     }
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile);
-        // TODO add undo functionality
-//        {
-//            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-//                    .setAction("Undo", new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            addItemToAdapter(codeFile);
-//                        }
-//                    })
-//                    .show();
-//        } else {
-//            showSnack("Problem deleting " + codeFile.displayName());
-//        }
+        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReferenceWrapper.OnCodeFileDeletedListener() {
+            @Override
+            public void codeFileDeleted(Exception exception) {
+                if (exception == null) {
+                    Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    addItemToAdapter(codeFile);
+                                }
+                            })
+                            .show();
+                } else {
+                    showSnack("Problem deleting " + codeFile.displayName());
+                    logException("Problem deleting " + codeFile.displayName(), exception);
+                }
+            }
+        });
+        Tracker.trackOnClick(getActivity(), "onItemLongClicked");
         return true;
     }
 

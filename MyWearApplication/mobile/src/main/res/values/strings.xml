@@ -9,6 +9,7 @@
     <string name="menu_debug">Debug</string>
     <string name="menu_debug_reset_app">Reset App and exit</string>
 
+    <string name="undo">undo</string>
 
     <string name="code_fie_detail_tags">Tags</string>
     <string name="code_fie_detail_original_file">Original file</string>
