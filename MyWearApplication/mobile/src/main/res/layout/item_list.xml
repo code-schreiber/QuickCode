@@ -82,6 +82,8 @@
                 android:layout_height="@dimen/size_thumbnail_small"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
                 android:scaleType="fitCenter"
                 app:imageBitmap="@{codeFileViewModel.getCodeThumbnailImage(context)}"
                 tools:src="@drawable/ic_file_content_black_24dp"/>

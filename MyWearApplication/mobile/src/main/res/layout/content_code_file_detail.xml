@@ -11,6 +11,9 @@
             name="codeFileViewModel"
             type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
 
+        <variable
+            name="clickListener"
+            type="com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListener"/>
     </data>
 
     <android.support.v4.widget.NestedScrollView
@@ -40,11 +43,17 @@
                     tools:text="some, tags"/>
             </LinearLayout>
 
-            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+            <LinearLayout
+                style="@style/CodeFileDetailLinearLayout"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{()->clickListener.onImageClicked()}">
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
-                    android:src="@drawable/ic_file_black_24dp"/>
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerInside"
+                    app:imageBitmap="@{codeFileViewModel.getOriginalThumbnailImage(context)}"
+                    tools:src="@drawable/ic_file_black_24dp"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
