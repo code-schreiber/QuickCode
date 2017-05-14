@@ -30,7 +30,6 @@ import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
-import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
@@ -176,7 +175,7 @@ public class MainActivity extends BaseActivity implements
             return (MainActivityFragment) fragment;// TODO do this the right way
         }
         showSnack(MainActivityFragment.class + " not found");
-        Logger.logError(MainActivityFragment.class + " not found");
+        logError(MainActivityFragment.class + " not found");
         return null;
     }
 
