@@ -27,7 +27,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+            <LinearLayout
+                android:id="@+id/content_code_file_detail_debug_tags"
+                style="@style/CodeFileDetailLinearLayout">
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
@@ -61,8 +63,8 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
-                    android:text="@{codeFileViewModel.getOriginalFilePath()}"
-                    tools:text="original file"/>
+                    android:text="@{codeFileViewModel.getOriginalFilename()}"
+                    tools:text="original filename"/>
             </LinearLayout>
 
             <LinearLayout style="@style/CodeFileDetailLinearLayout">
@@ -81,7 +83,9 @@
                     tools:text="creation date"/>
             </LinearLayout>
 
-            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+            <LinearLayout
+                android:id="@+id/content_code_file_detail_debug_size"
+                style="@style/CodeFileDetailLinearLayout">
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
@@ -97,7 +101,9 @@
                     tools:text="original file size"/>
             </LinearLayout>
 
-            <LinearLayout style="@style/CodeFileDetailLinearLayout">
+            <LinearLayout
+                android:id="@+id/content_code_file_detail_debug_type"
+                style="@style/CodeFileDetailLinearLayout">
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
@@ -120,6 +126,11 @@
                 android:orientation="vertical">
 
                 <View style="@style/Divider"/>
+
+                <TextView
+                    style="@style/CodeFileDetailTextView.Title"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:text="@string/code_fie_detail_code"/>
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 

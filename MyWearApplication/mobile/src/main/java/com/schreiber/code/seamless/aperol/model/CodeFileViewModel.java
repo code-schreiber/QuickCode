@@ -66,8 +66,8 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return TypeUtils.getCommaSeparatedStringsFromList(tags);
     }
 
-    public String getOriginalFilePath() {
-        return codeFile().originalCodeFile().importedFrom() + " " + codeFile().originalCodeFile().filename();
+    public String getOriginalFilename() {
+        return codeFile().originalCodeFile().filename();
     }
 
     public String getCreationDateLong(Context context) {

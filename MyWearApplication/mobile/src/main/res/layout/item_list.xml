@@ -25,8 +25,8 @@
         android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/margin_medium"
-        android:paddingLeft="@dimen/margin_small"
-        android:paddingRight="@dimen/margin_small"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
         android:paddingTop="@dimen/margin_medium">
 
         <LinearLayout
