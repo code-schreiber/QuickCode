@@ -2,6 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.google.firebase.firebase-crash'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
+    }
+}
+
 android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -90,3 +99,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.getkeepsafe.dexcount'
