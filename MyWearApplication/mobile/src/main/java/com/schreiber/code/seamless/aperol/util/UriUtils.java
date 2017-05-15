@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
@@ -17,16 +18,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 public class UriUtils {
 
     public static final String MODE_READ = "r";
 
-    public static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
-    public static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
-    public static final String TYPE_RELATIVE_IMAGE = "image/";
+    private static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
+    private static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
+    private static final String TYPE_RELATIVE_IMAGE = "image/";
     public static final int SIZE_UNKNOWN = -1;
+
+    private static final String[] SUPPORTED_IMPORT_FORMATS = {
+            TYPE_ABSOLUTE_APPLICATION_PDF,
+            TYPE_RELATIVE_IMAGE,
+            TYPE_ABSOLUTE_TEXT_PLAIN,
+    };
 
     private UriUtils() {
         // Hide utility class constructor
@@ -155,6 +163,10 @@ public class UriUtils {
         return false;
     }
 
+    public static boolean isSupportedImportFile(ContentResolver contentResolver, Uri uri) {
+        return isPdf(contentResolver, uri) || isImage(contentResolver, uri) || isText(contentResolver, uri);
+    }
+
     public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
         return TYPE_ABSOLUTE_APPLICATION_PDF.equals(contentResolver.getType(uri));
     }
@@ -166,6 +178,30 @@ public class UriUtils {
 
     public static boolean isText(ContentResolver contentResolver, Uri uri) {
         return TYPE_ABSOLUTE_TEXT_PLAIN.equals(contentResolver.getType(uri));
+    }
+
+    @NonNull
+    public static String getSupportedImportFormatsAsString() {
+        ArrayList<String> supportedImportFormats = new ArrayList<>();
+        for (String supportedImportFormat : SUPPORTED_IMPORT_FORMATS) {
+            supportedImportFormats.add(getFormatName(supportedImportFormat));
+        }
+        return TypeUtils.getCommaSeparatedStringsFromList(supportedImportFormats);
+    }
+
+    @NonNull
+    private static String getFormatName(String supportedImportFormat) {
+        switch (supportedImportFormat) {
+            case TYPE_ABSOLUTE_APPLICATION_PDF:
+                return "Pdf";
+            case TYPE_RELATIVE_IMAGE:
+                return "Image";
+            case TYPE_ABSOLUTE_TEXT_PLAIN:
+                return "Text";
+            default:
+                Logger.logError("Unknown import format:" + supportedImportFormat);
+                return "Unknown import format: " + supportedImportFormat;
+        }
     }
 
 }
