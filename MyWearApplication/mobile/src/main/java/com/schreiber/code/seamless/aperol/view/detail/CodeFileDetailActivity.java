@@ -17,15 +17,19 @@ import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
 import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
+import com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListener;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
 import java.util.ArrayList;
 
 
-public class CodeFileDetailActivity extends BaseActivity {
+public class CodeFileDetailActivity extends BaseActivity implements OnImageClickedListener {
 
     private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
+
+    private ActivityCodeFileDetailBinding binding;
+    private CodeFileViewModel codeFileViewModel;
 
 
     public static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
@@ -38,15 +42,18 @@ public class CodeFileDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCodeFileDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
-        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
+        binding.setClickListener(this);
         binding.setCodeFileViewModel(codeFileViewModel);
+        binding.activityCodeFileDetailContent.setClickListener(this);
         binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
         setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
 
-        initViews(binding, codeFileViewModel);
+        initViews();
+        initDebugViews();
     }
 
     @Override
@@ -71,24 +78,21 @@ public class CodeFileDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initViews(ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel) {
-        setTitle(codeFileViewModel.getDisplayName());
-        binding.activityCodeFileDetailHeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String objectAsNiceJson = codeFileViewModel.toString().replace("{", "{\n").replace(",", ",\n");
-                Bitmap original = codeFileViewModel.getOriginalImage(view.getContext());
-                Bitmap thumbnail = codeFileViewModel.getOriginalThumbnailImage(view.getContext());
-                Bitmap code = codeFileViewModel.getCodeImage(view.getContext());
-                Bitmap codeThumb = codeFileViewModel.getCodeThumbnailImage(view.getContext());
-                ImageDialogFragment dialog = ImageDialogFragment.newInstance(objectAsNiceJson, original, thumbnail, code, codeThumb);
-                showDialog(dialog);
-            }
-        });
-        initFab(binding, codeFileViewModel);
+    @Override
+    public void onImageClicked() {
+        ImageDialogFragment dialog = ImageDialogFragment.newInstance(codeFileViewModel.getOriginalThumbnailImage(this));
+        showDialog(dialog);
     }
 
-    private void initFab(final ActivityCodeFileDetailBinding binding, final CodeFileViewModel codeFileViewModel) {
+    private void initViews() {
+        setTitle(codeFileViewModel.getDisplayName());
+        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setVisibility(View.GONE);
+        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
+        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugType.setVisibility(View.GONE);
+        initFab();
+    }
+
+    private void initFab() {
         final FloatingActionButton fab = binding.activityCodeFileDetailFab;
         View codeLayout = binding.activityCodeFileDetailContent.contentCodeFileDetailCodeLayout;
         if (codeFileViewModel.isCodeAvailable(this)) {
@@ -130,7 +134,10 @@ public class CodeFileDetailActivity extends BaseActivity {
                         CodeFile codeFile = codeFiles.get(0);
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                         if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
-                            initFab(binding, newCodeFileViewModel);
+                            codeFileViewModel = newCodeFileViewModel;
+                            initFab();
+                        } else {
+                            logError("Code image not available after extracting.");
                         }
                     }
                 }
@@ -138,4 +145,25 @@ public class CodeFileDetailActivity extends BaseActivity {
         }
     }
 
+    private void initDebugViews() {
+        // TODO use BuildConfig.DEBUG
+        if (true) {
+            binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setVisibility(View.VISIBLE);
+            binding.activityCodeFileDetailContent.contentCodeFileDetailDebugSize.setVisibility(View.VISIBLE);
+            binding.activityCodeFileDetailContent.contentCodeFileDetailDebugType.setVisibility(View.VISIBLE);
+            binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    String objectAsNiceJson = codeFileViewModel.toString().replace("{", "{\n").replace(",", ",\n");
+                    Bitmap original = codeFileViewModel.getOriginalImage(view.getContext());
+                    Bitmap thumbnail = codeFileViewModel.getOriginalThumbnailImage(view.getContext());
+                    Bitmap code = codeFileViewModel.getCodeImage(view.getContext());
+                    Bitmap codeThumb = codeFileViewModel.getCodeThumbnailImage(view.getContext());
+                    ImageDialogFragment dialog = ImageDialogFragment.newInstance(objectAsNiceJson, original, thumbnail, code, codeThumb);
+                    showDialog(dialog);
+                    return true;
+                }
+            });
+        }
+    }
 }

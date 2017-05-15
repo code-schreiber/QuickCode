@@ -16,9 +16,10 @@
     <string name="code_fie_detail_creation_date">Imported on</string>
     <string name="code_fie_detail_file_size">Original file size</string>
     <string name="code_fie_detail_file_type">Original file type</string>
-    <string name="code_fie_detail_code_type">Code type</string>
-    <string name="code_fie_detail_code_content_type">Code content type</string>
-    <string name="code_fie_detail_code_display_content">Code content</string>
-    <string name="code_fie_detail_code_raw_content">Code raw content</string>
+    <string name="code_fie_detail_code">Code</string>
+    <string name="code_fie_detail_code_type">Type</string>
+    <string name="code_fie_detail_code_content_type">Content type</string>
+    <string name="code_fie_detail_code_display_content">Content</string>
+    <string name="code_fie_detail_code_raw_content">Raw content</string>
 
 </resources>
