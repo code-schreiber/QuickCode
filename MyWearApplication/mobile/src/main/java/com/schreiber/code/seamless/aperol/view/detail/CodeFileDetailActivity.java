@@ -80,8 +80,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
     @Override
     public void onImageClicked() {
-        ImageDialogFragment dialog = ImageDialogFragment.newInstance(codeFileViewModel.getOriginalThumbnailImage(this));
-        showDialog(dialog);
+        showDialog(ImageDialogFragment.newInstance(codeFileViewModel.getOriginalImage(this)));
     }
 
     private void initViews() {
