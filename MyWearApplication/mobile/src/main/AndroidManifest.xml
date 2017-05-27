@@ -18,6 +18,32 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/pdf"/>
+            </intent-filter>
+
+            <!--TODO is there SEND_MULTIPLE for all types?-->
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND_MULTIPLE"/>-->
+            <!--<category android:name="android.intent.category.DEFAULT"/>-->
+            <!--<data android:mimeType="image/*"/>-->
+            <!--</intent-filter>-->
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -32,6 +58,7 @@
                 <data android:mimeType="application/pdf"/>
                 <data android:mimeType="image/*"/>
             </intent-filter>
+
         </activity>
         <activity
             android:name=".view.detail.CodeFileDetailActivity"

@@ -164,20 +164,32 @@ public class UriUtils {
     }
 
     public static boolean isSupportedImportFile(ContentResolver contentResolver, Uri uri) {
-        return isPdf(contentResolver, uri) || isImage(contentResolver, uri) || isText(contentResolver, uri);
+        String type = contentResolver.getType(uri);
+        return isPdf(type) || isImage(type) || isText(type);
     }
 
     public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
-        return TYPE_ABSOLUTE_APPLICATION_PDF.equals(contentResolver.getType(uri));
+        return isPdf(contentResolver.getType(uri));
+    }
+
+    public static boolean isPdf(String type) {
+        return TYPE_ABSOLUTE_TEXT_PLAIN.equals(type);
     }
 
     public static boolean isImage(ContentResolver contentResolver, Uri uri) {
-        String type = contentResolver.getType(uri);
-        return !TypeUtils.isEmpty(type) && type.contains(TYPE_RELATIVE_IMAGE);
+        return isImage(contentResolver.getType(uri));
+    }
+
+    public static boolean isImage(String type) {
+        return !TypeUtils.isEmpty(type) && type.startsWith(TYPE_RELATIVE_IMAGE);
     }
 
     public static boolean isText(ContentResolver contentResolver, Uri uri) {
-        return TYPE_ABSOLUTE_TEXT_PLAIN.equals(contentResolver.getType(uri));
+        return isText(contentResolver.getType(uri));
+    }
+
+    public static boolean isText(String type) {
+        return TYPE_ABSOLUTE_TEXT_PLAIN.equals(type);
     }
 
     @NonNull
