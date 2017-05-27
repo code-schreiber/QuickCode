@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,6 +27,7 @@ import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
+import com.google.firebase.auth.FirebaseAuth;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
@@ -61,6 +63,7 @@ public class MainActivity extends BaseActivity implements
         toggle.syncState();
 
         NavigationView navigationView = binding.activityMainNavView;
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(FirebaseAuth.getInstance().getCurrentUser() == null ? "No user signed in" : FirebaseAuth.getInstance().getCurrentUser().getUid());
         navigationView.setNavigationItemSelectedListener(this);
 
 
