@@ -178,11 +178,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     private void addItemToAdapter(CodeFile codeFile) {
-        if (!adapter.contains(codeFile)) {
-            DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
-        } else {
-            showSnack(codeFile.displayName() + " already exists");
-        }
+        DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
     }
 
     void handleFile(Uri uri) {

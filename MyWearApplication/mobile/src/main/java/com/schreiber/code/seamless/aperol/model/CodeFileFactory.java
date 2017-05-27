@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.schreiber.code.seamless.aperol.db.PremiumPreferences;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
@@ -20,9 +21,6 @@ import java.util.Collections;
 
 
 public class CodeFileFactory {
-
-    private static final boolean PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT = true;
-    private static final boolean PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT = true;
 
     private CodeFileFactory() {
         // Hide utility class constructor
@@ -53,8 +51,8 @@ public class CodeFileFactory {
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         ArrayList<Bitmap> originalImages = getBitmapsFromUri(context, uri);
         if (originalImages != null && !originalImages.isEmpty()) {
-            if (originalImages.size() > 1 && !PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT) {
-                Logger.logWarning("PREMIUM_ALLOW_MULTIPLE_PAGES_IMPORT is disabled, returning only one codefile out of " + originalImages.size());
+            if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
+                Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
                 return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), uri.toString());
             }
             for (Bitmap originalImage : originalImages) {
@@ -80,8 +78,8 @@ public class CodeFileFactory {
     @NonNull
     private static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
         ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
-        if (codeFiles.size() > 1 && !PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT) {
-            Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one.");
+        if (codeFiles.size() > 1 && !PremiumPreferences.allowMultipleCodesInImageImport(context)) {
+            Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one because of allowMultipleCodesInImageImport.");
             return createListFromSingleItem(codeFiles.get(0));
         }
         return codeFiles;
