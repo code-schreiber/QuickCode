@@ -32,8 +32,11 @@ import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
+import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity implements
@@ -92,16 +95,43 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void handleIntent(Intent intent) {
+        MainActivityFragment fragment = getMainActivityFragment();
+
         String action = intent.getAction();
-        Uri linkData = intent.getData();
-        if (Intent.ACTION_VIEW.equals(action) && linkData != null) {
-            String intentType = intent.getType();
-            String type = getContentResolver().getType(linkData);
-            showSnack(type + " and " + intentType);// TODO check
-            MainActivityFragment fragment = getMainActivityFragment();
-            if (fragment != null) {
-                fragment.handleFile(linkData);
+        String type = intent.getType();
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Uri linkData = intent.getData();
+            if (linkData != null) {
+                getContentResolver().getType(linkData);// TODO compare to type in debug
+                if (fragment != null) {
+                    fragment.handleFile(linkData);
+                }
+            } else {
+                logError("Activity started with ACTION_VIEW has unknown type: " + type);
             }
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            if (UriUtils.isText(type)) {
+                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                fragment.handleSharedText(sharedText);
+            } else if (UriUtils.isImage(type)) {
+                Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                fragment.handleFile(imageUri);
+            } else if (UriUtils.isPdf(type)) {
+                Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                fragment.handleFile(pdfUri);
+            } else {
+                logError("Activity started with ACTION_SEND has unknown type: " + type);
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            if (UriUtils.isImage(type)) {
+                ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                fragment.handleFile(imageUris);
+            } else {
+                logError("Activity started with ACTION_SEND_MULTIPLE has unknown type: " + type);
+            }
+        } else if (!Intent.ACTION_MAIN.equals(action)) {
+            logError("Activity started with unknown action: " + action);
         }
     }
 

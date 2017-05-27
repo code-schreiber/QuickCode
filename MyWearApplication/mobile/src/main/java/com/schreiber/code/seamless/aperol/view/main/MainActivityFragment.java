@@ -30,6 +30,7 @@ import com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
@@ -181,22 +182,39 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
     }
 
+    void handleSharedText(String text) {
+        // TODO handleSharedText() not yet implemented.
+        showSnack("No file added: handleSharedText() not yet implemented. Text was: " + text);
+//        ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
+//        addCodeFilesToAdapter(items);
+    }
+
+    public void handleFile(List<Uri> uris) {
+        for (Uri uri : uris) {
+            handleFile(uri);
+        }
+    }
+
     void handleFile(Uri uri) {
         if (UriUtils.isSupportedImportFile(getActivity().getContentResolver(), uri)) {
             ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
-            if (items.isEmpty()) {
-                showSimpleDialog("No file added: No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
-            } else {
-                for (CodeFile codeFile : items) {
-                    CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                    if (!newCodeFileViewModel.isCodeAvailable(getActivity())) {
-                        showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
-                    }
-                    addItemToAdapter(codeFile);
-                }
-            }
+            addCodeFilesToAdapter(items);
         } else {
             showSimpleDialog("No file added: File type not supported, make sure it is one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
+        }
+    }
+
+    private void addCodeFilesToAdapter(ArrayList<CodeFile> items) {
+        if (items.isEmpty()) {
+            showSimpleDialog("No file added: No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+        } else {
+            for (CodeFile codeFile : items) {
+                CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
+                if (!newCodeFileViewModel.isCodeAvailable(getActivity())) {
+                    showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+                }
+                addItemToAdapter(codeFile);
+            }
         }
     }
 
