@@ -175,8 +175,8 @@
                         android:text="@string/code_fie_detail_code_display_content"/>
 
                     <TextView
+                        android:id="@+id/content_code_file_detail_code_display_content_textview"
                         style="@style/CodeFileDetailTextView"
-                        android:autoLink="all"
                         android:text="@{codeFileViewModel.getCodeDisplayContent()}"
                         tools:text="codeDisplayContent"/>
                 </LinearLayout>
@@ -194,8 +194,8 @@
                         android:text="@string/code_fie_detail_code_raw_content"/>
 
                     <TextView
+                        android:id="@+id/content_code_file_detail_code_raw_content_textview"
                         style="@style/CodeFileDetailTextView"
-                        android:autoLink="all"
                         android:text="@{codeFileViewModel.getCodeRawContent()}"
                         tools:text="codeRawContent"/>
                 </LinearLayout>

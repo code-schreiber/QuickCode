@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.util.Linkify;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityFullscreenImageBinding;
+import com.schreiber.code.seamless.aperol.db.PremiumPreferences;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 
@@ -52,13 +55,13 @@ public class FullscreenImageActivity extends BaseActivity {
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     };
-    private View mControlsView;
+    private View mTextLayout;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
             // Delayed display of UI elements
             showActionBar();
-            mControlsView.setVisibility(View.VISIBLE);
+            mTextLayout.setVisibility(View.VISIBLE);
         }
     };
     private boolean mVisible;
@@ -101,8 +104,9 @@ public class FullscreenImageActivity extends BaseActivity {
         setDisplayHomeAsUpEnabled(true);
 
         mVisible = true;
-        mControlsView = binding.activityFullscreenImageContentControls;
+        mTextLayout = binding.activityFullscreenImageContentTextLayout;
         mContentView = binding.activityFullscreenImageContent;
+        handleAllowClickingLinks(this, binding.activityFullscreenImageContentText);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +151,19 @@ public class FullscreenImageActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static void handleAllowClickingLinks(final BaseActivity context, TextView textview) {
+        if (PremiumPreferences.allowClickingLinks(context)) {
+            Linkify.addLinks(textview, Linkify.ALL);
+        } else {
+            textview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.showSimpleDialog("Clicking Links in only allowed in premium version :(");
+                }
+            });
+        }
+    }
+
     private void toggle() {
         if (mVisible) {
             hide();
@@ -158,7 +175,7 @@ public class FullscreenImageActivity extends BaseActivity {
     private void hide() {
         // Hide UI first
         hideActionBar();
-        mControlsView.setVisibility(View.GONE);// TODO use animation
+        mTextLayout.setVisibility(View.GONE);// TODO use animation
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -186,5 +203,4 @@ public class FullscreenImageActivity extends BaseActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
-
 }
