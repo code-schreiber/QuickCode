@@ -75,9 +75,10 @@ public class ImageDialogFragment extends DialogFragment {
     }
 
     private void addImageViewToLayout(LinearLayout layout, String key) {
-        ImageView codeThumb = new ImageView(getActivity());
-        codeThumb.setImageBitmap((Bitmap) getArguments().getParcelable(key));
-        layout.addView(codeThumb);
+        ImageView imageView = new ImageView(getActivity());
+        imageView.setImageBitmap((Bitmap) getArguments().getParcelable(key));
+        imageView.setAdjustViewBounds(true);
+        layout.addView(imageView);
     }
 
 }
