@@ -29,15 +29,13 @@
             app:imageBitmap="@{codeFileViewModel.getCodeImage(context)}"
             tools:src="@drawable/ic_file_content_black_24dp"/>
 
-        <!-- This FrameLayout insets its children based on system windows using
-             android:fitsSystemWindows. -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true">
 
             <LinearLayout
-                android:id="@+id/activity_fullscreen_image_content_controls"
+                android:id="@+id/activity_fullscreen_image_content_text_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
@@ -45,6 +43,7 @@
                 tools:ignore="UselessParent">
 
                 <TextView
+                    android:id="@+id/activity_fullscreen_image_content_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"

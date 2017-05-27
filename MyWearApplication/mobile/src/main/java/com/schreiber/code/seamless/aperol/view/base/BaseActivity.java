@@ -51,7 +51,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void showSimpleDialog(String message) {
+    public void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
     }

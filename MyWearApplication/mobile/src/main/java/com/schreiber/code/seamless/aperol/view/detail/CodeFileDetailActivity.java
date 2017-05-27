@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
+import com.schreiber.code.seamless.aperol.databinding.ContentCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
@@ -85,9 +86,12 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
     private void initViews() {
         setTitle(codeFileViewModel.getDisplayName());
-        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setVisibility(View.GONE);
-        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
-        binding.activityCodeFileDetailContent.contentCodeFileDetailDebugType.setVisibility(View.GONE);
+        final ContentCodeFileDetailBinding content = binding.activityCodeFileDetailContent;
+        content.contentCodeFileDetailDebugTags.setVisibility(View.GONE);
+        content.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
+        content.contentCodeFileDetailDebugType.setVisibility(View.GONE);
+        FullscreenImageActivity.handleAllowClickingLinks(this, content.contentCodeFileDetailCodeDisplayContentTextview);
+        FullscreenImageActivity.handleAllowClickingLinks(this, content.contentCodeFileDetailCodeRawContentTextview);
         initFab();
     }
 
