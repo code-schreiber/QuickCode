@@ -103,12 +103,9 @@ public class MainActivity extends BaseActivity implements
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri linkData = intent.getData();
             if (linkData != null) {
-                getContentResolver().getType(linkData);// TODO compare to type in debug
-                if (fragment != null) {
-                    fragment.handleFile(linkData);
-                }
+                fragment.handleFile(linkData);
             } else {
-                logError("Activity started with ACTION_VIEW has unknown type: " + type);
+                logError("Activity started with ACTION_VIEW has no data. Type: " + type);
             }
         } else if (Intent.ACTION_SEND.equals(action)) {
             if (UriUtils.isText(type)) {

@@ -173,7 +173,7 @@ public class UriUtils {
     }
 
     public static boolean isPdf(String type) {
-        return TYPE_ABSOLUTE_TEXT_PLAIN.equals(type);
+        return TYPE_ABSOLUTE_APPLICATION_PDF.equals(type);
     }
 
     public static boolean isImage(ContentResolver contentResolver, Uri uri) {
@@ -190,6 +190,10 @@ public class UriUtils {
 
     public static boolean isText(String type) {
         return TYPE_ABSOLUTE_TEXT_PLAIN.equals(type);
+    }
+
+    public static String getTextTypeName() {
+        return TYPE_ABSOLUTE_TEXT_PLAIN;
     }
 
     @NonNull
