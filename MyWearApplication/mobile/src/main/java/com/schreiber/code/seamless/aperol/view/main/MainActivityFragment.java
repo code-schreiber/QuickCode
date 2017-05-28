@@ -182,13 +182,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
     }
 
-    void handleSharedText(String text) {
-        // TODO handleSharedText() not yet implemented.
-        showSnack("No file added: handleSharedText() not yet implemented. Text was: " + text);
-//        ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
-//        addCodeFilesToAdapter(items);
-    }
-
     public void handleFile(List<Uri> uris) {
         for (Uri uri : uris) {
             handleFile(uri);
@@ -202,6 +195,17 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         } else {
             showSimpleDialog("No file added: File type not supported, make sure it is one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
         }
+    }
+
+    void handleSharedText(String text) {
+        final int maxCharacters = 2953;
+        if (text.length() > maxCharacters) {
+            logWarning("Text was too long so it has been cut. Length: " + text.length());
+            showSimpleDialog("Text was too long so it has been cut.");
+            text = text.substring(0, maxCharacters - 3) + "...";
+        }
+        ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), text);
+        addCodeFilesToAdapter(items);
     }
 
     private void addCodeFilesToAdapter(ArrayList<CodeFile> items) {
