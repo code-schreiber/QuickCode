@@ -47,16 +47,38 @@ public class CodeFileFactory {
         String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
         String fileType = contentResolver.getType(uri);
         int size = UriUtils.getSizeInBytes(contentResolver, uri);
+        String importedFrom = uri.toString();
 
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         ArrayList<Bitmap> originalImages = getBitmapsFromUri(context, uri);
         if (originalImages != null && !originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
                 Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
-                return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), uri.toString());
+                return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), importedFrom);
             }
             for (Bitmap originalImage : originalImages) {
-                codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, uri.toString()));
+                codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom));
+            }
+        }
+        return codeFiles;
+    }
+
+    @NonNull
+    public static ArrayList<CodeFile> createCodeFilesFromText(Context context, String text) {
+        String originalFilename = "A shared text";//TODO what to use for the name of a text file?
+        String fileType = UriUtils.getTextTypeName();
+        int size = -1;//TODO what to use for the size of a text file?
+        String importedFrom = "Imported from a shared text";//TODO what to use
+
+        ArrayList<CodeFile> codeFiles = new ArrayList<>();
+        ArrayList<Bitmap> originalImages = getBitmapFromText(text);
+        if (originalImages != null && !originalImages.isEmpty()) {
+            if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
+                Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
+                return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), importedFrom);
+            }
+            for (Bitmap originalImage : originalImages) {
+                codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom));
             }
         }
         return codeFiles;
@@ -97,8 +119,7 @@ public class CodeFileFactory {
             } else if (UriUtils.isText(resolver, uri)) {
                 // TODO
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
-                Bitmap bitmap = EncodingUtils.encodeQRCode(textContent);
-                return createListFromSingleItem(bitmap);
+                return getBitmapFromText(textContent);
             } else {
                 Logger.logError("No known file type: " + uri);
             }
@@ -106,6 +127,12 @@ public class CodeFileFactory {
             Logger.logError("File doesn't exist: " + uri);
         }
         return null;
+    }
+
+    @NonNull
+    private static ArrayList<Bitmap> getBitmapFromText(String textContent) {
+        Bitmap bitmap = EncodingUtils.encodeQRCode(textContent);
+        return createListFromSingleItem(bitmap);
     }
 
     @NonNull
