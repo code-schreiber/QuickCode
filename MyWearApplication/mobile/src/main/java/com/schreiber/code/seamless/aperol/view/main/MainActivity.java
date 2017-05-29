@@ -105,7 +105,7 @@ public class MainActivity extends BaseActivity implements
             if (linkData != null) {
                 fragment.handleFile(linkData);
             } else {
-                logError("Activity started with ACTION_VIEW has no data. Type: " + type);
+                showUnknownTypeDialog(type, "ACTION_VIEW");
             }
         } else if (Intent.ACTION_SEND.equals(action)) {
             if (UriUtils.isText(type)) {
@@ -118,18 +118,23 @@ public class MainActivity extends BaseActivity implements
                 Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 fragment.handleFile(pdfUri);
             } else {
-                logError("Activity started with ACTION_SEND has unknown type: " + type);
+                showUnknownTypeDialog(type, "ACTION_SEND");
             }
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
             if (UriUtils.isImage(type)) {
                 ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                 fragment.handleFile(imageUris);
             } else {
-                logError("Activity started with ACTION_SEND_MULTIPLE has unknown type: " + type);
+                showUnknownTypeDialog(type, "ACTION_SEND_MULTIPLE");
             }
         } else if (!Intent.ACTION_MAIN.equals(action)) {
             logError("Activity started with unknown action: " + action);
         }
+    }
+
+    private void showUnknownTypeDialog(String type, String action) {
+        logError("Activity started with " + action + " has unknown type: " + type);
+        showSimpleDialog("No file added: File type not supported, " + type + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
     }
 
     @Override

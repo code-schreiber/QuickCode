@@ -193,7 +193,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
             addCodeFilesToAdapter(items);
         } else {
-            showSimpleDialog("No file added: File type not supported, make sure it is one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
+            showSimpleDialog("No file added: File type not supported, " + getActivity().getContentResolver().getType(uri) + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
         }
     }
 
