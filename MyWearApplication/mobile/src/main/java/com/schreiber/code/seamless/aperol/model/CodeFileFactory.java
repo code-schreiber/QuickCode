@@ -57,7 +57,12 @@ public class CodeFileFactory {
                 return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), importedFrom);
             }
             for (Bitmap originalImage : originalImages) {
-                codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom));
+                String filename = originalFilename;
+                if (originalImages.size() > 1) {
+                    // append index To filename on multiple pages
+                    filename += " (" + originalImages.indexOf(originalImage) + ")";
+                }
+                codeFiles.addAll(createCodeFiles(context, filename, fileType, size, originalImage, importedFrom));
             }
         }
         return codeFiles;
@@ -94,7 +99,12 @@ public class CodeFileFactory {
 
     @NonNull
     static String getFileSuffix(String originalFilename) {
-        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
+        if (suffix.contains(" ")) {
+            // handle pdf (1) case, removing the " (1) "
+            suffix = suffix.substring(0, suffix.indexOf(" "));
+        }
+        return suffix;
     }
 
     @NonNull
