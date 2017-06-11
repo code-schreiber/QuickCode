@@ -26,7 +26,7 @@
             android:keepScreenOn="true"
             android:padding="@dimen/margin_large"
             android:scaleType="fitCenter"
-            app:imageBitmap="@{codeFileViewModel.getCodeImage(context)}"
+            app:imageBitmap="@{codeFileViewModel.getCodeImage()}"
             tools:src="@drawable/ic_file_content_black_24dp"/>
 
         <FrameLayout

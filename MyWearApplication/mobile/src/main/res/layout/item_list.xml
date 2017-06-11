@@ -42,7 +42,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:imageBitmap="@{codeFileViewModel.getOriginalThumbnailImage(context)}"
+                app:imageBitmap="@{codeFileViewModel.getOriginalImageThumbnail()}"
                 tools:src="@drawable/ic_file_black_24dp"/>
         </LinearLayout>
 
@@ -85,7 +85,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
                 android:scaleType="fitCenter"
-                app:imageBitmap="@{codeFileViewModel.getCodeThumbnailImage(context)}"
+                app:imageBitmap="@{codeFileViewModel.getCodeImageThumbnail()}"
                 tools:src="@drawable/ic_file_content_black_24dp"/>
 
             <ImageView

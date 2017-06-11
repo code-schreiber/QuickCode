@@ -14,10 +14,8 @@ import android.widget.ImageView;
 
 import com.google.auto.value.AutoValue;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.util.IOUtils;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,12 +23,6 @@ import java.util.List;
 
 @AutoValue
 public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFileViewModel> {
-
-    private static final String SUFFIX_ORIGINAL_THUMBNAIL = "original.thumbnail";
-    private static final String SUFFIX_CODE_THUMBNAIL = "code.thumbnail";
-    private static final String SUFFIX_ORIGINAL = "original";
-    private static final String SUFFIX_CODE = "code";
-
 
     public static CodeFileViewModel create(CodeFile codeFile) {
         return new AutoValue_CodeFileViewModel(codeFile);
@@ -112,8 +104,8 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return codeFile().codeRawContent();
     }
 
-    public boolean isCodeAvailable(Context context) {
-        return getCodeImage(context) != null;
+    public boolean isCodeAvailable() {
+        return codeFile().isCodeAvailable();
     }
 
     @DrawableRes
@@ -133,50 +125,23 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     @Nullable
-    public Bitmap getOriginalThumbnailImage(Context context) {
-        return getBitmapFromFile(context, SUFFIX_ORIGINAL_THUMBNAIL);
+    public Bitmap getOriginalImageThumbnail() {
+        return codeFile().originalImageThumbnail();
     }
 
     @Nullable
-    public Bitmap getCodeThumbnailImage(Context context) {
-        return getBitmapFromFile(context, SUFFIX_CODE_THUMBNAIL);
+    public Bitmap getCodeImageThumbnail() {
+        return codeFile().codeImageThumbnail();
     }
 
     @Nullable
-    public Bitmap getOriginalImage(Context context) {
-        return getBitmapFromFile(context, SUFFIX_ORIGINAL);
+    public Bitmap getOriginalImage() {
+        return codeFile().originalImage();
     }
 
     @Nullable
-    public Bitmap getCodeImage(Context context) {
-        return getBitmapFromFile(context, SUFFIX_CODE);
-    }
-
-    boolean saveOriginalThumbnailImage(Context context, Bitmap image) throws IOException {
-        return saveBitmapToFile(context, image, SUFFIX_ORIGINAL_THUMBNAIL);
-    }
-
-    boolean saveCodeThumbnailImage(Context context, Bitmap image) throws IOException {
-        return saveBitmapToFile(context, image, SUFFIX_CODE_THUMBNAIL);
-    }
-
-    boolean saveOriginalImage(Context context, Bitmap image) throws IOException {
-        return saveBitmapToFile(context, image, SUFFIX_ORIGINAL);
-    }
-
-    boolean saveCodeImage(Context context, Bitmap image) throws IOException {
-        return saveBitmapToFile(context, image, SUFFIX_CODE);
-    }
-
-    private boolean saveBitmapToFile(Context context, Bitmap image, String fileSuffix) throws IOException {
-        // TODO do off the UI thread
-        return IOUtils.saveBitmapToFile(context, image, codeFile().originalCodeFile().filename(), fileSuffix);
-    }
-
-    @Nullable
-    private Bitmap getBitmapFromFile(Context context, String fileSuffix) {
-        // TODO do off the UI thread
-        return IOUtils.getBitmapFromFile(context, codeFile().originalCodeFile().filename(), fileSuffix);
+    public Bitmap getCodeImage() {
+        return codeFile().codeImage();
     }
 
     @NonNull

@@ -207,7 +207,7 @@ public class MainActivity extends BaseActivity implements
     private MainActivityFragment getMainActivityFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
         if (fragment != null && fragment instanceof MainActivityFragment) {
-            return (MainActivityFragment) fragment;// TODO do this the right way
+            return (MainActivityFragment) fragment;
         }
         showSnack(MainActivityFragment.class + " not found");
         logError(MainActivityFragment.class + " not found");
@@ -281,5 +281,3 @@ public class MainActivity extends BaseActivity implements
     }
 
 }
-
-

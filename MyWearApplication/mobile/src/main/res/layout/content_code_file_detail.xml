@@ -54,7 +54,7 @@
                     style="@style/CodeFileDetailImageView"
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
-                    app:imageBitmap="@{codeFileViewModel.getOriginalThumbnailImage(context)}"
+                    app:imageBitmap="@{codeFileViewModel.getOriginalImageThumbnail()}"
                     tools:src="@drawable/ic_file_black_24dp"/>
 
                 <TextView

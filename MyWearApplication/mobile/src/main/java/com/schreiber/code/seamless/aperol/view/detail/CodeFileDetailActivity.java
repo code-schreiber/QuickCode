@@ -81,7 +81,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
     @Override
     public void onImageClicked() {
-        showDialog(ImageDialogFragment.newInstance(codeFileViewModel.getOriginalImage(this)));
+        showDialog(ImageDialogFragment.newInstance(codeFileViewModel.getOriginalImage()));
     }
 
     private void initViews() {
@@ -98,9 +98,9 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     private void initFab() {
         final FloatingActionButton fab = binding.activityCodeFileDetailFab;
         View codeLayout = binding.activityCodeFileDetailContent.contentCodeFileDetailCodeLayout;
-        if (codeFileViewModel.isCodeAvailable(this)) {
+        if (codeFileViewModel.isCodeAvailable()) {
             codeLayout.setVisibility(View.VISIBLE);
-            fab.setImageBitmap(codeFileViewModel.getCodeThumbnailImage(this));
+            fab.setImageBitmap(codeFileViewModel.getCodeImageThumbnail());
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -128,7 +128,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                     } else {
                         for (CodeFile codeFile : codeFiles) {
                             CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                            if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
+                            if (newCodeFileViewModel.isCodeAvailable()) {
                                 DatabaseReferenceWrapper.addListItemAuthFirst(codeFile); // TODO check that this handles multiple codes
                             } else {
                                 showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
@@ -136,7 +136,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                         }
                         CodeFile codeFile = codeFiles.get(0);
                         CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                        if (newCodeFileViewModel.isCodeAvailable(view.getContext())) {
+                        if (newCodeFileViewModel.isCodeAvailable()) {
                             codeFileViewModel = newCodeFileViewModel;
                             initFab();
                         } else {
@@ -158,10 +158,10 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 @Override
                 public boolean onLongClick(View view) {
                     String objectAsNiceJson = codeFileViewModel.toString().replace("{", "{\n").replace(",", ",\n");
-                    Bitmap original = codeFileViewModel.getOriginalImage(view.getContext());
-                    Bitmap thumbnail = codeFileViewModel.getOriginalThumbnailImage(view.getContext());
-                    Bitmap code = codeFileViewModel.getCodeImage(view.getContext());
-                    Bitmap codeThumb = codeFileViewModel.getCodeThumbnailImage(view.getContext());
+                    Bitmap original = codeFileViewModel.getOriginalImage();
+                    Bitmap thumbnail = codeFileViewModel.getOriginalImageThumbnail();
+                    Bitmap code = codeFileViewModel.getCodeImage();
+                    Bitmap codeThumb = codeFileViewModel.getCodeImageThumbnail();
                     ImageDialogFragment dialog = ImageDialogFragment.newInstance(objectAsNiceJson, original, thumbnail, code, codeThumb);
                     showDialog(dialog);
                     return true;

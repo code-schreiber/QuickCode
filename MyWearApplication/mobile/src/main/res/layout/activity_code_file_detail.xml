@@ -50,7 +50,7 @@
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:tint="@color/transparent_black"
-                        app:imageBitmap="@{codeFileViewModel.getOriginalImage(context)}"
+                        app:imageBitmap="@{codeFileViewModel.getOriginalImage()}"
                         tools:src="@drawable/ic_file_black_24dp"/>
 
                 </FrameLayout>

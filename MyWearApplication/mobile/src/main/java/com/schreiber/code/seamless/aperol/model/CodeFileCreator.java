@@ -3,7 +3,6 @@ package com.schreiber.code.seamless.aperol.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
@@ -11,12 +10,10 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.schreiber.code.seamless.aperol.util.BitmapUtils;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -52,12 +49,8 @@ public class CodeFileCreator {
                 // FIXME bug when unsuported code is still detected
                 Logger.logError("No barcodes detected, creating CodeFile without barcode: " + originalFilename);
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile);
-                if (saveBitmapsToFile(context, codeFile, originalImage, null)) {
-                    codeFiles.add(codeFile);
-                } else {
-                    Logger.logError("Couldn't save images from " + originalFilename);
-                }
+                CodeFile codeFile = CodeFile.create(originalCodeFile, originalImage);
+                codeFiles.add(codeFile);
             } else {
                 for (int i = 0; i < barcodes.size(); i++) {
                     int key = barcodes.keyAt(i);
@@ -66,7 +59,7 @@ public class CodeFileCreator {
                         // append Code Index To Filename
                         originalFilename += " ( Code " + key + ")";
                     }
-                    CodeFile codeFile = getCodeFileFromBarcode(context, originalFilename, fileType, size, originalImage, importedFrom, barcode);
+                    CodeFile codeFile = getCodeFileFromBarcode(originalFilename, fileType, size, originalImage, importedFrom, barcode);
                     if (codeFile != null) {
                         codeFiles.add(codeFile);
                     }
@@ -91,7 +84,7 @@ public class CodeFileCreator {
     }
 
     @Nullable
-    private static CodeFile getCodeFileFromBarcode(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom, Barcode barcode) {
+    private static CodeFile getCodeFileFromBarcode(String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom, Barcode barcode) {
         String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(barcode.format);
         String codeContentType = BarcodeFormatMapper.getContentType(barcode.valueFormat);
         String codeDisplayValue = barcode.displayValue;
@@ -103,51 +96,12 @@ public class CodeFileCreator {
                 Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
             } else {
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
-                if (saveBitmapsToFile(context, codeFile, originalImage, codeImage)) {
-                    return codeFile;
-                } else {
-                    Logger.logError("Couldn't save images from " + originalFilename);
-                }
+                return CodeFile.create(originalCodeFile, originalImage, codeImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
             }
         } else {
             Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedBarcodeFormatsAsString());
         }
         return null;
-    }
-
-    @CheckResult
-    private static boolean saveBitmapsToFile(Context context, CodeFile codeFile, Bitmap originalImage, Bitmap codeImage) {
-        CodeFileViewModel codeFileViewModel = CodeFileViewModel.create(codeFile);
-        try {
-            boolean allSaved = codeFileViewModel.saveOriginalImage(context, originalImage);
-            if (allSaved) {
-                Bitmap thumbnail = createThumbnail(originalImage);
-                if (thumbnail != null) {
-                    allSaved = codeFileViewModel.saveOriginalThumbnailImage(context, thumbnail);
-                    if (allSaved) {
-                        if (codeImage != null) {
-                            allSaved = codeFileViewModel.saveCodeImage(context, codeImage);
-                            if (allSaved) {
-                                thumbnail = createThumbnail(codeImage);
-                                if (thumbnail != null) {
-                                    allSaved = codeFileViewModel.saveCodeThumbnailImage(context, thumbnail);
-                                }// TODO else
-                            }
-                        }
-                    }
-                }// TODO else
-            }
-            // TODO some type of rollback on fail
-            return allSaved;
-        } catch (IOException e) {
-            Logger.logException(e);
-            return false;
-        }
-    }
-
-    private static Bitmap createThumbnail(Bitmap originalImage) {
-        return BitmapUtils.resizeImage(originalImage, 200);
     }
 
     private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {

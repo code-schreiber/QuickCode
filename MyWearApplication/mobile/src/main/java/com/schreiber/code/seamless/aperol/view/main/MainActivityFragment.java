@@ -214,7 +214,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         } else {
             for (CodeFile codeFile : items) {
                 CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                if (!newCodeFileViewModel.isCodeAvailable(getActivity())) {
+                if (!newCodeFileViewModel.isCodeAvailable()) {
                     showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                 }
                 addItemToAdapter(codeFile);

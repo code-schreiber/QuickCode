@@ -88,7 +88,7 @@ public class CodeFileFactory {
         String originalFilename = codeFile.originalCodeFile().filename();
         String fileType = codeFile.originalCodeFile().fileType();
         int size = codeFile.originalCodeFile().size();
-        Bitmap originalImage = CodeFileViewModel.create(codeFile).getOriginalImage(context);
+        Bitmap originalImage = CodeFileViewModel.create(codeFile).getOriginalImage();
         return createCodeFiles(context, originalFilename, fileType, size, originalImage, "CodeFile of " + originalFilename);
     }
 
@@ -117,7 +117,6 @@ public class CodeFileFactory {
                 Bitmap bitmap = UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
                 return createListFromSingleItem(bitmap);
             } else if (UriUtils.isText(resolver, uri)) {
-                // TODO
                 String textContent = UriUtils.readTextFromUri(resolver, uri);
                 return getBitmapFromText(textContent);
             } else {
