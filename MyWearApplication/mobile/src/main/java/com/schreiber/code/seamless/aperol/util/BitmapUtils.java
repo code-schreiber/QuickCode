@@ -46,9 +46,13 @@ public final class BitmapUtils {
         return null;
     }
 
-    public static String getBase64encodedBitmap(Bitmap originalImage) {
-        byte[] bytes = getBytes(originalImage);
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    @Nullable
+    public static String getBase64encodedBitmap(@Nullable Bitmap originalImage) {
+        if (originalImage != null) {
+            byte[] bytes = getBytes(originalImage);
+            return Base64.encodeToString(bytes, Base64.DEFAULT);
+        }
+        return null;
     }
 
     @NonNull
