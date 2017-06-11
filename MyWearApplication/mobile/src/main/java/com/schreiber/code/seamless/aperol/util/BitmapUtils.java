@@ -2,7 +2,12 @@ package com.schreiber.code.seamless.aperol.util;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 
 
 public final class BitmapUtils {
@@ -23,10 +28,27 @@ public final class BitmapUtils {
     }
 
     public static Bitmap resizeImage(Bitmap bitmap, int scaleSize) {
-        int originalWidth = bitmap.getWidth();
-        int originalHeight = bitmap.getHeight();
-        Dimensions dimensions = getNewDimensions(scaleSize, originalWidth, originalHeight);
-        return Bitmap.createScaledBitmap(bitmap, dimensions.width, dimensions.height, false);
+        if (bitmap != null) {
+            int originalWidth = bitmap.getWidth();
+            int originalHeight = bitmap.getHeight();
+            Dimensions dimensions = getNewDimensions(scaleSize, originalWidth, originalHeight);
+            return Bitmap.createScaledBitmap(bitmap, dimensions.width, dimensions.height, false);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Bitmap createBitmapFromBase64EncodedString(@Nullable String bitmapBase64Encoded) {
+        if (bitmapBase64Encoded != null) {
+            byte[] bitmapBytes = Base64.decode(bitmapBase64Encoded, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+        }
+        return null;
+    }
+
+    public static String getBase64encodedBitmap(Bitmap originalImage) {
+        byte[] bytes = getBytes(originalImage);
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
     @NonNull
@@ -53,6 +75,12 @@ public final class BitmapUtils {
             newHeight = scaleSize;
         }
         return new Dimensions(newWidth, newHeight);
+    }
+
+    private static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        return outputStream.toByteArray();
     }
 
 }

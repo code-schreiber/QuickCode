@@ -75,7 +75,6 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     }
 
-
 }
 
 
