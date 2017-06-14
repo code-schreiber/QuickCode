@@ -3,6 +3,7 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -11,9 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
+import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
@@ -35,26 +38,20 @@ import java.util.List;
 
 public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
 
+    private TextView loadingView;
     private RecyclerView recyclerView;
     private MyCustomAdapter adapter;
 
     private static final int READ_REQUEST_CODE = 111;
-
     private DatabaseReferenceWrapper.OnCodeFilesChangedListener onCodeFilesChangedListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_main_activity_recycler_view);
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+        FragmentMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
+        loadingView = binding.fragmentMainActivityLoadingView;
+        recyclerView = binding.fragmentMainActivityRecyclerView;
         recyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
             @Override
@@ -75,7 +72,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
         adapter = new MyCustomAdapter(new ArrayList<CodeFileViewModel>(), MainActivityFragment.this);
         recyclerView.setAdapter(adapter);
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
@@ -190,11 +187,30 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     void handleFile(Uri uri) {
         if (UriUtils.isSupportedImportFile(getActivity().getContentResolver(), uri)) {
-            ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
-            addCodeFilesToAdapter(items);
+            backgroundTaskStart(uri);
         } else {
             showSimpleDialog("No file added: File type not supported, " + getActivity().getContentResolver().getType(uri) + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
         }
+    }
+
+    private void backgroundTaskStart(final Uri uri) {
+        loadingView.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // create code files in background
+                final ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
+                loadingView.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        addCodeFilesToAdapter(items);
+                        loadingView.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }).start();
     }
 
     void handleSharedText(String text) {
