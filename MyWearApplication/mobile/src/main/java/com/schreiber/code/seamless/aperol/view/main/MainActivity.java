@@ -46,12 +46,9 @@ public class MainActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient mGoogleApiClient;
-
     private static final String COUNT_KEY = "TODO_FIND_A_WAY_TO_READ_FROM_ONE_SOURCE";//TODO
-
+    private GoogleApiClient mGoogleApiClient;
     private DrawerLayout drawerLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +63,9 @@ public class MainActivity extends BaseActivity implements
         toggle.syncState();
 
         NavigationView navigationView = binding.activityMainNavView;
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(FirebaseAuth.getInstance().getCurrentUser() == null ? "No user signed in" : FirebaseAuth.getInstance().getCurrentUser().getUid());
+        String subtitle = FirebaseAuth.getInstance().getCurrentUser() == null ? "No user signed in" : FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(subtitle);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         binding.activityMainAppBarMain.appBarMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
