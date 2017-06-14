@@ -72,7 +72,6 @@ public class CodeFileFactory {
     public static ArrayList<CodeFile> createCodeFilesFromText(Context context, String text) {
         String originalFilename = "A shared text";//TODO what to use for the name of a text file?
         String fileType = UriUtils.getTextTypeName();
-        int size = -1;//TODO what to use for the size of a text file?
         String importedFrom = "Imported from a shared text";//TODO what to use
 
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
@@ -80,9 +79,12 @@ public class CodeFileFactory {
         if (originalImages != null && !originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
                 Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
-                return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), importedFrom);
+                final Bitmap originalImage = originalImages.get(0);
+                int size = originalImage.getByteCount();
+                return createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
             }
             for (Bitmap originalImage : originalImages) {
+                int size = originalImage.getByteCount();
                 codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom));
             }
         }
