@@ -25,7 +25,7 @@ public final class SharedPreferencesWrapper {
     }
 
     public static void clearAll(Context context) {
-        getDefaultPreferences(context).edit().clear().commit();
+        getEditor(context).clear().commit();
     }
 
     public static void registerPrefObserver(Context context, SharedPreferences.OnSharedPreferenceChangeListener listener) {
