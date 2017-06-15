@@ -45,12 +45,6 @@ public class TypefaceProvider {
             for (String s : fonts.keySet()) {
                 allFonts.put(s, fonts.get(s));
             }
-
-            int randomIndex = new Random().nextInt(fonts.size());
-            randomKey = (String) fonts.keySet().toArray()[randomIndex];
-            Font randomFont = fonts.get(randomKey);
-            fonts.clear();
-            fonts.put(randomKey, randomFont);
         }
     }
 
@@ -91,7 +85,7 @@ public class TypefaceProvider {
     public void setTypeface(TextView textView) {
         String defaultTypeface = "symbol";
         if (RANDOM_MODE) {
-            defaultTypeface = randomKey;
+            defaultTypeface = getARandomTypeface();
         }
         setTypeface(defaultTypeface, textView);
     }
@@ -99,9 +93,17 @@ public class TypefaceProvider {
     public void setTypeface(TextView textView, int style) {
         String defaultTypeface = "symbol";
         if (RANDOM_MODE) {
-            defaultTypeface = randomKey;
+            defaultTypeface = getARandomTypeface();
         }
         setTypeface(defaultTypeface, textView, style);
+    }
+
+    private String getARandomTypeface() {
+        if (randomKey == null) {
+            int randomIndex = new Random().nextInt(fonts.size());
+            randomKey = (String) fonts.keySet().toArray()[randomIndex];
+        }
+        return randomKey;
     }
 
     public void setTypeface(String fontName, TextView textView) {
@@ -121,11 +123,14 @@ public class TypefaceProvider {
         Logger.logError("No Typeface for " + style + " found in " + fonts);
     }
 
+    public void resetRandomKey() {
+        randomKey = null;
+    }
+
     @Nullable
     public String getCurrentFontName() {
-        if (fonts.size() == 1) {
-            String key = (String) fonts.keySet().toArray()[0];
-            return fonts.get(key).getName();
+        if (randomKey != null) {
+            return fonts.get(randomKey).getName();
         }
         return null;
     }
