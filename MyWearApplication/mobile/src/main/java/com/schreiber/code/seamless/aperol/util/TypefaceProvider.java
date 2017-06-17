@@ -83,7 +83,7 @@ public class TypefaceProvider {
     }
 
     public void setTypeface(TextView textView) {
-        String defaultTypeface = "symbol";
+        String defaultTypeface;
         if (RANDOM_MODE) {
             defaultTypeface = getARandomTypeface();
         }
@@ -91,7 +91,7 @@ public class TypefaceProvider {
     }
 
     public void setTypeface(TextView textView, int style) {
-        String defaultTypeface = "symbol";
+        String defaultTypeface;
         if (RANDOM_MODE) {
             defaultTypeface = getARandomTypeface();
         }
@@ -106,7 +106,7 @@ public class TypefaceProvider {
         return randomKey;
     }
 
-    public void setTypeface(String fontName, TextView textView) {
+    private void setTypeface(String fontName, TextView textView) {
         int style = textView.getTypeface().getStyle();
         setTypeface(fontName, textView, style);
     }
@@ -120,7 +120,7 @@ public class TypefaceProvider {
                 return;
             }
         }
-        Logger.logError("No Typeface for " + style + " found in " + fonts);
+        Logger.logWarning("No Typeface for " + style + " found in " + fonts);
     }
 
     public void resetRandomKey() {
@@ -129,6 +129,7 @@ public class TypefaceProvider {
 
     @Nullable
     public String getCurrentFontName() {
+        getARandomTypeface();
         if (randomKey != null) {
             return fonts.get(randomKey).getName();
         }
