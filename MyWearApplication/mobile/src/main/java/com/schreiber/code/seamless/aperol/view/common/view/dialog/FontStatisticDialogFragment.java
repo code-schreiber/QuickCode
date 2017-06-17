@@ -46,9 +46,10 @@ public class FontStatisticDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Context context = getActivity();
+        TypefaceProvider.getInstance(context).resetRandomKey();
         return new AlertDialog.Builder(context)
-                .setMessage("¿¡do you like this font?!" + "☺️" +
-                        "\nEstimado/a. Maria Carmen\n" +
+                .setMessage("¿¡do you like this font?!" + " \uD83D\uDD25\uD83D\uDCA5 \uD83D\uDD25 ️" + TypefaceProvider.getInstance(context).getCurrentFontName() +
+                        "\nEstimado/a.\n" +
                         "Como continuación a la notificación que habrá recibido de la DGT (Dirección General de Tráfico) por vía postal, " +
                         "relativa a la Campaña de Seguridad 16-C-004, le recordamos que ....\n" +
                         "En dicha comunicación le informamos que es necesario revisar la instalación eléctrica de la batería (Como recordatorio, le adjuntamos modelo de carta informativa sobre esta campaña.)" +
@@ -106,7 +107,6 @@ public class FontStatisticDialogFragment extends DialogFragment {
         Dialog dialog = getDialog();
         Context context = getContext();
         TypefaceProvider provider = TypefaceProvider.getInstance(context);
-        provider.resetRandomKey();
 
         TextView view = (TextView) dialog.findViewById(android.R.id.message);
         provider.setTypeface(view, Typeface.NORMAL);
