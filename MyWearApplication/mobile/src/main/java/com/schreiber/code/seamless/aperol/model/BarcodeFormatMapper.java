@@ -54,15 +54,15 @@ class BarcodeFormatMapper {
     static String getEncodingFormatName(int barcodeFormat) {
         switch (barcodeFormat) {
             case Barcode.CODE_128:
-                return "CODE 128";
+                return "Code 128";
             case Barcode.CODE_39:
-                return "CODE 39";
+                return "Code 39";
             case Barcode.CODE_93:
-                return "CODE 93";
+                return "Code 93";
             case Barcode.CODABAR:
-                return "CODABAR";
+                return "Codabar";
             case Barcode.DATA_MATRIX:
-                return "DATA MATRIX";
+                return "Data Matrix";
             case Barcode.EAN_13:
                 return "EAN 13 ";
             case Barcode.EAN_8:
@@ -70,15 +70,15 @@ class BarcodeFormatMapper {
             case Barcode.ITF:
                 return "ITF";
             case Barcode.QR_CODE:
-                return "QR CODE";
+                return "QR Code";
             case Barcode.UPC_A:
                 return "UPC A";
             case Barcode.UPC_E:
                 return "UPC E";
             case Barcode.PDF417:
-                return "PDF 417";
+                return "Pdf 417";
             case Barcode.AZTEC:
-                return "AZTEC";
+                return "Aztec";
             default:
                 Logger.logError("Unknown code format:" + barcodeFormat);
                 return "Unknown code format: " + barcodeFormat;
