@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 public final class SharedPreferencesWrapper {
 
+    @Deprecated
     private static final String FONT_STATISTIC_KEY = "FONT_STATISTIC_KEY";
     private static final String LIST_ITEMS_KEY = "LIST_ITEMS_KEY";
 
@@ -16,12 +17,14 @@ public final class SharedPreferencesWrapper {
         // Hide utility class constructor
     }
 
+    @Deprecated
     public static String getFontStatistic(Context context) {
         return getDefaultPreferences(context).getString(FONT_STATISTIC_KEY, "");
     }
 
+    @Deprecated
     public static void setFontStatistic(Context context, String fontStatistic) {
-        getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).apply();
+        getEditor(context).putString(FONT_STATISTIC_KEY, fontStatistic).commit();
     }
 
     public static void clearAll(Context context) {

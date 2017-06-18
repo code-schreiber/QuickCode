@@ -213,7 +213,7 @@ public class MainActivity extends BaseActivity implements
         } else if (Intent.ACTION_SEND.equals(action)) {
             if (UriUtils.isText(type)) {
                 String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-                fragment.handleSharedText(sharedText);
+                fragment.loadSharedTextInBackground(sharedText);
             } else if (UriUtils.isImage(type)) {
                 Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 fragment.handleFile(imageUri);

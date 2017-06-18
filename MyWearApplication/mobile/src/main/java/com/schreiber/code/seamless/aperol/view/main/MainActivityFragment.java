@@ -93,7 +93,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             }
         }
         logError("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
-        showSnack("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                             .setAction(R.string.undo, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    addItemToAdapter(codeFile);
+                                    addCodeFileToAdapter(codeFile);
                                 }
                             })
                             .show();
@@ -181,27 +180,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
-    void importAssets() {
-        ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
-        ArrayList<CodeFile> assets = new ArrayList<>();
-        for (String path : paths) {
-            ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromAssets(getActivity(), path);
-            if (items.isEmpty()) {
-                showSimpleDialog("Error: Not adding " + path);
-            } else {
-                assets.addAll(items);
-            }
-        }
-
-        for (CodeFile codeFile : assets) {
-            addItemToAdapter(codeFile);
-        }
-    }
-
-    private void addItemToAdapter(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
-    }
-
     public void handleFile(List<Uri> uris) {
         for (Uri uri : uris) {
             handleFile(uri);
@@ -210,13 +188,62 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     void handleFile(Uri uri) {
         if (UriUtils.isSupportedImportFile(getActivity().getContentResolver(), uri)) {
-            backgroundTaskStart(uri);
+            loadFileInBackground(uri);
         } else {
             showSimpleDialog("No file added: File type not supported, " + getActivity().getContentResolver().getType(uri) + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
         }
     }
 
-    private void backgroundTaskStart(final Uri uri) {
+    void importAssets() {
+        loadingView.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
+                for (String path : paths) {
+                    final ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromAssets(getActivity(), path);
+                    loadingView.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            addCodeFilesToAdapter(items);
+                            loadingView.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    void loadSharedTextInBackground(String text) {
+        final int maxCharacters = 2953;
+        if (text.length() > maxCharacters) {
+            logWarning("Text was too long so it has been cut. Length: " + text.length());
+            showSimpleDialog("Text was too long so it has been cut.");
+            text = text.substring(0, maxCharacters - 3) + "...";
+        }
+
+        loadingView.setVisibility(View.VISIBLE);
+        final String finalText = text;
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                final ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), finalText);
+                loadingView.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        addCodeFilesToAdapter(items);
+                        loadingView.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void loadFileInBackground(final Uri uri) {
         loadingView.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
 
@@ -236,17 +263,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }).start();
     }
 
-    void handleSharedText(String text) {
-        final int maxCharacters = 2953;
-        if (text.length() > maxCharacters) {
-            logWarning("Text was too long so it has been cut. Length: " + text.length());
-            showSimpleDialog("Text was too long so it has been cut.");
-            text = text.substring(0, maxCharacters - 3) + "...";
-        }
-        ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), text);
-        addCodeFilesToAdapter(items);
-    }
-
     private void addCodeFilesToAdapter(ArrayList<CodeFile> items) {
         if (items.isEmpty()) {
             showSimpleDialog("No file added: No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
@@ -256,9 +272,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (!newCodeFileViewModel.isCodeAvailable()) {
                     showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
                 }
-                addItemToAdapter(codeFile);
+                addCodeFileToAdapter(codeFile);
             }
         }
+    }
+
+    private void addCodeFileToAdapter(CodeFile codeFile) {
+        DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
     }
 
     @Deprecated
