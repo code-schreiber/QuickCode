@@ -23,10 +23,9 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
     private final OnViewClickedListener clickListener;
 
 
-    MyCustomAdapter(ArrayList<CodeFileViewModel> data, OnViewClickedListener listener) {
-        this.data = data;
+    MyCustomAdapter(OnViewClickedListener listener) {
+        this.data = new ArrayList<>();
         this.clickListener = listener;
-        Collections.sort(this.data);
     }
 
     void replaceData(ArrayList<CodeFileViewModel> items) {

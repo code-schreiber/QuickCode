@@ -3,6 +3,7 @@
     <string name="app_name">Seamless Aperol</string>
     <string name="subtitle">Seamless Aperol</string>
 
+    <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the \u2795</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

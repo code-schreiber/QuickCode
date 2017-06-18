@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -50,11 +51,111 @@ public class MainActivity extends BaseActivity implements
     private GoogleApiClient mGoogleApiClient;
     private DrawerLayout drawerLayout;
 
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        initViews();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_global, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        onMenuItemSelected(item);
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        onMenuItemSelected(item);
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onOkClicked(boolean showDialogAgain) {
+        if (showDialogAgain) {
+            showFontsDialog();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        logDebug("onResume ");
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        logDebug("onPause");
+        super.onPause();
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        logDebug("onConnected " + bundle);
+        logDebug("mGoogleApiClient " + mGoogleApiClient);
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        logDebug(dataEventBuffer + " onDataChanged");
+        for (DataEvent event : dataEventBuffer) {
+            logDebug("event.getType() " + event.getType());
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        logDebug("onConnectionSuspended " + i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        logDebug("onConnectionFailed " + connectionResult);
+    }
+
+    public void setVisibilityOfFabHint(int visibility) {
+        binding.activityMainAppBarMain.appBarMainFabHint.setVisibility(visibility);
+    }
+
+    private void initViews() {
         Toolbar toolbar = binding.activityMainAppBarMain.appBarMainToolbar;
         setSupportActionBar(toolbar);
         drawerLayout = binding.activityMainDrawerLayout;
@@ -67,7 +168,8 @@ public class MainActivity extends BaseActivity implements
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(subtitle);
         navigationView.setNavigationItemSelectedListener(this);
 
-        binding.activityMainAppBarMain.appBarMainFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton actionButton = binding.activityMainAppBarMain.appBarMainFab;
+        actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MainActivityFragment fragment = getMainActivityFragment();
@@ -77,13 +179,17 @@ public class MainActivity extends BaseActivity implements
             }
         });
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-        handleIntent(getIntent());
+        actionButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                MainActivityFragment fragment = getMainActivityFragment();
+                if (fragment != null) {
+                    fragment.performFileSearchForImages();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     protected void onNewIntent(Intent intent) {
@@ -134,41 +240,6 @@ public class MainActivity extends BaseActivity implements
         showSimpleDialog("No file added: File type not supported, " + type + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
     }
 
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_global, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        onMenuItemSelected(item);
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        onMenuItemSelected(item);
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     private void onMenuItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_global_import_assets) {
@@ -193,13 +264,6 @@ public class MainActivity extends BaseActivity implements
         showDialog(FontStatisticDialogFragment.newInstance());
     }
 
-    @Override
-    public void onOkClicked(boolean showDialogAgain) {
-        if (showDialogAgain) {
-            showFontsDialog();
-        }
-    }
-
     @Nullable
     private MainActivityFragment getMainActivityFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
@@ -214,47 +278,6 @@ public class MainActivity extends BaseActivity implements
     private void showSnack(String m) {
         logInfo(m);
         Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onResume() {
-        logDebug("onResume ");
-        super.onResume();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        logDebug("onPause");
-        super.onPause();
-        Wearable.DataApi.removeListener(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        logDebug("onConnected " + bundle);
-        logDebug("mGoogleApiClient " + mGoogleApiClient);
-        Wearable.DataApi.addListener(mGoogleApiClient, this);
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        logDebug(dataEventBuffer + " onDataChanged");
-        for (DataEvent event : dataEventBuffer) {
-            logDebug("event.getType() " + event.getType());
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        logDebug("onConnectionSuspended " + i);
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        logDebug("onConnectionFailed " + connectionResult);
     }
 
     // Create a data map and put data in it
@@ -276,5 +299,4 @@ public class MainActivity extends BaseActivity implements
 //            }
 //        });
     }
-
 }
