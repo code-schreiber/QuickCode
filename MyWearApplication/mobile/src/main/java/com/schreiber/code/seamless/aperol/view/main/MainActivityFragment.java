@@ -53,11 +53,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        adapter = new MyCustomAdapter(this);
+        recyclerView.setAdapter(adapter);
+
         onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
             @Override
             public void codeFilesChanged(ArrayList<CodeFile> codeFiles) {
-                ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
-                adapter.replaceData(adapterData);// TODO refactoring
+                replaceListData(codeFiles);
             }
         };
         DatabaseReferenceWrapper.addOnCodeFilesChangedListener(onCodeFilesChangedListener);//TODO get reference to use later
@@ -65,13 +67,10 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         DatabaseReferenceWrapper.loadCodeFiles(new DatabaseReferenceWrapper.OnCodeFilesLoadedListener() {
             @Override
             public void codeFilesLoaded(ArrayList<CodeFile> codeFiles) {
-                ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
-                adapter.replaceData(adapterData);
+                replaceListData(codeFiles);
             }
         });
 
-        adapter = new MyCustomAdapter(new ArrayList<CodeFileViewModel>(), MainActivityFragment.this);
-        recyclerView.setAdapter(adapter);
         return binding.getRoot();
     }
 
@@ -134,12 +133,35 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return true;
     }
 
-    void performFileSearch() {
+    private void replaceListData(ArrayList<CodeFile> codeFiles) {
+        ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+        adapter.replaceData(adapterData);
 
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (adapter.getItemCount() > 0) {
+            mainActivity.setVisibilityOfFabHint(View.GONE);
+        } else {
+            mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+        }
+    }
+
+    void performFileSearch() {
+        String typeFilter = "*/*";
+        performFileSearch(typeFilter);
+    }
+
+    void performFileSearchForImages() {
+        String typeFilter = "image/*";
+        performFileSearch(typeFilter);
+    }
+
+    private void performFileSearch(String typeFilter) {
         BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            showSimpleDialog("Could not set up the barcode detector! Was offline: " + !NetworkUtils.isOnline(getActivity()));
+            final String message = "Could not set up the barcode detector! Was offline: " + !NetworkUtils.isOnline(getActivity());
+            showSimpleDialog(message);
+            logError(message);
             return;
         }
 
@@ -150,10 +172,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         // file (as opposed to a list of contacts or timezones)
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        // Filter to show only a file type, using the image MIME data type.
+        // Filter to show only a file type, using the data type.
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers, it would be "*/*".
-        intent.setType("*/*");
+        intent.setType(typeFilter);
+
         // Fires an intent to spin up the "file chooser" UI and select a file.
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
