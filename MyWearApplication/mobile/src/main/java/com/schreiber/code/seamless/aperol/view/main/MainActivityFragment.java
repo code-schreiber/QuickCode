@@ -2,6 +2,7 @@ package com.schreiber.code.seamless.aperol.view.main;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -12,11 +13,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
+import com.schreiber.code.seamless.aperol.databinding.ItemLoadingBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
@@ -32,13 +33,12 @@ import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener
 import com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
 
-    private TextView loadingView;
+    private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
     private MyCustomAdapter adapter;
 
@@ -48,7 +48,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
-        loadingView = binding.fragmentMainActivityLoadingView;
+        loadingViewBinding = binding.fragmentMainActivityLoadingView;
         recyclerView = binding.fragmentMainActivityRecyclerView;
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -58,7 +58,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
         onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
             @Override
-            public void codeFilesChanged(ArrayList<CodeFile> codeFiles) {
+            public void codeFilesChanged(List<CodeFile> codeFiles) {
                 replaceListData(codeFiles);
             }
         };
@@ -66,7 +66,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
         DatabaseReferenceWrapper.loadCodeFiles(new DatabaseReferenceWrapper.OnCodeFilesLoadedListener() {
             @Override
-            public void codeFilesLoaded(ArrayList<CodeFile> codeFiles) {
+            public void codeFilesLoaded(List<CodeFile> codeFiles) {
                 replaceListData(codeFiles);
             }
         });
@@ -132,8 +132,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return true;
     }
 
-    private void replaceListData(ArrayList<CodeFile> codeFiles) {
-        ArrayList<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+    private void replaceListData(List<CodeFile> codeFiles) {
+        List<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
         adapter.replaceData(adapterData);
 
         MainActivity mainActivity = (MainActivity) getActivity();
@@ -195,22 +195,15 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     void importAssets() {
-        loadingView.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                ArrayList<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
+                List<String> paths = new AssetPathLoader(getActivity().getAssets(), "test code images").getPaths();
                 for (String path : paths) {
-                    final ArrayList<CodeFile> items = CodeFileFactory.createCodeFileFromAssets(getActivity(), path);
-                    loadingView.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addCodeFilesToAdapter(items);
-                            loadingView.setVisibility(View.GONE);
-                        }
-                    });
+                    showLoadingView(path);
+                    final List<CodeFile> items = CodeFileFactory.createCodeFileFromAssets(getActivity(), path);
+                    hideLoadingView(items);
                 }
             }
         }).start();
@@ -224,46 +217,55 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             text = text.substring(0, maxCharacters - 3) + "...";
         }
 
-        loadingView.setVisibility(View.VISIBLE);
+        String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
+        showLoadingView(originalFilename);
         final String finalText = text;
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                final ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), finalText);
-                loadingView.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        addCodeFilesToAdapter(items);
-                        loadingView.setVisibility(View.GONE);
-                    }
-                });
+                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), finalText);
+                hideLoadingView(items);
             }
         }).start();
     }
 
     private void loadFileInBackground(final Uri uri) {
-        loadingView.setVisibility(View.VISIBLE);
+        showLoadingView(uri);
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 // create code files in background
-                final ArrayList<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
-                loadingView.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        addCodeFilesToAdapter(items);
-                        loadingView.setVisibility(View.GONE);
-                    }
-                });
+                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromUri(getActivity(), uri);
+                hideLoadingView(items);
             }
         }).start();
     }
 
-    private void addCodeFilesToAdapter(ArrayList<CodeFile> items) {
+    private void hideLoadingView(final List<CodeFile> items) {
+        loadingViewBinding.itemLoadingText.post(new Runnable() {
+
+            @Override
+            public void run() {
+                addCodeFilesToAdapter(items);
+                loadingViewBinding.getRoot().setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void showLoadingView(Uri uri) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
+        showLoadingView(originalFilename);
+    }
+
+    private void showLoadingView(String originalFilename) {
+        loadingViewBinding.itemLoadingText.setText(originalFilename);
+        loadingViewBinding.getRoot().setVisibility(View.VISIBLE);
+    }
+
+    private void addCodeFilesToAdapter(List<CodeFile> items) {
         if (items.isEmpty()) {
             showSimpleDialog("No file added: No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
         } else {

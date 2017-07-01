@@ -97,7 +97,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
-                    android:text="@{codeFileViewModel.getOriginalFileSizeInMegabytes()}"
+                    android:text="@{codeFileViewModel.getOriginalFileSizeInMegabytes(context)}"
                     tools:text="original file size"/>
             </LinearLayout>
 
