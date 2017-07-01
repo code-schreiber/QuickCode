@@ -70,13 +70,13 @@ public class CodeFileFactory {
 
     @NonNull
     public static ArrayList<CodeFile> createCodeFilesFromText(Context context, String text) {
-        String originalFilename = "A shared text";//TODO what to use for the name of a text file?
+        String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
         String fileType = UriUtils.getTextTypeName();
-        String importedFrom = "Imported from a shared text";//TODO what to use
+        String importedFrom = "Imported from shared text: " + originalFilename;
 
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         ArrayList<Bitmap> originalImages = getBitmapFromText(text);
-        if (originalImages != null && !originalImages.isEmpty()) {
+        if (!originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
                 Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
                 final Bitmap originalImage = originalImages.get(0);
