@@ -32,13 +32,13 @@ public final class DatabaseReferenceWrapper {
 
     public interface OnCodeFilesChangedListener {
 
-        void codeFilesChanged(ArrayList<CodeFile> codeFiles);
+        void codeFilesChanged(List<CodeFile> codeFiles);
 
     }
 
     public interface OnCodeFilesLoadedListener {
 
-        void codeFilesLoaded(ArrayList<CodeFile> codeFiles);
+        void codeFilesLoaded(List<CodeFile> codeFiles);
 
     }
 
