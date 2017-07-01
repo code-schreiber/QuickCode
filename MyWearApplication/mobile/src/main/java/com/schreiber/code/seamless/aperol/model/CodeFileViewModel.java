@@ -9,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
+import android.text.format.Formatter;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
@@ -37,8 +38,8 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return Long.compare(o.codeFile().originalCodeFile().importedOn(), this.codeFile().originalCodeFile().importedOn());
     }
 
-    public static ArrayList<CodeFileViewModel> createList(ArrayList<CodeFile> data) {
-        ArrayList<CodeFileViewModel> list = new ArrayList<>();
+    public static List<CodeFileViewModel> createList(List<CodeFile> data) {
+        List<CodeFileViewModel> list = new ArrayList<>();
         for (CodeFile codeFile : data) {
             list.add(create(codeFile));
         }
@@ -70,10 +71,9 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return getCreationDate(context);
     }
 
-    public String getOriginalFileSizeInMegabytes() {
+    public String getOriginalFileSizeInMegabytes(Context context) {
         int sizeInBytes = codeFile().originalCodeFile().size();
-        // TODO return FileUtils.byteCountToDisplaySize(sizeInBytes);
-        return sizeInBytes + " bytes";
+        return Formatter.formatFileSize(context, sizeInBytes);
     }
 
     public String getOriginalFileType() {
