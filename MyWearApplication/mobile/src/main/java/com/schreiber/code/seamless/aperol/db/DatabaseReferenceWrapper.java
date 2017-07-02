@@ -29,6 +29,7 @@ public final class DatabaseReferenceWrapper {
     private static final String CODE_FILES_KEY = "CODE_FILES_KEY";
 
     private static final List<ValueEventListener> codeFilesChangedListeners = new ArrayList<>();
+    private static DatabaseReference dbReference;
 
     public interface OnCodeFilesChangedListener {
 
@@ -65,7 +66,6 @@ public final class DatabaseReferenceWrapper {
                                 FirebaseUser user = auth.getCurrentUser();
                                 addListItem(codeFile);
                             } else {
-                                // If sign in fails, display a message to the user.
                                 Logger.logException("signInAnonymously:failure: ", task.getException());
                             }
                         }
@@ -80,12 +80,6 @@ public final class DatabaseReferenceWrapper {
                 .child(CODE_FILES_KEY)
                 .child(codeFile.id())
                 .setValue(codeFile.toFirebaseValue());
-        task.addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Logger.logInfo("Task completed");
-            }
-        });
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -228,7 +222,12 @@ public final class DatabaseReferenceWrapper {
     }
 
     private static DatabaseReference getDbReference() {
-        return FirebaseDatabase.getInstance().getReference();
+        if (dbReference == null) {
+            FirebaseDatabase instance = FirebaseDatabase.getInstance();
+            instance.setPersistenceEnabled(true);
+            dbReference = instance.getReference();
+        }
+        return dbReference;
     }
 
 }

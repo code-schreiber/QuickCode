@@ -260,9 +260,15 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         showLoadingView(originalFilename);
     }
 
-    private void showLoadingView(String originalFilename) {
-        loadingViewBinding.itemLoadingText.setText(originalFilename);
-        loadingViewBinding.getRoot().setVisibility(View.VISIBLE);
+    private void showLoadingView(final String originalFilename) {
+        loadingViewBinding.itemLoadingText.post(new Runnable() {
+
+            @Override
+            public void run() {
+                loadingViewBinding.itemLoadingText.setText(originalFilename);
+                loadingViewBinding.getRoot().setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void addCodeFilesToAdapter(List<CodeFile> items) {
