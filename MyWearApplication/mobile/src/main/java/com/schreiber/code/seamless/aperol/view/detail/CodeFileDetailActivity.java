@@ -124,14 +124,14 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 private void handleFile(View view) {
                     ArrayList<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile());
                     if (codeFiles.isEmpty()) {
-                        showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+                        showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                     } else {
                         for (CodeFile codeFile : codeFiles) {
                             CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                             if (newCodeFileViewModel.isCodeAvailable()) {
                                 DatabaseReferenceWrapper.addListItemAuthFirst(codeFile); // TODO check that this handles multiple codes
                             } else {
-                                showSimpleDialog("No code could be found, make sure it is one of the supported formats: " + CodeFileCreator.getSupportedBarcodeFormatsAsString() + ".");
+                                showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                             }
                         }
                         CodeFile codeFile = codeFiles.get(0);

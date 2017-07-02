@@ -237,7 +237,7 @@ public class MainActivity extends BaseActivity implements
 
     private void showUnknownTypeDialog(String type, String action) {
         logError("Activity started with " + action + " has unknown type: " + type);
-        showSimpleDialog("No file added: File type not supported, " + type + " is not one of the supported formats: " + UriUtils.getSupportedImportFormatsAsString() + ".");
+        showSimpleDialog(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
     }
 
     private void onMenuItemSelected(MenuItem item) {
