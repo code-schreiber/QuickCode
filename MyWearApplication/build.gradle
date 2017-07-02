@@ -33,10 +33,10 @@ ext {
     versionCode = getVersionCode(version, git)
     versionName = getVersionName(git, version)
 
-    compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
+    compileSdkVersion = 26
+    buildToolsVersion = "26.0.0"
     minSdkVersion = 23
-    targetSdkVersion = 25
+    targetSdkVersion = 26
 
     googleSupportLibrary = "25.3.1"
     googleServices = "10.2.1"
@@ -46,7 +46,7 @@ static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
     def postfix = git.tag.list().size()
     def completeVersionCode = versionCode + postfix
-    completeVersionCode += 490115 // Temporary fix for Google Play VersionCode Update
+    completeVersionCode += 490116 // Temporary fix for Google Play VersionCode Update
     return Integer.parseInt(completeVersionCode)
 }
 
