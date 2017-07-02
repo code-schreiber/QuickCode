@@ -16,7 +16,7 @@
 #   public *;
 #}
 
--keepattributes LineNumberTable
+-keepattributes SourceFile, LineNumberTable
 
 # Firebase Realtime Database
 -keepattributes Signature
