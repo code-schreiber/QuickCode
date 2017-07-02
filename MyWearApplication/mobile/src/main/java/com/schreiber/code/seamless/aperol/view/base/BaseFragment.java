@@ -1,6 +1,7 @@
 package com.schreiber.code.seamless.aperol.view.base;
 
 
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
@@ -20,6 +21,10 @@ public class BaseFragment extends Fragment {
     protected void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
+    }
+
+    protected void showSimpleDialog(@StringRes int resId, Object... formatArgs) {
+        showSimpleDialog(getString(resId, formatArgs));
     }
 
     protected void showDialog(DialogFragment dialog) {

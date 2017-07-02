@@ -23,4 +23,9 @@
     <string name="code_fie_detail_code_display_content">Content</string>
     <string name="code_fie_detail_code_raw_content">Raw content</string>
 
+    <string name="error_file_not_added">No file added, make sure it is one of the supported formats: %1$s.</string>
+    <string name="error_file_added_with_no_code">File added but no code could be found, make sure it is one of the supported formats: %1$s.</string>
+    <string name="error_file_no_code">No code could be found, make sure it is one of the supported formats: %1$s.</string>
+    <string name="error_file_not_added_unsupported_type">No file added: File type not supported, %1$s is not one of the supported formats: %2$s.</string>
+
 </resources>
