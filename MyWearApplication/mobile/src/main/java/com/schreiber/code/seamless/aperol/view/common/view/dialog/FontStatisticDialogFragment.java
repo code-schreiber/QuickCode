@@ -18,6 +18,7 @@ import com.schreiber.code.seamless.aperol.util.TypefaceProvider;
 import java.util.Set;
 
 
+// TODO delete class
 public class FontStatisticDialogFragment extends DialogFragment {
 
     public interface DialogFragmentListener {
@@ -108,13 +109,13 @@ public class FontStatisticDialogFragment extends DialogFragment {
         Context context = getContext();
         TypefaceProvider provider = TypefaceProvider.getInstance(context);
 
-        TextView view = (TextView) dialog.findViewById(android.R.id.message);
+        TextView view = dialog.findViewById(android.R.id.message);
         provider.setTypeface(view, Typeface.NORMAL);
-        view = (TextView) dialog.findViewById(android.R.id.button1);
+        view = dialog.findViewById(android.R.id.button1);
         provider.setTypeface(view, Typeface.BOLD);
-        view = (TextView) dialog.findViewById(android.R.id.button2);
+        view = dialog.findViewById(android.R.id.button2);
         provider.setTypeface(view, Typeface.ITALIC);
-        view = (TextView) dialog.findViewById(android.R.id.button3);
+        view = dialog.findViewById(android.R.id.button3);
         provider.setTypeface(view, Typeface.BOLD_ITALIC);
     }
 

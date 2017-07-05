@@ -212,8 +212,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     void loadSharedTextInBackground(String text) {
         final int maxCharacters = 2953;
         if (text.length() > maxCharacters) {
-            logWarning("Text was too long so it has been cut. Length: " + text.length());
-            showSimpleDialog("Text was too long so it has been cut.");
+            String message = getString(R.string.error_shared_text_too_long);
+            logWarning(message + " Length: " + text.length());
+            showSimpleDialog(message);
             text = text.substring(0, maxCharacters - 3) + "...";
         }
 
