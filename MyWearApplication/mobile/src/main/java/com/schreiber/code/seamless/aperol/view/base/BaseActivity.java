@@ -62,7 +62,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void showDialog(DialogFragment dialog) {
-        dialog.show(getSupportFragmentManager(), dialog.toString());
+        if (isFinishing()) {
+            logWarning("Not showing dialog, activity finishing. " + dialog);
+        } else {
+            dialog.show(getSupportFragmentManager(), dialog.toString());
+        }
     }
 
     public static void logInfo(String message) {
