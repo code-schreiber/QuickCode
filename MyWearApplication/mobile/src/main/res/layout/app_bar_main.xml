@@ -38,7 +38,8 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:gravity="end"
                 android:text="@string/fab_hint"
-                android:textSize="@dimen/text_size_large"/>
+                android:textSize="@dimen/text_size_large"
+                android:visibility="gone"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/app_bar_main_fab"
