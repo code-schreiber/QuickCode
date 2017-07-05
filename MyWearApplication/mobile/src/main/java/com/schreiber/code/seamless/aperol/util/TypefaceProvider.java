@@ -50,7 +50,7 @@ public class TypefaceProvider {
 
     private void initializeTypefaces(AssetManager assets, ArrayList<String> paths) {
         for (String path : paths) {
-            if (path.endsWith(".ttf") || path.endsWith(".otf")) {
+            if (path.endsWith(".ttf") || path.endsWith(".otf")) {// TODO extract constants
                 if (fontExists(assets, path)) {
                     addTypefaceToFonts(assets, path);
                 } else {
