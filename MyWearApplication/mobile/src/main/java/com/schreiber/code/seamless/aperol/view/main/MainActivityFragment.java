@@ -15,6 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
 import com.schreiber.code.seamless.aperol.databinding.ItemLoadingBinding;
@@ -43,7 +47,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     private MyCustomAdapter adapter;
 
     private static final int READ_REQUEST_CODE = 111;
-    private DatabaseReferenceWrapper.OnCodeFilesChangedListener onCodeFilesChangedListener;
+    private ValueEventListener onCodeFilesChangedListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,29 +60,26 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         adapter = new MyCustomAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        onCodeFilesChangedListener = new DatabaseReferenceWrapper.OnCodeFilesChangedListener() {
+        onCodeFilesChangedListener = new ValueEventListener() {
             @Override
-            public void codeFilesChanged(List<CodeFile> codeFiles) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<CodeFile> codeFiles = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
                 replaceListData(codeFiles);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addOnCodeFilesChangedListener(onCodeFilesChangedListener);//TODO get reference to use later
-
-        DatabaseReferenceWrapper.loadCodeFiles(new DatabaseReferenceWrapper.OnCodeFilesLoadedListener() {
-            @Override
-            public void codeFilesLoaded(List<CodeFile> codeFiles) {
-                replaceListData(codeFiles);
-            }
-        });
-
+        DatabaseReferenceWrapper.addValueEventListener(onCodeFilesChangedListener);
         return binding.getRoot();
     }
 
     @Override
     public void onStop() {
+        DatabaseReferenceWrapper.removeEventListener(onCodeFilesChangedListener);
         super.onStop();
-        //TODO
-//        DatabaseReferenceWrapper.removeOnCodeFilesChangedListener(onCodeFilesChangedListener); TODO
     }
 
     @Override
@@ -110,24 +111,26 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReferenceWrapper.OnCodeFileDeletedListener() {
-            @Override
-            public void codeFileDeleted(Exception exception) {
-                if (exception == null) {
-                    Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                            .setAction(R.string.undo, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    addCodeFileToAdapter(codeFile);
-                                }
-                            })
-                            .show();
-                } else {
-                    showSnack("Problem deleting " + codeFile.displayName());
-                    logException("Problem deleting " + codeFile.displayName(), exception);
+        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            // TODO make Snackbar implementation more elegant
+                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            addCodeFileToAdapter(codeFile);
+                                        }
+                                    })
+                                    .show();
+                        } else {
+                            showSnack("Problem deleting " + codeFile.displayName());
+                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
+                        }
+                    }
                 }
-            }
-        });
+        );
         Tracker.trackOnClick(getActivity(), "onItemLongClicked");
         return true;
     }
