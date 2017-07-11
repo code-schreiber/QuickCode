@@ -28,26 +28,7 @@ public final class DatabaseReferenceWrapper {
 
     private static final String CODE_FILES_KEY = "CODE_FILES_KEY";
 
-    private static final List<ValueEventListener> codeFilesChangedListeners = new ArrayList<>();
     private static DatabaseReference dbReference;
-
-    public interface OnCodeFilesChangedListener {
-
-        void codeFilesChanged(List<CodeFile> codeFiles);
-
-    }
-
-    public interface OnCodeFilesLoadedListener {
-
-        void codeFilesLoaded(List<CodeFile> codeFiles);
-
-    }
-
-    public interface OnCodeFileDeletedListener {
-
-        void codeFileDeleted(Exception exception);
-
-    }
 
     private DatabaseReferenceWrapper() {
         // Hide utility class constructor
@@ -55,7 +36,7 @@ public final class DatabaseReferenceWrapper {
 
     public static void addListItemAuthFirst(final CodeFile codeFile) {
         final FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null) {
+        if (auth.getCurrentUser() == null) {// TODO dont do this only on add, do it before
             auth.signInAnonymously()
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -94,83 +75,30 @@ public final class DatabaseReferenceWrapper {
         });
     }
 
-    public static void loadCodeFiles(final OnCodeFilesLoadedListener onCodeFilesLoadedListener) {
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<CodeFile> codeFiles = new ArrayList<>();
-                Logger.logInfo("onDataChange in loadCodeFiles. Count " + dataSnapshot.getChildrenCount());
-                if (dataSnapshot.getChildren() != null) {
-                    getCodeFilesFromDataSnapshot(dataSnapshot, codeFiles);
-                } else {
-                    Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
-                }
-                onCodeFilesLoadedListener.codeFilesLoaded(codeFiles);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("onCancelled", databaseError.toException());
-            }
-        };
-        getDbReference().getRef().child(CODE_FILES_KEY).addListenerForSingleValueEvent(listener);
-    }
-
-    public static ValueEventListener addOnCodeFilesChangedListener(final OnCodeFilesChangedListener onCodeFilesChangedListener) {
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<CodeFile> codeFiles = new ArrayList<>();
-                Logger.logInfo("onDataChange in addOnCodeFilesChangedListener. Count " + dataSnapshot.getChildrenCount());
-                if (dataSnapshot.getChildren() != null) {
-                    getCodeFilesFromDataSnapshot(dataSnapshot, codeFiles);
-                } else {
-                    Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
-                }
-                onCodeFilesChangedListener.codeFilesChanged(codeFiles);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("onCancelled", databaseError.toException());
-            }
-        };
+    public static void addValueEventListener(ValueEventListener listener) {
         getDbReference().getRef().child(CODE_FILES_KEY).addValueEventListener(listener);
-        codeFilesChangedListeners.add(listener);
-        return listener;
     }
 
-    private static void getCodeFilesFromDataSnapshot(DataSnapshot dataSnapshot, ArrayList<CodeFile> codeFiles) {
-        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            CodeFile codeFile = null;
-            try {
-                codeFile = CodeFile.create(snapshot);
-            } catch (NullPointerException e) {
-                Logger.logError(e.getMessage());// TODO delete try catch block
-            }
-            if (codeFile != null) {
-                codeFiles.add(codeFile);
-            }
-        }
-    }
-
-    public static void removeOnCodeFilesChangedListener(ValueEventListener listener) {
-        if (listener != null) {
-//            getDbReference().getRef().removeEventListener(codeFilesChangedListeners.get(listener)); TODO
-        }
-    }
-
-    public static void deleteListItem(final CodeFile codeFile, final OnCodeFileDeletedListener onCodeFileDeletedListener) {
-        getDbReference().child(CODE_FILES_KEY).child(codeFile.id()).removeValue(new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    onCodeFileDeletedListener.codeFileDeleted(null);
-                } else {
-                    onCodeFileDeletedListener.codeFileDeleted(databaseError.toException());
+    public static List<CodeFile> getCodeFilesFromDataSnapshot(DataSnapshot dataSnapshot) {
+        List<CodeFile> codeFiles = new ArrayList<>();
+        Logger.logInfo("onDataChange in addOnCodeFilesChangedListener. Count " + dataSnapshot.getChildrenCount());
+        if (dataSnapshot.getChildren() != null) {
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                try {
+                    CodeFile codeFile = CodeFile.create(snapshot);
+                    codeFiles.add(codeFile);
+                } catch (NullPointerException e) {
+                    Logger.logError(e.getMessage());// TODO delete try catch block
                 }
             }
-        });
+        } else {
+            Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
+        }
+        return codeFiles;
+    }
+
+    public static void deleteListItem(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
+        getDbReference().child(CODE_FILES_KEY).child(codeFile.id()).removeValue(listener);
     }
 
     public static <T> boolean containsListItem(Context context) {
@@ -219,6 +147,12 @@ public final class DatabaseReferenceWrapper {
                 Logger.logError("onCancelled" + databaseError.toException().getMessage());
             }
         });
+    }
+
+    public static void removeEventListener(ValueEventListener listener) {
+        if (listener != null) {
+            getDbReference().removeEventListener(listener);
+        }
     }
 
     private static DatabaseReference getDbReference() {
