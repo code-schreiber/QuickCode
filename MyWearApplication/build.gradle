@@ -18,7 +18,7 @@ buildscript {
 }
 
 plugins {
-    id "org.sonarqube" version "2.2"
+    id "org.sonarqube" version "2.5"
 }
 
 allprojects {
@@ -52,7 +52,7 @@ static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
     def postfix = git.tag.list().size()
     def completeVersionCode = versionCode + postfix
-    completeVersionCode += 490116 // Temporary fix for Google Play VersionCode Update
+    completeVersionCode += 490117 // Temporary fix for Google Play VersionCode Update
     return Integer.parseInt(completeVersionCode)
 }
 
