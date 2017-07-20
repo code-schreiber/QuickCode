@@ -72,13 +72,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addValueEventListener(onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.addValueEventListenerAuthFirst(onCodeFilesChangedListener);
         return binding.getRoot();
     }
 
     @Override
     public void onStop() {
-        DatabaseReferenceWrapper.removeEventListener(onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.removeEventListenerAuthFirst(onCodeFilesChangedListener);
         super.onStop();
     }
 
@@ -111,7 +111,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReference.CompletionListener() {
+        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
                         if (databaseError == null) {
@@ -131,7 +131,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                     }
                 }
         );
-        Tracker.trackOnClick(getActivity(), "onItemLongClicked");
+        Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItemAuthFirst");
         return true;
     }
 
