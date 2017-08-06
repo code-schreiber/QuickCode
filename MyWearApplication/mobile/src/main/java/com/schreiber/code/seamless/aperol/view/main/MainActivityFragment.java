@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
@@ -63,8 +62,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         onCodeFilesChangedListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<CodeFile> codeFiles = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
-                replaceListData(codeFiles);
+                List<CodeFileViewModel> models = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
+                replaceListData(models);
             }
 
             @Override
@@ -98,52 +97,68 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(CodeFileViewModel item) {
-        CodeFileDetailActivity.start((BaseActivity) getActivity(), item);
+        CodeFileDetailActivity.start((BaseActivity) getActivity(), item.getCodeFile().id());
         Tracker.trackOnClick(getActivity(), "onItemClicked");
     }
 
     @Override
     public void onCodeInItemClicked(CodeFileViewModel item) {
-        FullscreenImageActivity.start((BaseActivity) getActivity(), item);
+        FullscreenImageActivity.start((BaseActivity) getActivity(), item.getCodeFile().id());
         Tracker.trackOnClick(getActivity(), "onCodeInItemClicked");
     }
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
+//        Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+//                .setAction("delete", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
+//                                    @Override
+//                                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
+//                                        if (databaseError == null) {
+//                                            // TODO [UI nice to have] make Snackbar implementation more elegant
+//                                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+//                                                    .setAction(R.string.undo, new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View v) {
+//                                                            addCodeFileToAdapter(codeFile);
+//                                                        }
+//                                                    })
+//                                                    .show();
+//                                        } else {
+//                                            showSnack("Problem deleting " + codeFile.displayName());
+//                                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
+//                                        }
+//                                    }
+//                                }
+//                        );
+//                    }
+//                })
+        Snackbar.make(recyclerView, "add to new list", Snackbar.LENGTH_LONG)
+                .setAction("add", new View.OnClickListener() {
                     @Override
-                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
-                        if (databaseError == null) {
-                            // TODO make Snackbar implementation more elegant
-                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.undo, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            addCodeFileToAdapter(codeFile);
-                                        }
-                                    })
-                                    .show();
-                        } else {
-                            showSnack("Problem deleting " + codeFile.displayName());
-                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
-                        }
+                    public void onClick(View view) {
+                        addCodeFileToDatabase(codeFile);
                     }
-                }
-        );
+                })
+                .show();
+
         Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItemAuthFirst");
         return true;
     }
 
-    private void replaceListData(List<CodeFile> codeFiles) {
-        List<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+    private void replaceListData(List<CodeFileViewModel> adapterData) {
         adapter.replaceData(adapterData);
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if (adapter.getItemCount() > 0) {
-            mainActivity.setVisibilityOfFabHint(View.GONE);
-        } else {
-            mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+        if (mainActivity != null) {
+            if (adapter.getItemCount() > 0) {
+                mainActivity.setVisibilityOfFabHint(View.GONE);
+            } else {
+                mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+            }
         }
     }
 
@@ -289,8 +304,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         }
     }
 
+    @Deprecated
     private void addCodeFileToAdapter(CodeFile codeFile) {
         DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
+    }
+
+    private void addCodeFileToDatabase(CodeFile codeFile) {
+        DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile);
     }
 
     @Deprecated

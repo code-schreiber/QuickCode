@@ -85,6 +85,7 @@ public abstract class CodeFile implements Parcelable {
     public abstract long onWatchUntil();
 
     public String id() {
+        // TODO [Before beta] Decide on what to use as an id
         return String.valueOf(hashCode());
     }
 
