@@ -12,8 +12,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityFullscreenImageBinding;
+import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.db.PremiumPreferences;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
@@ -25,7 +29,7 @@ import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
  */
 public class FullscreenImageActivity extends BaseActivity {
 
-    private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
+    private static final String CODE_FILE_ID = "CODE_FILE_ID";
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -86,10 +90,13 @@ public class FullscreenImageActivity extends BaseActivity {
         }
     };
 
-    public static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
+    private ValueEventListener onCodeFilesChangedListener;
+    private String codeFileId;
+
+    public static void start(BaseActivity context, String codeFileId) {
         Intent intent = new Intent(context, FullscreenImageActivity.class);
-        intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
-        context.startActivity(intent);// TODO animate code in button getting bigger
+        intent.putExtra(CODE_FILE_ID, codeFileId);
+        context.startActivity(intent);// TODO [UI nice to have] animate code in button getting bigger
         context.overridePendingTransitionFadeIn();
     }
 
@@ -97,13 +104,12 @@ public class FullscreenImageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityFullscreenImageBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
-        CodeFileViewModel codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
-        binding.setCodeFileViewModel(codeFileViewModel);
+        final ActivityFullscreenImageBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
 
         setDisplayHomeAsUpEnabled(true);
 
         mVisible = true;
+        codeFileId = getIntent().getStringExtra(CODE_FILE_ID);
         mTextLayout = binding.activityFullscreenImageContentTextLayout;
         mContentView = binding.activityFullscreenImageContent;
         handleAllowClickingLinks(this, binding.activityFullscreenImageContentText);
@@ -116,7 +122,20 @@ public class FullscreenImageActivity extends BaseActivity {
             }
         });
 
-        setTitle(codeFileViewModel.getDisplayName());
+        onCodeFilesChangedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CodeFileViewModel codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                setTitle(codeFileViewModel.getDisplayName());
+                binding.setCodeFileViewModel(codeFileViewModel);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                logException("onCancelled", databaseError.toException());
+            }
+        };
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
     @Override
@@ -129,6 +148,12 @@ public class FullscreenImageActivity extends BaseActivity {
     public void finish() {
         super.finish();
         overridePendingTransitionFadeOut();
+    }
+
+    @Override
+    public void onStop() {
+        DatabaseReferenceWrapper.removeEventListenerAuthFirst(codeFileId, onCodeFilesChangedListener);
+        super.onStop();
     }
 
     @Override
@@ -176,7 +201,7 @@ public class FullscreenImageActivity extends BaseActivity {
     private void hide() {
         // Hide UI first
         hideActionBar();
-        mTextLayout.setVisibility(View.GONE);// TODO use animation
+        mTextLayout.setVisibility(View.GONE);// TODO [UI nice to have] use animation
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
