@@ -158,7 +158,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                         for (CodeFile codeFile : codeFiles) {
                             CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                             if (newCodeFileViewModel.isCodeAvailable()) {
-                                DatabaseReferenceWrapper.addListItemAuthFirst(codeFile); // TODO [No big value] check that this handles multiple codes
+                                DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile); // TODO [No big value] check that this handles multiple codes
                             } else {
                                 showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                             }

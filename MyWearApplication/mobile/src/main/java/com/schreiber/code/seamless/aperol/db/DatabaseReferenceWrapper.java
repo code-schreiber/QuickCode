@@ -27,8 +27,6 @@ import java.util.List;
 public final class DatabaseReferenceWrapper {
 
     private static final String CODE_FILES_LIST_KEY = "CODE_FILES_LIST_KEY";
-    @Deprecated
-    private static final String CODE_FILES_KEY_OLD = "CODE_FILES_KEY";
 
     private static DatabaseReference dbReference;
 
@@ -46,14 +44,14 @@ public final class DatabaseReferenceWrapper {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = task.getResult().getUser();
                                 Logger.logInfo("signInAnonymously: success for user " + user);
-                                getDbReference().getRef().child(CODE_FILES_KEY_OLD).child(codeFileId).addValueEventListener(listener);
+                                getDbCodeFileListChild().child(codeFileId).addValueEventListener(listener);
                             } else {
                                 Logger.logException("signInAnonymously: failure: ", task.getException());
                             }
                         }
                     });
         } else {
-            getDbReference().getRef().child(CODE_FILES_KEY_OLD).child(codeFileId).addValueEventListener(listener);
+            getDbCodeFileListChild().child(codeFileId).addValueEventListener(listener);
         }
     }
 
@@ -67,37 +65,14 @@ public final class DatabaseReferenceWrapper {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = task.getResult().getUser();
                                 Logger.logInfo("signInAnonymously: success for user " + user);
-                                getDbReference().getRef().child(CODE_FILES_KEY_OLD).addValueEventListener(listener);
+                                getDbCodeFileListChild().addValueEventListener(listener);
                             } else {
                                 Logger.logException("signInAnonymously: failure: ", task.getException());
                             }
                         }
                     });
         } else {
-            // TODO use getDbCodeFilesChild everywhere?
-            getDbReference().getRef().child(CODE_FILES_KEY_OLD).addValueEventListener(listener);
-        }
-    }
-
-    @Deprecated
-    public static void addListItemAuthFirst(final CodeFile codeFile) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null) {
-            auth.signInAnonymously()
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = task.getResult().getUser();
-                                Logger.logInfo("signInAnonymously: success for user " + user);
-                                addListItem(codeFile);
-                            } else {
-                                Logger.logException("signInAnonymously: failure: ", task.getException());
-                            }
-                        }
-                    });
-        } else {
-            addListItem(codeFile);
+            getDbCodeFileListChild().addValueEventListener(listener);
         }
     }
 
@@ -132,14 +107,14 @@ public final class DatabaseReferenceWrapper {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = task.getResult().getUser();
                                 Logger.logInfo("signInAnonymously: success for user " + user);
-                                getDbCodeFilesChild().child(codeFile.id()).removeValue(listener);
+                                getDbCodeFileListChild().child(codeFile.id()).removeValue(listener);
                             } else {
                                 Logger.logException("signInAnonymously: failure: ", task.getException());
                             }
                         }
                     });
         } else {
-            getDbCodeFilesChild().child(codeFile.id()).removeValue(listener);
+            getDbCodeFileListChild().child(codeFile.id()).removeValue(listener);
         }
     }
 
@@ -229,35 +204,16 @@ public final class DatabaseReferenceWrapper {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = task.getResult().getUser();
                                     Logger.logInfo("signInAnonymously: success for user " + user);
-                                    getDbReference().getRef().child(CODE_FILES_KEY_OLD).child(codeFileId).removeEventListener(listener);
+                                    getDbCodeFileListChild().child(codeFileId).removeEventListener(listener);
                                 } else {
                                     Logger.logException("signInAnonymously: failure: ", task.getException());
                                 }
                             }
                         });
             } else {
-                getDbReference().getRef().child(CODE_FILES_KEY_OLD).child(codeFileId).removeEventListener(listener);
+                getDbCodeFileListChild().child(codeFileId).removeEventListener(listener);
             }
         }
-    }
-
-    @Deprecated
-    private static void addListItem(CodeFile codeFile) {
-        Task<Void> task = getDbCodeFilesChild()
-                .child(codeFile.id())
-                .setValue(codeFile.toFirebaseValue());
-        task.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Logger.logException("addListItem Task failed", e);
-            }
-        });
-        task.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Logger.logInfo("addListItem Task succeeded");
-            }
-        });
     }
 
     private static void addCodeFile(CodeFile codeFile) {
@@ -280,7 +236,7 @@ public final class DatabaseReferenceWrapper {
 
     private static void clearAll() {
         // Delete code files
-        getDbCodeFilesChild().addListenerForSingleValueEvent(new ValueEventListener() {
+        getDbCodeFileListChild().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
@@ -318,10 +274,6 @@ public final class DatabaseReferenceWrapper {
                 Logger.logException("onCancelled", databaseError.toException());
             }
         });
-    }
-
-    private static DatabaseReference getDbCodeFilesChild() {
-        return getDbReference().child(CODE_FILES_KEY_OLD);
     }
 
     private static DatabaseReference getDbCodeFileListChild() {

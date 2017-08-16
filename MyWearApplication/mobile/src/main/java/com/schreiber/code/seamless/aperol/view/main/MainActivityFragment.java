@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
@@ -109,42 +110,28 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
+        // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
-//        Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-//                .setAction("delete", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
-//                                    @Override
-//                                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
-//                                        if (databaseError == null) {
-//                                            // TODO [UI nice to have] make Snackbar implementation more elegant
-//                                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-//                                                    .setAction(R.string.undo, new View.OnClickListener() {
-//                                                        @Override
-//                                                        public void onClick(View v) {
-//                                                            addCodeFileToAdapter(codeFile);
-//                                                        }
-//                                                    })
-//                                                    .show();
-//                                        } else {
-//                                            showSnack("Problem deleting " + codeFile.displayName());
-//                                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
-//                                        }
-//                                    }
-//                                }
-//                        );
-//                    }
-//                })
-        Snackbar.make(recyclerView, "add to new list", Snackbar.LENGTH_LONG)
-                .setAction("add", new View.OnClickListener() {
+        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onClick(View view) {
-                        addCodeFileToDatabase(codeFile);
+                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            // TODO [UI nice to have] make Snackbar implementation more elegant
+                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            addCodeFileToDatabase(codeFile);
+                                        }
+                                    })
+                                    .show();
+                        } else {
+                            showSnack("Problem deleting " + codeFile.displayName());
+                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
+                        }
                     }
-                })
-                .show();
-
+                }
+        );
         Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItemAuthFirst");
         return true;
     }
@@ -267,7 +254,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
             @Override
             public void run() {
-                addCodeFilesToAdapter(items);
+                addCodeFilesToDatabase(items);
                 loadingViewBinding.getRoot().setVisibility(View.GONE);
             }
         });
@@ -290,7 +277,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         });
     }
 
-    private void addCodeFilesToAdapter(List<CodeFile> items) {
+    private void addCodeFilesToDatabase(List<CodeFile> items) {
         if (items.isEmpty()) {
             showSimpleDialog(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
         } else {
@@ -299,14 +286,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (!newCodeFileViewModel.isCodeAvailable()) {
                     showSimpleDialog(R.string.error_file_added_with_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                 }
-                addCodeFileToAdapter(codeFile);
+                addCodeFileToDatabase(codeFile);
             }
         }
-    }
-
-    @Deprecated
-    private void addCodeFileToAdapter(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
     }
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
