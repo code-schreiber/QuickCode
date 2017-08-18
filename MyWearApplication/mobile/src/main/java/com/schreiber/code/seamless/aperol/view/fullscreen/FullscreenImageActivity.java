@@ -183,8 +183,7 @@ public class FullscreenImageActivity extends BaseActivity {
             textview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO extract string
-                    context.showSimpleDialog("Clicking Links in only allowed in premium version :(");
+                    context.showSimpleDialog(R.string.error_premium_links_not_allowed);
                 }
             });
         }
