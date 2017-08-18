@@ -51,9 +51,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
         codeFileId = getIntent().getStringExtra(CODE_FILE_ID);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
         binding.setClickListener(this);
-        binding.setCodeFileViewModel(codeFileViewModel);
         binding.activityCodeFileDetailContent.setClickListener(this);
-        binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
         setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
@@ -63,8 +61,9 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
             public void onDataChange(DataSnapshot dataSnapshot) {
                 codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
                 if (codeFileViewModel != null) {
-                    setTitle(codeFileViewModel.getDisplayName());
                     binding.setCodeFileViewModel(codeFileViewModel);
+                    binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
+                    binding.toolbarLayout.setTitle(codeFileViewModel.getDisplayName());
                     initViews();
                     initDebugViews();
                 } else {
@@ -114,7 +113,6 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     }
 
     private void initViews() {
-        setTitle(codeFileViewModel.getDisplayName());
         final ContentCodeFileDetailBinding content = binding.activityCodeFileDetailContent;
         content.contentCodeFileDetailDebugTags.setVisibility(View.GONE);
         content.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
