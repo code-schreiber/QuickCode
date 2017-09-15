@@ -63,8 +63,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         onCodeFilesChangedListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<CodeFile> codeFiles = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
-                replaceListData(codeFiles);
+                List<CodeFileViewModel> models = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
+                replaceListData(models);
             }
 
             @Override
@@ -98,29 +98,30 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public void onItemClicked(CodeFileViewModel item) {
-        CodeFileDetailActivity.start((BaseActivity) getActivity(), item);
+        CodeFileDetailActivity.start((BaseActivity) getActivity(), item.getCodeFile().id());
         Tracker.trackOnClick(getActivity(), "onItemClicked");
     }
 
     @Override
     public void onCodeInItemClicked(CodeFileViewModel item) {
-        FullscreenImageActivity.start((BaseActivity) getActivity(), item);
+        FullscreenImageActivity.start((BaseActivity) getActivity(), item.getCodeFile().id());
         Tracker.trackOnClick(getActivity(), "onCodeInItemClicked");
     }
 
     @Override
     public boolean onItemLongClicked(CodeFileViewModel item) {
+        // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
         DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
                         if (databaseError == null) {
-                            // TODO make Snackbar implementation more elegant
+                            // TODO [UI nice to have] make Snackbar implementation more elegant
                             Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
                                     .setAction(R.string.undo, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            addCodeFileToAdapter(codeFile);
+                                            addCodeFileToDatabase(codeFile);
                                         }
                                     })
                                     .show();
@@ -135,15 +136,16 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         return true;
     }
 
-    private void replaceListData(List<CodeFile> codeFiles) {
-        List<CodeFileViewModel> adapterData = CodeFileViewModel.createList(codeFiles);
+    private void replaceListData(List<CodeFileViewModel> adapterData) {
         adapter.replaceData(adapterData);
 
         MainActivity mainActivity = (MainActivity) getActivity();
-        if (adapter.getItemCount() > 0) {
-            mainActivity.setVisibilityOfFabHint(View.GONE);
-        } else {
-            mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+        if (mainActivity != null) {
+            if (adapter.getItemCount() > 0) {
+                mainActivity.setVisibilityOfFabHint(View.GONE);
+            } else {
+                mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+            }
         }
     }
 
@@ -252,7 +254,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
             @Override
             public void run() {
-                addCodeFilesToAdapter(items);
+                addCodeFilesToDatabase(items);
                 loadingViewBinding.getRoot().setVisibility(View.GONE);
             }
         });
@@ -275,7 +277,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         });
     }
 
-    private void addCodeFilesToAdapter(List<CodeFile> items) {
+    private void addCodeFilesToDatabase(List<CodeFile> items) {
         if (items.isEmpty()) {
             showSimpleDialog(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
         } else {
@@ -284,13 +286,13 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
                 if (!newCodeFileViewModel.isCodeAvailable()) {
                     showSimpleDialog(R.string.error_file_added_with_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                 }
-                addCodeFileToAdapter(codeFile);
+                addCodeFileToDatabase(codeFile);
             }
         }
     }
 
-    private void addCodeFileToAdapter(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addListItemAuthFirst(codeFile);
+    private void addCodeFileToDatabase(CodeFile codeFile) {
+        DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile);
     }
 
     @Deprecated

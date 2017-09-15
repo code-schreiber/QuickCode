@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.databinding.ContentCodeFileDetailBinding;
@@ -27,15 +31,16 @@ import java.util.ArrayList;
 
 public class CodeFileDetailActivity extends BaseActivity implements OnImageClickedListener {
 
-    private static final String EXTRA_CODE_FILE_VIEW_MODEL = "EXTRA_CODE_FILE_VIEW_MODEL";
+    private static final String CODE_FILE_ID = "CODE_FILE_ID";
 
     private ActivityCodeFileDetailBinding binding;
     private CodeFileViewModel codeFileViewModel;
+    private String codeFileId;
+    private ValueEventListener onCodeFilesChangedListener;
 
-
-    public static void start(BaseActivity context, CodeFileViewModel codeFileViewModel) {
+    public static void start(BaseActivity context, String codeFileId) {
         Intent intent = new Intent(context, CodeFileDetailActivity.class);
-        intent.putExtra(EXTRA_CODE_FILE_VIEW_MODEL, codeFileViewModel);
+        intent.putExtra(CODE_FILE_ID, codeFileId);
         context.startActivity(intent);
         context.overridePendingTransitionEnter();
     }
@@ -43,18 +48,35 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        codeFileViewModel = getIntent().getParcelableExtra(EXTRA_CODE_FILE_VIEW_MODEL);
+        codeFileId = getIntent().getStringExtra(CODE_FILE_ID);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_code_file_detail);
         binding.setClickListener(this);
-        binding.setCodeFileViewModel(codeFileViewModel);
         binding.activityCodeFileDetailContent.setClickListener(this);
-        binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
 
         setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
 
-        initViews();
-        initDebugViews();
+        onCodeFilesChangedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (codeFileViewModel != null) {
+                    binding.setCodeFileViewModel(codeFileViewModel);
+                    binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
+                    binding.toolbarLayout.setTitle(codeFileViewModel.getDisplayName());
+                    initViews();
+                    initDebugViews();
+                } else {
+                    showSimpleDialog(R.string.error_generic);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                logException("onCancelled", databaseError.toException());
+            }
+        };
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
     @Override
@@ -67,6 +89,12 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     public void finish() {
         super.finish();
         overridePendingTransitionExit();
+    }
+
+    @Override
+    public void onStop() {
+        DatabaseReferenceWrapper.removeEventListenerAuthFirst(codeFileId, onCodeFilesChangedListener);
+        super.onStop();
     }
 
     @Override
@@ -85,13 +113,12 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     }
 
     private void initViews() {
-        setTitle(codeFileViewModel.getDisplayName());
         final ContentCodeFileDetailBinding content = binding.activityCodeFileDetailContent;
         content.contentCodeFileDetailDebugTags.setVisibility(View.GONE);
         content.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
         content.contentCodeFileDetailDebugType.setVisibility(View.GONE);
-        FullscreenImageActivity.handleAllowClickingLinks(this, content.contentCodeFileDetailCodeDisplayContentTextview);
-        FullscreenImageActivity.handleAllowClickingLinks(this, content.contentCodeFileDetailCodeRawContentTextview);
+        handleAllowClickingLinks(content.contentCodeFileDetailCodeDisplayContentTextview);
+        handleAllowClickingLinks(content.contentCodeFileDetailCodeRawContentTextview);
         initFab();
     }
 
@@ -104,7 +131,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileViewModel);
+                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileId);
                 }
             });
             if (codeFileViewModel.getCodeDisplayContent().equals(codeFileViewModel.getCodeRawContent())) {
@@ -129,7 +156,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                         for (CodeFile codeFile : codeFiles) {
                             CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
                             if (newCodeFileViewModel.isCodeAvailable()) {
-                                DatabaseReferenceWrapper.addListItemAuthFirst(codeFile); // TODO check that this handles multiple codes
+                                DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile); // TODO [No big value] check that this handles multiple codes
                             } else {
                                 showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                             }
@@ -149,7 +176,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     }
 
     private void initDebugViews() {
-        // TODO use BuildConfig.DEBUG
+        // TODO [Before beta] use BuildConfig.DEBUG
         if (true) {
             binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setVisibility(View.VISIBLE);
             binding.activityCodeFileDetailContent.contentCodeFileDetailDebugSize.setVisibility(View.VISIBLE);
@@ -169,4 +196,9 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
             });
         }
     }
+
+    private void handleAllowClickingLinks(TextView textView) {
+        FullscreenImageActivity.handleAllowClickingLinks(this, textView);
+    }
+
 }

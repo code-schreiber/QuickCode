@@ -17,7 +17,6 @@ import com.google.auto.value.AutoValue;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,14 +35,6 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     public int compareTo(@NonNull CodeFileViewModel o) {
         // Last created items first
         return Long.compare(o.codeFile().originalCodeFile().importedOn(), this.codeFile().originalCodeFile().importedOn());
-    }
-
-    public static List<CodeFileViewModel> createList(List<CodeFile> data) {
-        List<CodeFileViewModel> list = new ArrayList<>();
-        for (CodeFile codeFile : data) {
-            list.add(create(codeFile));
-        }
-        return list;
     }
 
     public CodeFile getCodeFile() {
@@ -68,7 +59,7 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getCreationDateShort(Context context) {
-        return getCreationDate(context);
+        return getCreationDate(context) + " - id " + codeFile().id();// TODO remove id
     }
 
     public String getOriginalFileSizeInMegabytes(Context context) {
