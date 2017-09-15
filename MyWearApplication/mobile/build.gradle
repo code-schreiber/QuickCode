@@ -47,20 +47,14 @@ android {
     productFlavors {
         fonts {
             signingConfig signingConfigs.debugConfig
-            versionCode rootProject.versionCode
-            versionName rootProject.versionName
             versionNameSuffix '.dev'
         }
         dev {
             signingConfig signingConfigs.debugConfig
-            versionCode rootProject.versionCode
-            versionName rootProject.versionName
             versionNameSuffix '.dev'
         }
         prod {
             signingConfig signingConfigs.releaseConfig
-            versionCode rootProject.versionCode
-            versionName rootProject.versionName
         }
     }
     dataBinding {
