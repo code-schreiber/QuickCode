@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.schreiber.code.seamless.aperol.db.PremiumPreferences;
-import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
 
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 
 public class CodeFileFactory {
@@ -26,7 +26,7 @@ public class CodeFileFactory {
         // Hide utility class constructor
     }
 
-    public static ArrayList<CodeFile> createCodeFileFromAssets(Context context, String path) {
+    public static List<CodeFile> createCodeFileFromAssets(Context context, String path) {
         Uri uri = Uri.parse(path);
         String originalFilename = uri.getLastPathSegment();
         String fileType = getFileSuffix(originalFilename);
@@ -42,7 +42,7 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    public static ArrayList<CodeFile> createCodeFilesFromUri(Context context, Uri uri) {
+    public static List<CodeFile> createCodeFilesFromUri(Context context, Uri uri) {
         ContentResolver contentResolver = context.getContentResolver();
         String originalFilename = UriUtils.getDisplayName(contentResolver, uri);
         String fileType = contentResolver.getType(uri);
@@ -50,7 +50,7 @@ public class CodeFileFactory {
         String importedFrom = uri.toString();
 
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
-        ArrayList<Bitmap> originalImages = getBitmapsFromUri(context, uri);
+        List<Bitmap> originalImages = getBitmapsFromUri(context, uri);
         if (originalImages != null && !originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
                 Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
@@ -69,29 +69,16 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    public static ArrayList<CodeFile> createCodeFilesFromText(Context context, String text) {
+    public static List<CodeFile> createCodeFilesFromText(Context context, String text) {
         String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
         String fileType = UriUtils.getTextTypeName();
         String importedFrom = "Imported from shared text: " + originalFilename;
-
-        ArrayList<CodeFile> codeFiles = new ArrayList<>();
-        ArrayList<Bitmap> originalImages = getBitmapFromText(text);
-        if (!originalImages.isEmpty()) {
-            if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
-                Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
-                final Bitmap originalImage = originalImages.get(0);
-                int size = originalImage.getByteCount();
-                return createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
-            }
-            for (Bitmap originalImage : originalImages) {
-                int size = originalImage.getByteCount();
-                codeFiles.addAll(createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom));
-            }
-        }
-        return codeFiles;
+        Bitmap originalImage = UriUtils.getBitmapFromText(text);
+        int size = originalImage.getByteCount();
+        return createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
     }
 
-    public static ArrayList<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile) {
+    public static List<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile) {
         String originalFilename = codeFile.originalCodeFile().filename();
         String fileType = codeFile.originalCodeFile().fileType();
         int size = codeFile.originalCodeFile().size();
@@ -110,7 +97,7 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    private static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
+    private static List<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
         ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
         if (codeFiles.size() > 1 && !PremiumPreferences.allowMultipleCodesInImageImport(context)) {
             Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one because of allowMultipleCodesInImageImport.");
@@ -120,17 +107,17 @@ public class CodeFileFactory {
     }
 
     @Nullable
-    private static ArrayList<Bitmap> getBitmapsFromUri(Context context, Uri uri) {
+    private static List<Bitmap> getBitmapsFromUri(Context context, Uri uri) {
         ContentResolver resolver = context.getContentResolver();
         if (UriUtils.fileExists(resolver, uri)) {
             if (UriUtils.isPdf(resolver, uri)) {
-                return PdfToBitmapConverter.pdfUriToBitmaps(context.getContentResolver(), uri);
+                return UriUtils.pdfUriToBitmaps(context.getContentResolver(), uri);
             } else if (UriUtils.isImage(resolver, uri)) {
                 Bitmap bitmap = UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
                 return createListFromSingleItem(bitmap);
             } else if (UriUtils.isText(resolver, uri)) {
-                String textContent = UriUtils.readTextFromUri(resolver, uri);
-                return getBitmapFromText(textContent);
+                Bitmap bitmap = UriUtils.getBitmapFromText(resolver, uri);
+                return createListFromSingleItem(bitmap);
             } else {
                 Logger.logError("No known file type: " + uri);
             }
@@ -138,12 +125,6 @@ public class CodeFileFactory {
             Logger.logError("File doesn't exist: " + uri);
         }
         return null;
-    }
-
-    @NonNull
-    private static ArrayList<Bitmap> getBitmapFromText(String textContent) {
-        Bitmap bitmap = EncodingUtils.encodeQRCode(textContent);
-        return createListFromSingleItem(bitmap);
     }
 
     @NonNull
