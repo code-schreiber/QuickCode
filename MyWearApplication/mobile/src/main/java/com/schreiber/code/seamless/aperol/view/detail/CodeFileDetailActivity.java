@@ -26,7 +26,7 @@ import com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListene
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class CodeFileDetailActivity extends BaseActivity implements OnImageClickedListener {
@@ -149,7 +149,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 }
 
                 private void handleFile(View view) {
-                    ArrayList<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile());
+                    List<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile());
                     if (codeFiles.isEmpty()) {
                         showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
                     } else {

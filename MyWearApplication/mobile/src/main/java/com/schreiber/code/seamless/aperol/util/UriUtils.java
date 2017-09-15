@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class UriUtils {
@@ -89,6 +90,24 @@ public class UriUtils {
             }
         }
         return null;
+    }
+
+    @CheckResult
+    public static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
+        return PdfToBitmapConverter.pdfUriToBitmaps(contentResolver, uri);
+    }
+
+    @NonNull
+    @CheckResult
+    public static Bitmap getBitmapFromText(ContentResolver contentResolver, Uri uri) {
+        String textContent = readTextFromUri(contentResolver, uri);
+        return getBitmapFromText(textContent);
+    }
+
+    @NonNull
+    @CheckResult
+    public static Bitmap getBitmapFromText(String textContent) {
+        return EncodingUtils.encodeQRCode(textContent);
     }
 
     @CheckResult

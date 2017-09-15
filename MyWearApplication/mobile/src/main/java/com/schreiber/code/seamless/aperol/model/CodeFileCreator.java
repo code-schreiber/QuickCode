@@ -10,6 +10,7 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.schreiber.code.seamless.aperol.util.BitmapUtils;
 import com.schreiber.code.seamless.aperol.util.EncodingUtils;
 import com.schreiber.code.seamless.aperol.util.Logger;
 import com.schreiber.code.seamless.aperol.util.TypeUtils;
@@ -49,7 +50,7 @@ public class CodeFileCreator {
                 // FIXME bug when unsuported code is still detected
                 Logger.logError("No barcodes detected, creating CodeFile without barcode: " + originalFilename);
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = CodeFile.create(originalCodeFile, originalImage);
+                CodeFile codeFile = createCodeFile(originalImage, originalCodeFile);
                 codeFiles.add(codeFile);
             } else {
                 for (int i = 0; i < barcodes.size(); i++) {
@@ -96,12 +97,20 @@ public class CodeFileCreator {
                 Logger.logError("Couldn't encode bitmap from barcode:" + codeRawValue);
             } else {
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                return CodeFile.create(originalCodeFile, originalImage, codeImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
+                return createCodeFile(originalImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue, codeImage, originalCodeFile);
             }
         } else {
             Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedBarcodeFormatsAsString());
         }
         return null;
+    }
+
+    private static CodeFile createCodeFile(Bitmap originalImage, OriginalCodeFile originalCodeFile) {
+        return CodeFile.create(originalCodeFile, BitmapUtils.sizeDownImage(originalImage));
+    }
+
+    private static CodeFile createCodeFile(Bitmap originalImage, String encodingFormatName, String codeContentType, String codeDisplayValue, String codeRawValue, Bitmap codeImage, OriginalCodeFile originalCodeFile) {
+        return CodeFile.create(originalCodeFile, BitmapUtils.sizeDownImage(originalImage), codeImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
     }
 
     private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {

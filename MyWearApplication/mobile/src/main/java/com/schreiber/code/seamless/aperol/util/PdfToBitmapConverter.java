@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol.model;
+package com.schreiber.code.seamless.aperol.util;
 
 
 import android.content.ContentResolver;
@@ -7,9 +7,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
-
-import com.schreiber.code.seamless.aperol.util.Logger;
-import com.schreiber.code.seamless.aperol.util.UriUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
