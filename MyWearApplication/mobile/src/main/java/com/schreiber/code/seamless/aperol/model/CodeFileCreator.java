@@ -46,13 +46,7 @@ public class CodeFileCreator {
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
-            if (barcodes.size() < 1) {
-                // FIXME bug when unsupported code is still detected
-                Logger.logError("No barcodes detected, creating CodeFile without barcode: " + originalFilename);
-                OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
-                CodeFile codeFile = createCodeFile(originalImage, originalCodeFile);
-                codeFiles.add(codeFile);
-            } else {
+            if (barcodes.size() > 0) {
                 for (int i = 0; i < barcodes.size(); i++) {
                     int key = barcodes.keyAt(i);
                     Barcode barcode = barcodes.get(key);
@@ -103,10 +97,6 @@ public class CodeFileCreator {
             Logger.logError("Code format not supported: " + barcode.format + " - " + encodingFormatName + ". " + "Currently supported: " + getSupportedBarcodeFormatsAsString());
         }
         return null;
-    }
-
-    private static CodeFile createCodeFile(Bitmap originalImage, OriginalCodeFile originalCodeFile) {
-        return CodeFile.create(originalCodeFile, originalImage);
     }
 
     private static CodeFile createCodeFile(Bitmap originalImage, String encodingFormatName, String codeContentType, String codeDisplayValue, String codeRawValue, Bitmap codeImage, OriginalCodeFile originalCodeFile) {

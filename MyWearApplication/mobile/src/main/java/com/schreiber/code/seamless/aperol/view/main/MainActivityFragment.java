@@ -281,10 +281,6 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
             showSimpleDialog(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
         } else {
             for (CodeFile codeFile : items) {
-                CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                if (!newCodeFileViewModel.isCodeAvailable()) {
-                    showSimpleDialog(R.string.error_file_added_with_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
-                }
                 addCodeFileToDatabase(codeFile);
             }
         }

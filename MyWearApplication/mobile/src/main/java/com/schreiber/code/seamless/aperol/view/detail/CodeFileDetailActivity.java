@@ -17,16 +17,11 @@ import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.databinding.ContentCodeFileDetailBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
-import com.schreiber.code.seamless.aperol.model.CodeFileCreator;
-import com.schreiber.code.seamless.aperol.model.CodeFileFactory;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListener;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.ImageDialogFragment;
 import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity;
-
-import java.util.List;
 
 
 public class CodeFileDetailActivity extends BaseActivity implements OnImageClickedListener {
@@ -121,61 +116,26 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
         content.contentCodeFileDetailDebugSize.setVisibility(View.GONE);
         content.contentCodeFileDetailDebugType.setVisibility(View.GONE);
         handleAllowClickingLinks(content.contentCodeFileDetailCodeDisplayContentTextview);
-        handleAllowClickingLinks(content.contentCodeFileDetailCodeRawContentTextview);
+        if (codeFileViewModel.getCodeDisplayContent().equals(codeFileViewModel.getCodeRawContent())) {
+            // Don't display double infos
+            binding.activityCodeFileDetailContent.contentCodeFileDetailCodeRawContentLayout.setVisibility(View.GONE);
+        } else {
+            handleAllowClickingLinks(content.contentCodeFileDetailCodeRawContentTextview);
+        }
         initFab();
     }
 
     private void initFab() {
-        final FloatingActionButton fab = binding.activityCodeFileDetailFab;
+        FloatingActionButton fab = binding.activityCodeFileDetailFab;
         View codeLayout = binding.activityCodeFileDetailContent.contentCodeFileDetailCodeLayout;
-        if (codeFileViewModel.isCodeAvailable()) {
-            codeLayout.setVisibility(View.VISIBLE);
-            fab.setImageBitmap(codeFileViewModel.getCodeImageThumbnail());
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileId);
-                }
-            });
-            if (codeFileViewModel.getCodeDisplayContent().equals(codeFileViewModel.getCodeRawContent())) {
-                // Don't display double infos
-                binding.activityCodeFileDetailContent.contentCodeFileDetailCodeRawContentLayout.setVisibility(View.GONE);
+        codeLayout.setVisibility(View.VISIBLE);
+        fab.setImageBitmap(codeFileViewModel.getCodeImageThumbnail());
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FullscreenImageActivity.start((BaseActivity) view.getContext(), codeFileId);
             }
-        } else {
-            // No code, let the user try again
-            codeLayout.setVisibility(View.GONE);
-            fab.setImageResource(R.drawable.ic_retry_black_24dp);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    handleFile(view);
-                }
-
-                private void handleFile(View view) {
-                    List<CodeFile> codeFiles = CodeFileFactory.createCodeFileFromCodeFile(view.getContext(), codeFileViewModel.getCodeFile());
-                    if (codeFiles.isEmpty()) {
-                        showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
-                    } else {
-                        for (CodeFile codeFile : codeFiles) {
-                            CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                            if (newCodeFileViewModel.isCodeAvailable()) {
-                                DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile); // TODO [No big value] check that this handles multiple codes
-                            } else {
-                                showSimpleDialog(R.string.error_file_no_code, CodeFileCreator.getSupportedBarcodeFormatsAsString());
-                            }
-                        }
-                        CodeFile codeFile = codeFiles.get(0);
-                        CodeFileViewModel newCodeFileViewModel = CodeFileViewModel.create(codeFile);
-                        if (newCodeFileViewModel.isCodeAvailable()) {
-                            codeFileViewModel = newCodeFileViewModel;
-                            initFab();
-                        } else {
-                            logError("Code image not available after extracting.");
-                        }
-                    }
-                }
-            });
-        }
+        });
     }
 
     private void initDebugViews() {

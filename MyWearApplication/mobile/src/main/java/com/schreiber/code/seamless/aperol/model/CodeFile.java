@@ -3,6 +3,7 @@ package com.schreiber.code.seamless.aperol.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -22,19 +23,7 @@ public abstract class CodeFile implements Parcelable {
 
     static final long NOT_ON_WATCH = 0L;
 
-    public static CodeFile create(OriginalCodeFile originalCodeFile, Bitmap originalImage) {
-        return create(originalCodeFile, originalImage, null);
-    }
-
-    public static CodeFile create(OriginalCodeFile originalCodeFile, Bitmap originalImage, @Nullable Bitmap codeImage) {
-        String codeType = "";
-        String codeContentType = "";
-        String codeDisplayContent = "";
-        String codeRawContent = "";
-        return create(originalCodeFile, originalImage, codeImage, codeType, codeContentType, codeDisplayContent, codeRawContent);
-    }
-
-    public static CodeFile create(OriginalCodeFile originalCodeFile, Bitmap originalImage, Bitmap codeImage, String codeType, String codeContentType, String codeDisplayContent, String codeRawContent) {
+    public static CodeFile create(@NonNull OriginalCodeFile originalCodeFile, @NonNull Bitmap originalImage, @NonNull Bitmap codeImage, @NonNull String codeType, @NonNull String codeContentType, @NonNull String codeDisplayContent, @NonNull String codeRawContent) {
         String originalFilename = originalCodeFile.filename();
         String suffix = CodeFileFactory.getFileSuffix(originalFilename);
         String displayName = originalFilename.replace("." + suffix, "");
@@ -89,14 +78,8 @@ public abstract class CodeFile implements Parcelable {
         return String.valueOf(hashCode());
     }
 
-    public boolean isCodeAvailable() {
-        return codeImageBytes() != null;
-    }
-
-    @Nullable
     abstract String originalImageBytes();
 
-    @Nullable
     abstract String codeImageBytes();
 
     Bitmap originalImage() {
@@ -126,7 +109,7 @@ public abstract class CodeFile implements Parcelable {
     }
 
     @Nullable
-    private Bitmap createBitmapFromBase64EncodedString(@Nullable String bitmapBase64Encoded) {
+    private Bitmap createBitmapFromBase64EncodedString(String bitmapBase64Encoded) {
         return BitmapUtils.createBitmapFromBase64EncodedString(bitmapBase64Encoded);
     }
 

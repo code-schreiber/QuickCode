@@ -54,12 +54,9 @@ public final class BitmapUtils {
     }
 
     @Nullable
-    public static Bitmap createBitmapFromBase64EncodedString(@Nullable String bitmapBase64Encoded) {
-        if (bitmapBase64Encoded != null) {
-            byte[] bitmapBytes = Base64.decode(bitmapBase64Encoded, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-        }
-        return null;
+    public static Bitmap createBitmapFromBase64EncodedString(String bitmapBase64Encoded) {
+        byte[] bitmapBytes = Base64.decode(bitmapBase64Encoded, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
     }
 
     @Nullable
