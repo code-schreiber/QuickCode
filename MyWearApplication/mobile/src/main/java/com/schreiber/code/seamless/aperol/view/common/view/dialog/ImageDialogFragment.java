@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -47,6 +49,7 @@ public class ImageDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
         addTextViewIfGiven(layout, INFO);
         addImageViewToLayout(layout, IMAGE_ORIGINAL);
         addImageViewIfGiven(layout, IMAGE_ORIGINAL_THUMBNAIL);
@@ -76,6 +79,10 @@ public class ImageDialogFragment extends DialogFragment {
 
     private void addImageViewToLayout(LinearLayout layout, String key) {
         ImageView imageView = new ImageView(getActivity());
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        imageView.setLayoutParams(layoutParams);
         imageView.setImageBitmap((Bitmap) getArguments().getParcelable(key));
         imageView.setAdjustViewBounds(true);
         layout.addView(imageView);
