@@ -95,10 +95,6 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         return codeFile().codeRawContent();
     }
 
-    public boolean isCodeAvailable() {
-        return codeFile().isCodeAvailable();
-    }
-
     @DrawableRes
     public int getIsOnWatchResource() {
         boolean isOnWatch = codeFile().onWatchUntil() != CodeFile.NOT_ON_WATCH;

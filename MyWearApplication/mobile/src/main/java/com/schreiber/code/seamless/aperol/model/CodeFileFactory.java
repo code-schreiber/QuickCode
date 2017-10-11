@@ -78,14 +78,6 @@ public class CodeFileFactory {
         return createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
     }
 
-    public static List<CodeFile> createCodeFileFromCodeFile(Context context, CodeFile codeFile) {
-        String originalFilename = codeFile.originalCodeFile().filename();
-        String fileType = codeFile.originalCodeFile().fileType();
-        int size = codeFile.originalCodeFile().size();
-        Bitmap originalImage = CodeFileViewModel.create(codeFile).getOriginalImage();
-        return createCodeFiles(context, originalFilename, fileType, size, originalImage, "CodeFile of " + originalFilename);
-    }
-
     @NonNull
     static String getFileSuffix(String originalFilename) {
         String suffix = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
