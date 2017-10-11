@@ -65,18 +65,18 @@ android {
 dependencies {
     //  wearApp project(':wear')
 
-    compile "com.google.android.gms:play-services:${rootProject.googleServices}"
-
     compile "com.android.support:design:${rootProject.googleSupportLibrary}"
     compile "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
     compile "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
     compile "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
 
-    compile "com.jakewharton.timber:timber:4.5.1"
+    compile "com.google.android.gms:play-services:${rootProject.googleServices}"
 
     compile "com.google.firebase:firebase-auth:${rootProject.googleServices}"
     compile "com.google.firebase:firebase-database:${rootProject.googleServices}"
     compile "com.google.firebase:firebase-core:${rootProject.googleServices}"
+
+    compile "com.jakewharton.timber:timber:4.5.1"
     compile 'com.google.zxing:core:3.0.1'
     provided 'com.google.auto.value:auto-value:1.2'
     apt 'com.google.auto.value:auto-value:1.2'
