@@ -63,10 +63,13 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 if (codeFileViewModel != null) {
                     binding.setCodeFileViewModel(codeFileViewModel);
                     binding.activityCodeFileDetailContent.setCodeFileViewModel(codeFileViewModel);
+                    binding.executePendingBindings();
+                    binding.activityCodeFileDetailContent.executePendingBindings();
                     binding.toolbarLayout.setTitle(codeFileViewModel.getDisplayName());
                     initViews();
                     initDebugViews();
                 } else {
+                    logError("codeFileViewModel is null");
                     showSimpleDialog(R.string.error_generic);
                 }
             }
