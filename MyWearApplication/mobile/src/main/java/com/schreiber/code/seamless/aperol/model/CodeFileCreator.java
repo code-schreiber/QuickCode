@@ -47,7 +47,7 @@ public class CodeFileCreator {
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
             if (barcodes.size() < 1) {
-                // FIXME bug when unsuported code is still detected
+                // FIXME bug when unsupported code is still detected
                 Logger.logError("No barcodes detected, creating CodeFile without barcode: " + originalFilename);
                 OriginalCodeFile originalCodeFile = OriginalCodeFile.create(originalFilename, fileType, size, importedFrom);
                 CodeFile codeFile = createCodeFile(originalImage, originalCodeFile);
@@ -106,11 +106,11 @@ public class CodeFileCreator {
     }
 
     private static CodeFile createCodeFile(Bitmap originalImage, OriginalCodeFile originalCodeFile) {
-        return CodeFile.create(originalCodeFile, BitmapUtils.sizeDownImage(originalImage));
+        return CodeFile.create(originalCodeFile, originalImage);
     }
 
     private static CodeFile createCodeFile(Bitmap originalImage, String encodingFormatName, String codeContentType, String codeDisplayValue, String codeRawValue, Bitmap codeImage, OriginalCodeFile originalCodeFile) {
-        return CodeFile.create(originalCodeFile, BitmapUtils.sizeDownImage(originalImage), codeImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
+        return CodeFile.create(originalCodeFile, originalImage, codeImage, encodingFormatName, codeContentType, codeDisplayValue, codeRawValue);
     }
 
     private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
@@ -118,9 +118,26 @@ public class CodeFileCreator {
         if (detector == null) {
             return new SparseArray<>();
         }
+        SparseArray<Barcode> detectedCodes = detectCodes(bitmap, detector);
+        detector.release();
+        return detectedCodes;
+    }
+
+    private static SparseArray<Barcode> detectCodes(Bitmap bitmap, BarcodeDetector detector) {
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
         SparseArray<Barcode> detectedCodes = detector.detect(frame);
-        detector.release();
+
+        if (detectedCodes.size() == 0) {
+            // Try again with a smaller image, which seems to work sometimes
+            Bitmap smallerBitmap = BitmapUtils.scaleDownImage500Pixels(bitmap);
+            if (smallerBitmap.getWidth() < bitmap.getWidth()) {
+                Logger.logDebug("Trying to detect again with a smaller image, this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() + " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                return detectCodes(smallerBitmap, detector);
+            } else {
+                Logger.logDebug("Trying to detect again with a smaller images did not work.");
+            }
+        }
+        Logger.logDebug(detectedCodes.size() + " detected codes");
         return detectedCodes;
     }
 

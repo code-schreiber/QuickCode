@@ -39,7 +39,7 @@ public abstract class CodeFile implements Parcelable {
         String suffix = CodeFileFactory.getFileSuffix(originalFilename);
         String displayName = originalFilename.replace("." + suffix, "");
         List<String> tags = createTags(originalCodeFile, suffix, codeType, codeContentType);
-        String originalImageBase64encoded = getBase64encodedBitmap(originalImage);
+        String originalImageBase64encoded = getBase64encodedBitmap(scaleDownOriginalImage(originalImage));
         String codeImageBase64encoded = getBase64encodedBitmap(codeImage);
 
         return new AutoValue_CodeFile(displayName, tags, codeType, codeContentType, codeDisplayContent, codeRawContent, originalCodeFile, NOT_ON_WATCH, originalImageBase64encoded, codeImageBase64encoded);
@@ -118,7 +118,11 @@ public abstract class CodeFile implements Parcelable {
     }
 
     private static Bitmap createThumbnail(Bitmap originalImage) {
-        return BitmapUtils.resizeImage(originalImage, 200);
+        return BitmapUtils.scaleDownImage(originalImage, 200);
+    }
+
+    private static Bitmap scaleDownOriginalImage(Bitmap originalImage) {
+        return BitmapUtils.scaleDownImage(originalImage, 1000);
     }
 
     @Nullable

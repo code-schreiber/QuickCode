@@ -27,26 +27,27 @@ public final class BitmapUtils {
         // Hide utility class constructor
     }
 
-    @Nullable
-    public static Bitmap resizeImage(Bitmap bitmap, int scaleSize) {
-        if (bitmap != null) {
-            int originalWidth = bitmap.getWidth();
-            int originalHeight = bitmap.getHeight();
-            Dimensions dimensions = getNewDimensions(scaleSize, originalWidth, originalHeight);
-            return Bitmap.createScaledBitmap(bitmap, dimensions.width, dimensions.height, false);
-        }
-        return null;
+    public static Bitmap scaleDownImage500Pixels(Bitmap bitmap) {
+        int scaleSize = Math.max(bitmap.getWidth(), bitmap.getHeight()) - 500;
+        return scaleDownImage(bitmap, scaleSize);
     }
 
     @Nullable
-    public static Bitmap sizeDownImage(Bitmap bitmap) {
+    public static Bitmap scaleDownImage(Bitmap bitmap, int scaleSize) {
         if (bitmap != null) {
-            int maxSize = 500;
-            int originalWidth = bitmap.getWidth();
-            int originalHeight = bitmap.getHeight();
-            if (originalWidth > maxSize || originalHeight > maxSize) {
-                Dimensions dimensions = getNewDimensions(maxSize, originalWidth, originalHeight);
-                return Bitmap.createScaledBitmap(bitmap, dimensions.width, dimensions.height, false);
+            if (scaleSize > 0) {
+                int originalWidth = bitmap.getWidth();
+                int originalHeight = bitmap.getHeight();
+                if (originalWidth > scaleSize || originalHeight > scaleSize) {
+                    Dimensions dimensions = getNewDimensions(scaleSize, originalWidth, originalHeight);
+                    return Bitmap.createScaledBitmap(bitmap, dimensions.width, dimensions.height, false);
+                } else {
+                    // Image not bigger than scaleSize, no need to scale down
+                    return bitmap;
+                }
+            } else {
+                Logger.logWarning("Invalid scaleSize: " + scaleSize);
+                return bitmap;
             }
         }
         return null;
