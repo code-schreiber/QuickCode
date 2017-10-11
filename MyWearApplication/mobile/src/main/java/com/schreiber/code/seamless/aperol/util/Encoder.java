@@ -27,10 +27,10 @@ class Encoder {
             int matrixWidth = encodedMatrix.getWidth();
             int matrixHeight = encodedMatrix.getHeight();
             if (matrixWidth != width) {
-                Logger.logError("Matrix doesn't have the same width! Is " + matrixWidth + " and should be " + width);
+                Logger.logWarning("Matrix doesn't have the wanted width! Is " + matrixWidth + " and should be " + width);
             }
             if (matrixHeight != height) {
-                Logger.logError("Matrix doesn't have the same height! Is " + matrixHeight + " and should be " + height);
+                Logger.logWarning("Matrix doesn't have the wanted height! Is " + matrixHeight + " and should be " + height);
             }
             int[] pixels = getPixels(encodedMatrix);
             return createBitmap(matrixWidth, matrixHeight, pixels);

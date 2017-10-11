@@ -30,7 +30,6 @@ import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.util.AssetPathLoader;
 import com.schreiber.code.seamless.aperol.util.Tracker;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
-import com.schreiber.code.seamless.aperol.util.android.NetworkUtils;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.base.BaseFragment;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
@@ -163,7 +162,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            final String message = "Could not set up the barcode detector! Was offline: " + !NetworkUtils.isOnline(getActivity());
+            final String message = "Could not set up the barcode detector!";// TODO setup earlier so this doesn't happen
             showSimpleDialog(message);
             logError(message);
             return;
