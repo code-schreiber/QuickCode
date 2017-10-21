@@ -46,13 +46,13 @@ public class CodeFileCreator {
         ArrayList<CodeFile> codeFiles = new ArrayList<>();
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
-            if (barcodes.size() > 0) {
-                for (int i = 0; i < barcodes.size(); i++) {
-                    int key = barcodes.keyAt(i);
-                    Barcode barcode = barcodes.get(key);
-                    if (barcodes.size() > 1) {
+            int barcodesSize = barcodes.size();
+            if (barcodesSize > 0) {
+                for (int i = 0; i < barcodesSize; i++) {
+                    Barcode barcode = barcodes.get(barcodes.keyAt(i));
+                    if (barcodesSize > 1) {
                         // append Code Index To Filename
-                        originalFilename += " ( Code " + key + ")";
+                        originalFilename += " (Code " + i + ")";
                     }
                     CodeFile codeFile = getCodeFileFromBarcode(originalFilename, fileType, size, originalImage, importedFrom, barcode);
                     if (codeFile != null) {
