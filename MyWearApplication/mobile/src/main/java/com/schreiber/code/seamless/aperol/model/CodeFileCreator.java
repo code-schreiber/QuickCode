@@ -17,6 +17,7 @@ import com.schreiber.code.seamless.aperol.util.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class CodeFileCreator {
@@ -42,8 +43,8 @@ public class CodeFileCreator {
     }
 
     @NonNull
-    static ArrayList<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
-        ArrayList<CodeFile> codeFiles = new ArrayList<>();
+    static List<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
+        List<CodeFile> codeFiles = new ArrayList<>();
         if (originalImage != null) {
             SparseArray<Barcode> barcodes = getCodesFromBitmap(context, originalImage);
             int barcodesSize = barcodes.size();
@@ -70,7 +71,7 @@ public class CodeFileCreator {
 
     @NonNull
     public static String getSupportedBarcodeFormatsAsString() {
-        ArrayList<String> supportedFormats = new ArrayList<>();
+        List<String> supportedFormats = new ArrayList<>();
         for (Integer supportedBarcodeFormat : SUPPORTED_BARCODE_FORMATS) {
             String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(supportedBarcodeFormat);
             supportedFormats.add(encodingFormatName);

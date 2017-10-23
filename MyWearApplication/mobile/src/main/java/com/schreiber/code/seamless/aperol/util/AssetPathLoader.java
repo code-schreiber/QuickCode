@@ -5,17 +5,18 @@ import android.content.res.AssetManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AssetPathLoader {
 
-    private final ArrayList<String> paths = new ArrayList<>();
+    private final List<String> paths = new ArrayList<>();
 
     public AssetPathLoader(AssetManager assets, String root) {
         initializePaths(assets, root);
     }
 
-    public ArrayList<String> getPaths() {
+    public List<String> getPaths() {
         return paths;
     }
 

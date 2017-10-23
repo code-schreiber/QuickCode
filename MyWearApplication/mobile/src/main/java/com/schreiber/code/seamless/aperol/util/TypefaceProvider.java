@@ -8,8 +8,8 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class TypefaceProvider {
     private void initialize(Context context) {
         AssetManager assets = context.getAssets();
 
-        ArrayList<String> paths = new AssetPathLoader(assets, FONTS_PATH).getPaths();
+        List<String> paths = new AssetPathLoader(assets, FONTS_PATH).getPaths();
         initializeTypefaces(assets, paths);
 
         if (RANDOM_MODE && !fonts.isEmpty()) {
@@ -48,7 +48,7 @@ public class TypefaceProvider {
         }
     }
 
-    private void initializeTypefaces(AssetManager assets, ArrayList<String> paths) {
+    private void initializeTypefaces(AssetManager assets, List<String> paths) {
         for (String path : paths) {
             if (path.endsWith(".ttf") || path.endsWith(".otf")) {// TODO extract constants
                 if (fontExists(assets, path)) {
