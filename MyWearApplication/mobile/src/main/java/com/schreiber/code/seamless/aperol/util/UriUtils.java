@@ -217,7 +217,7 @@ public class UriUtils {
 
     @NonNull
     public static String getSupportedImportFormatsAsString() {
-        ArrayList<String> supportedImportFormats = new ArrayList<>();
+        List<String> supportedImportFormats = new ArrayList<>();
         for (String supportedImportFormat : SUPPORTED_IMPORT_FORMATS) {
             supportedImportFormats.add(getFormatName(supportedImportFormat));
         }

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 class PdfToBitmapConverter {
@@ -19,8 +20,8 @@ class PdfToBitmapConverter {
     }
 
     @NonNull
-    static ArrayList<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
-        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
+        List<Bitmap> bitmaps = new ArrayList<>();
         try {
             ParcelFileDescriptor fileDescriptor = contentResolver.openFileDescriptor(uri, UriUtils.MODE_READ);
             if (fileDescriptor != null) {

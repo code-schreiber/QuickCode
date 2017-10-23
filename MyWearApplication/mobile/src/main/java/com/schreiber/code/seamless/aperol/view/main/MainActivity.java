@@ -37,7 +37,7 @@ import com.schreiber.code.seamless.aperol.util.UriUtils;
 import com.schreiber.code.seamless.aperol.view.base.BaseActivity;
 import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticDialogFragment;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends BaseActivity implements
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity implements
             }
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
             if (UriUtils.isImage(type)) {
-                ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                 fragment.handleFile(imageUris);
             } else {
                 showUnknownTypeDialog(type, "ACTION_SEND_MULTIPLE");

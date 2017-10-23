@@ -49,7 +49,7 @@ public class CodeFileFactory {
         int size = UriUtils.getSizeInBytes(contentResolver, uri);
         String importedFrom = uri.toString();
 
-        ArrayList<CodeFile> codeFiles = new ArrayList<>();
+        List<CodeFile> codeFiles = new ArrayList<>();
         List<Bitmap> originalImages = getBitmapsFromUri(context, uri);
         if (originalImages != null && !originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
@@ -90,7 +90,7 @@ public class CodeFileFactory {
 
     @NonNull
     private static List<CodeFile> createCodeFiles(Context context, String originalFilename, String fileType, int size, Bitmap originalImage, String importedFrom) {
-        ArrayList<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
+        List<CodeFile> codeFiles = CodeFileCreator.createCodeFiles(context, originalFilename, fileType, size, originalImage, importedFrom);
         if (codeFiles.size() > 1 && !PremiumPreferences.allowMultipleCodesInImageImport(context)) {
             Logger.logError(codeFiles.size() + " barcodes found in bitmap! Saving only one because of allowMultipleCodesInImageImport.");
             return createListFromSingleItem(codeFiles.get(0));
@@ -120,7 +120,7 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    private static <T> ArrayList<T> createListFromSingleItem(T t) {
+    private static <T> List<T> createListFromSingleItem(T t) {
         if (t == null) {
             return new ArrayList<>();
         } else {
