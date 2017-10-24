@@ -5,11 +5,6 @@ import android.graphics.Typeface;
 import android.util.SparseArray;
 
 
-/**
- * TODO make inmutable
- * Created by sebas on 17.02.17.
- */
-
 class Font {
 
     private final String name;

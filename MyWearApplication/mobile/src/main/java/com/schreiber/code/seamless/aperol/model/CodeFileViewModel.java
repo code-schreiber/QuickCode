@@ -59,7 +59,7 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getCreationDateShort(Context context) {
-        return getCreationDate(context) + " - id " + codeFile().id();// TODO remove id
+        return getCreationDate(context);
     }
 
     public String getOriginalFileSizeInMegabytes(Context context) {
