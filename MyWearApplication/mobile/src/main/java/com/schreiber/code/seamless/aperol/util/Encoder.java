@@ -58,7 +58,7 @@ class Encoder {
                 hints.put(EncodeHintType.CHARACTER_SET, Charset.defaultCharset().name());
                 break;
             case DATA_MATRIX:
-                // TODO image is too small
+                // TODO [For supporting DATA_MATRIX] Bug: image is too small
 //                int minSize = Math.max(width, height);
 //                hints.put(EncodeHintType.MIN_SIZE, new Dimension(minSize, minSize));
                 break;
