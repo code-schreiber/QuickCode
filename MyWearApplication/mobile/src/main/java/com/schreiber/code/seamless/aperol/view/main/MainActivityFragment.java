@@ -59,6 +59,8 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         adapter = new MyCustomAdapter(this);
         recyclerView.setAdapter(adapter);
 
+        CodeFileCreator.setupBarcodeDetector(getActivity());
+
         onCodeFilesChangedListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -159,10 +161,11 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     }
 
     private void performFileSearch(String typeFilter) {
+        logDebug("performing file search on " + typeFilter);
         BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            final String message = "Could not set up the barcode detector!";// TODO setup earlier so this doesn't happen
+            final String message = "Could not set up the barcode detector!";
             showSimpleDialog(message);
             logError(message);
             return;
