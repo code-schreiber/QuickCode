@@ -1,9 +1,12 @@
 package com.schreiber.code.seamless.aperol.util;
 
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import timber.log.Timber;
 
 
+// TODO add tags to logs
 public class Logger {
 
     private Logger() {
@@ -12,31 +15,29 @@ public class Logger {
 
     public static void logInfo(String message) {
         if (isMessageOk(message)) {
+            FirebaseCrash.log(message);
             Timber.i(message);
         }
     }
 
     public static void logDebug(String message) {
         if (isMessageOk(message)) {
+            FirebaseCrash.log(message);
             Timber.d(message);
         }
     }
 
     public static void logWarning(String message) {
         if (isMessageOk(message)) {
+            FirebaseCrash.report(new Exception("Warning:" + message));
             Timber.w(message);
         }
     }
 
     public static void logError(String message) {
         if (isMessageOk(message)) {
+            FirebaseCrash.report(new Exception("Error:" + message));
             Timber.e(message);
-        }
-    }
-
-    public static void logException(String message, Throwable e) {
-        if (isMessageOk(message)) {
-            Timber.e(e, message);
         }
     }
 
@@ -44,10 +45,18 @@ public class Logger {
         logException(e.getMessage(), e);
     }
 
+    public static void logException(String message, Throwable e) {
+        if (isMessageOk(message)) {
+            FirebaseCrash.log(message);
+            FirebaseCrash.report(e);
+            Timber.e(e, message);
+        }
+    }
+
     private static boolean isMessageOk(String message) {
         boolean isMessageOk = !TypeUtils.isEmpty(message);
         if (!isMessageOk) {
-            Timber.e(new Exception(), "No message provided to log! Message: \"" + message + "\"");
+            logException(new IllegalArgumentException("No message provided to log! Message: \"" + message + "\""));
         }
         return isMessageOk;
     }

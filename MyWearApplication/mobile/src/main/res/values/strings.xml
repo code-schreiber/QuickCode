@@ -1,16 +1,33 @@
 <resources>
 
     <string name="app_name">Seamless Aperol</string>
-    <string name="subtitle">subtitle</string>
+    <string name="subtitle">Seamless Aperol</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
+    <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the \u2795</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
+    <string name="menu_debug">Debug</string>
+    <string name="menu_debug_reset_app">Reset App and exit</string>
+
+    <string name="undo">undo</string>
+
+    <string name="code_fie_detail_tags">Tags</string>
+    <string name="code_fie_detail_original_file">Original file</string>
+    <string name="code_fie_detail_creation_date">Imported on</string>
+    <string name="code_fie_detail_file_size">Original file size</string>
+    <string name="code_fie_detail_file_type">Original file type</string>
+    <string name="code_fie_detail_code">Code</string>
+    <string name="code_fie_detail_code_type">Type</string>
+    <string name="code_fie_detail_code_content_type">Content type</string>
+    <string name="code_fie_detail_code_display_content">Content</string>
+    <string name="code_fie_detail_code_raw_content">Raw content</string>
+
+    <string name="error_generic">An internal error has occurred</string>
+    <string name="error_file_not_added">No file added, make sure it is one of the supported formats: %1$s.</string>
+    <string name="error_file_not_added_unsupported_type">No file added: File type not supported, %1$s is not one of the supported formats: %2$s.</string>
+    <string name="error_shared_text_too_long">Text was too long so it has been cut.</string>
+
+    <string name="error_premium_links_not_allowed">Clicking Links in only allowed in premium version :(</string>
 
 </resources>

@@ -10,10 +10,57 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/white</item>
+    </style>
+
+
+    <style name="Divider">
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@color/transparent_black</item>
+    </style>
+
+    <style name="CodeFileDetailLinearLayout">
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="CodeFileDetailTextView">
+        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="CodeFileDetailTextView.Title">
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:layout_weight">2</item>
+    </style>
+
+    <style name="CodeFileDetailImageView">
+        <item name="android:layout_marginEnd">@dimen/margin_small</item>
+        <item name="android:layout_height">@dimen/size_icon</item>
+        <item name="android:layout_width">@dimen/size_icon</item>
+        <item name="android:layout_weight">0</item>
+    </style>
 
 </resources>

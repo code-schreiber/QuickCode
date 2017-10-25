@@ -20,9 +20,6 @@ public class SeamlessAperolApp extends Application {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-        } else {
-            // TODO
-            // Timber.plant(new ProductionTree());
         }
     }
 

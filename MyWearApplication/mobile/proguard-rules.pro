@@ -15,3 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keepattributes SourceFile, LineNumberTable
+
+# Firebase Realtime Database
+-keepattributes Signature
+-keepclassmembers class com.schreiber.code.seamless.aperol.model.** {
+  *;
+}

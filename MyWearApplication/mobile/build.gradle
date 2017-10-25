@@ -1,10 +1,35 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.google.firebase.firebase-crash'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
+    }
+}
 
 android {
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    signingConfigs {
+        releaseConfig {
+            keyAlias System.getenv(RELEASE_KEY_ALIAS)
+            keyPassword System.getenv(RELEASE_KEY_PASSWORD)
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword System.getenv(RELEASE_STORE_PASSWORD)
+        }
+        debugConfig {
+            keyAlias DEBUG_KEY_ALIAS
+            keyPassword DEBUG_KEY_PASSWORD
+            storeFile file(DEBUG_STORE_FILE)
+            storePassword DEBUG_STORE_PASSWORD
+        }
+    }
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -15,8 +40,21 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        fonts {
+            signingConfig signingConfigs.debugConfig
+            versionNameSuffix '.dev'
+        }
+        dev {
+            signingConfig signingConfigs.debugConfig
+            versionNameSuffix '.dev'
+        }
+        prod {
+            signingConfig signingConfigs.releaseConfig
         }
     }
     dataBinding {
@@ -25,22 +63,27 @@ android {
 }
 
 dependencies {
-    wearApp project(':wear')
+    //  wearApp project(':wear')
 
-    compile 'com.google.android.gms:play-services:10.0.1'
-    // Note: specific version numbers are managed in gradle.properties. This is preferred since it easily keeps sub-projects on the same versions.
-    compile "com.android.support:design:${google_support_library}"
-    compile "com.android.support:support-v13:${google_support_library}"
-    compile "com.android.support:appcompat-v7:${google_support_library}"
-    compile "com.android.support:recyclerview-v7:${google_support_library}"
+    compile "com.android.support:design:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
+    compile "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
 
-    //compile 'com.jakewharton:butterknife:6.1.0'
+    compile "com.google.android.gms:play-services:${rootProject.googleServices}"
+
+    compile "com.google.firebase:firebase-auth:${rootProject.googleServices}"
+    compile "com.google.firebase:firebase-database:${rootProject.googleServices}"
+    compile "com.google.firebase:firebase-core:${rootProject.googleServices}"
+
     compile "com.jakewharton.timber:timber:4.5.1"
-
-    compile 'com.github.barteksc:pdfium-android:1.5.0'
-
+    compile 'com.google.zxing:core:3.0.1'
     provided 'com.google.auto.value:auto-value:1.2'
     apt 'com.google.auto.value:auto-value:1.2'
+    apt 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
+
+    apt 'me.mattlogan.auto.value:auto-value-firebase:1.0.1'
+    provided 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.0.1'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -53,20 +96,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
 
-
 }
 
-sonarqube {
-    properties {
-        property "sonar.projectName", project.name
-//        property "sonar.projectKey", "org.sonarqube:android-simple-sq-scanner-gradle"
-
-//        property "sonar.sourceEncoding","UTF-8"
-//        property "sonar.sources","."
-//        property "sonar.exclusions","build/**,**/*.png"
-
-        property "sonar.import_unknown_files", true
-
-//        property "sonar.android.lint.report", "./build/outputs/lint-results.xml"
-    }
-}
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.getkeepsafe.dexcount'

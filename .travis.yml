@@ -1,22 +1,35 @@
 language: android
+
+install: true
+
+sudo: true
+
+notifications:
+  email: false
+  
+addons:
+  sonarqube:
+    branches:
+    - develop
+    - master
+    token:
+      secure: "avJ3O4/qgwVvsj0nFAmYZoWjdK4qWo/O25nqsI8n4AtU9GLzxQ3AeoieMkMabDieyWvJdJ4wQeBO4rPM0LZEO5OywA7FA3fxjrNHQQyiMbCCE/42d8SMNiEwq40UcIM5r7/E28DgsL3cfNR9lXEzYVEIfAxu3eqYsnk+WmjfPq7KlS01ntoOLyZr8H1py/D2gxCODlu61///054jahnlm+NaJqM00qp9B8xLkon1wCzY9dRgeWicwWGCE9C0OuNeEl/iD9qA2yg3ogAfVUOJkYjxO+u35xxqzY+T6KJWb8Ppx+4yVTl7WiSVi7ncva4cwsc8wEvcxlB+1U3rU7To6jJgtYDQaVPVnBBgYcQsw2SkP1pPI2FEegGKlNeEkc5Qwg2JSEPoLimZsNk/4ZPfePm3sfTG3kYJZVJvMoYtgvbpWCVx+CrsvfIub4pj2zRqGIGWLvIV+lNKgWFFw3Ke+EV0sqS95pwlFH0ExusWrnOCcBdBf0r2y/8VoIKzbaXWSe0eAiKc9eyxBV+0dxFQ7lRzqlOP/80EWzrN5Ec4tpNLpFr9ziDriV8WpLeQr0e6ksPmrDPwgaHCA94mfxMYmQ8MXHQkzc6w6566JH0vNNeK+EbLfp/Jxmgz2nefsDvG8y5o9OoxpoDh/pemTrAR5BHoXdqvjYptRmStRHsGx1c="
+
 jdk: oraclejdk8
+
 android:
   components:
+    # use the latest revision of Android SDK Tools
     - tools
     - platform-tools
     # Workaround to get Android SDK 25 running
     - tools
 
-    # Uncomment the lines below if you want to
-    # use the latest revision of Android SDK Tools
-    # - platform-tools
-    # - tools
+    # BuildTools version used by project
+    - build-tools-26.0.1
 
-    # The BuildTools version used by your project
-    - build-tools-25.0.2
-
-    # The SDK version used to compile your project
-    - android-25
+    # SDK version to compile project
+    - android-26
 
     # Additional components
     # - extra-google-google_play_services
@@ -27,5 +40,24 @@ android:
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
-    # - sys-img-armeabi-v7a-android-17
-script: ./MyWearApplication/gradlew build -p MyWearApplication
+
+script: ./fastlane/deploy.sh
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_f305c44bb590_key -iv $encrypted_f305c44bb590_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
+  - rvm install 2.3.1
+  - gem install supply
+
+cache:
+  directories:
+    - '$HOME/.m2'
+    - '$HOME/.gradle'
+    - '$HOME/.sonar/cache'
+    # - '.gradle'
+
+env:
+  global:
+    - secure: "kPGA144Xz3UvM4+NUL+geElr9saC8SJtd0LR+rQFrFjBhBRC9yhdA5rx86Mwy5tu8SOnDzSxydB7kJ3VuvkikY2WTeXdUc/EDu1w3XTSFa1Jf5RYgClwCT/H3U2VIusrt5enyucUsuoBdbwBjgkDOoxsc0UHVLEY6AbnQFQfsO1WBxDUkuBuRYnWy05qSEeO+1kIvoHxzZpPvAadmUtGXM8k4ziEXahO+lZmZUj9CxP/KSgJq9aedIJro40ND0Fc5dhP1znzOgdIV3g+8ksxX2DpFyMfokqJJpzVYdnK6FCsjwlLzATNS+X/n2+P8OugVQtYvJpB9L0eb7ipFzoL7msrClaEAB4SmJWRf9Tucilcjh0tMq/Nkc5/Itav+7Z+tLp9O4Jjz1G57iUIbKUZ2o289AxNKodAgl826IuBwjy7t/kx4I/T8b0ucqQzzJfThf6AnxrCBY3br7kgcfclrswfcBrJHYJu3y3302p8NP1067+PUVtAuS47xFWPXIAEENWAPSd4sdFodIP0cyq1XMtwSpoCZp7ZLyUP2RsTew/M3tCDaC+JdBBjOUJZZ74HZYqf9sa22LU+SOjjqIXcEZ7Fvd7OrIow+eCKWul+wHK2v+9XZ/cE835DB2ozNUjdKDYER9MN+dBLHYJBYOPDNh8Q2azObkuIHFWzn7yPjao="
+    - secure: "J6l7sAUUsXDYlwEYTyCvI3yJY0Gb8oV2vrECCiV28nCfl0sjDVONf2Wbu5ing4IuCJri/+b3j9kLaFDM79Hxj86mcXCeh0sHO9uqBivMaLB8e4gFCVXgF1X+yWDhqXOT8zwDNzJezfeWXp6zh1TmfoGbBnRPZL3VcpHUGzy5udZW8EKWhrfcE44kSXaLUyT4DZq4yYXwXajbN5rDuwvTbnLpfhLOX+weTYAEuhHqQ9IAc+CAHei6aE0Rpi7YQQPk/8xBWxzsG2aRIL8yqFzRXAkArGSR79V8R7dbxmq5Gx/TJk5yuXjX3L67DgF1hPcfcvW/O2J5nsdJQZhlpGzJiRburNo7QxJUE40fNJN8NLGZ+dIT4DJy2Yz16RukdcqaU/HOv3qu9R464L/Qes8OZj5PhouXjg79iIuPBB3wEpmA+y+jT32hgll1a/h1ONp4lw+9/h3nzKyuxzfQzRIZffoShy5QU/tfM5E3Pnwkd21SN6moKIHaP0Nqlvc7K/MFl72AKP/ogkth1znX76WkB4nxAW2FnjZHwnnxVeam25Xmtd+hogVSAqTcvCDfx9exi0LS+9UfCbRD6EXgGr6fptxy03C37LqednYY+uor5ynzj/Gbd53wacLbsrsZJ68aE2Fm17CQm/C9pRXo0JnMTodCWnzAfmysKv0RiPSXQQI="
+    - secure: "Z9gtNoN7g1uZ54hyiRGBHXj15etU2foGj6znEg/N9oxs7t8CUxENnpPqjb/OR/oMeVRsSkjfy0Hhh5eUprraMxFXaCIxv+SbIy2fk7Mzd6n3a5V/VeYavuICxZJyNvEK6EgHppHD7bANCCcKTr988U1v5be9uGImGBRSBrNBQBJ89QaU2T/WBHTZEUsROiHeDUElCnPSBV8EzteXnoHdaSzfNNuqhf5b7ro4pjuNyqLwKgnpyWQ8KGRZfQSNIMzscy7MtDh81oJ5Yoprjk0fvpIknf93rDmu6oYzEytbTouUKiOYhtMwyf6WsAmxa1SCI5jQuNqBd5dc5ht333c3KNlQzrlMYHfuo8wGViKlkxMpDk0qTsiYE+VV5P4at4xhGoFXRh8Xr9A+0SyAfVwPPseaghFYnaF9iw+pJU4EeHN9P7GaiQ6h7hLKgXSkMxmLvtlyxvuB3/9RggYPF1kQ64QaFLYOhgFuJ9TZlAOCE3SZzSbGe4Nms5l4PslF5+mBqGO1Dwkfik2ePdk9qTKVkcqJnnmLQY9pwEOupO+0k/qeQL2uofQWHt0JoQm5OlLHAvlnvzmu1GvbXysUzZAFI443h3gOueJThhnob8jC5cJRmid6h4UBX9S7fdJLVB+iVtK/+Ug4ayhleYL8CifnU5j2alH/K4syvDLhcgXzbLw="

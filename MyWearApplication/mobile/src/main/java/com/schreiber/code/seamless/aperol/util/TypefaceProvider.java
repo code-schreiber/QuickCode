@@ -8,11 +8,12 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 
 public class TypefaceProvider {
 
@@ -36,40 +37,28 @@ public class TypefaceProvider {
 
     private void initialize(Context context) {
         AssetManager assets = context.getAssets();
-        initializeTypefaces(assets, FONTS_PATH);
+
+        List<String> paths = new AssetPathLoader(assets, FONTS_PATH).getPaths();
+        initializeTypefaces(assets, paths);
 
         if (RANDOM_MODE && !fonts.isEmpty()) {
             for (String s : fonts.keySet()) {
                 allFonts.put(s, fonts.get(s));
             }
-
-            int randomIndex = new Random().nextInt(fonts.size());
-            randomKey = (String) fonts.keySet().toArray()[randomIndex];
-            Font randomFont = fonts.get(randomKey);
-            fonts.clear();
-            fonts.put(randomKey, randomFont);
         }
     }
 
-    private void initializeTypefaces(AssetManager assets, String path) {
-        try {
-            String[] list = assets.list(path);
-            boolean isFolder = list.length > 0;
-            if (isFolder) {
-                for (String file : list) {
-                    initializeTypefaces(assets, path + "/" + file);
+    private void initializeTypefaces(AssetManager assets, List<String> paths) {
+        for (String path : paths) {
+            if (path.endsWith(".ttf") || path.endsWith(".otf")) {// TODO extract constants
+                if (fontExists(assets, path)) {
+                    addTypefaceToFonts(assets, path);
+                } else {
+                    Logger.logError("Not adding not existant " + path);
                 }
             } else {
-                if (path.endsWith(".ttf") || path.endsWith(".otf")) {
-                    if (fontExists(assets, path)) {
-                        addTypefaceToFonts(assets, path);
-                    } else
-                        Logger.logError("Not adding not existant " + path);
-                } else
-                    Logger.logError("Not adding " + path);
+                Logger.logError("Not adding " + path);
             }
-        } catch (IOException e) {
-            Logger.logException(e);
         }
     }
 
@@ -94,22 +83,30 @@ public class TypefaceProvider {
     }
 
     public void setTypeface(TextView textView) {
-        String defaultTypeface = "symbol";
+        String defaultTypeface;
         if (RANDOM_MODE) {
-            defaultTypeface = randomKey;
+            defaultTypeface = getARandomTypeface();
         }
         setTypeface(defaultTypeface, textView);
     }
 
     public void setTypeface(TextView textView, int style) {
-        String defaultTypeface = "symbol";
+        String defaultTypeface;
         if (RANDOM_MODE) {
-            defaultTypeface = randomKey;
+            defaultTypeface = getARandomTypeface();
         }
         setTypeface(defaultTypeface, textView, style);
     }
 
-    public void setTypeface(String fontName, TextView textView) {
+    private String getARandomTypeface() {
+        if (randomKey == null) {
+            int randomIndex = new Random().nextInt(fonts.size());
+            randomKey = (String) fonts.keySet().toArray()[randomIndex];
+        }
+        return randomKey;
+    }
+
+    private void setTypeface(String fontName, TextView textView) {
         int style = textView.getTypeface().getStyle();
         setTypeface(fontName, textView, style);
     }
@@ -123,14 +120,18 @@ public class TypefaceProvider {
                 return;
             }
         }
-        Logger.logError("No Typeface for " + style + " found in " + fonts);
+        Logger.logWarning("No Typeface for " + style + " found in " + fonts);
+    }
+
+    public void resetRandomKey() {
+        randomKey = null;
     }
 
     @Nullable
     public String getCurrentFontName() {
-        if (fonts.size() == 1) {
-            String key = (String) fonts.keySet().toArray()[0];
-            return fonts.get(key).getName();
+        getARandomTypeface();
+        if (randomKey != null) {
+            return fonts.get(randomKey).getName();
         }
         return null;
     }

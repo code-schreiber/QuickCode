@@ -3,32 +3,86 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.google.gms:google-services:3.0.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'org.ajoberstar:grgit:1.5.0'
+        classpath 'com.google.firebase:firebase-plugins:1.0.5'
     }
 
 }
 
 plugins {
-    id "org.sonarqube" version "2.2"
+    id "org.sonarqube" version "2.5"
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
     }
 }
 
+import org.ajoberstar.grgit.Grgit
+
+
 ext {
-    compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
-    minSdkVersion = 25
-    targetSdkVersion = 25
-    versionCode = 1
-    versionName = "0.0"
+    def version = "0.2.0"
+    def git = Grgit.open(currentDir: projectDir)
+    versionCode = getVersionCode(version, git)
+    versionName = getVersionName(version, git)
+
+    compileSdkVersion = 26
+    buildToolsVersion = "26.0.1"
+    minSdkVersion = 23
+    targetSdkVersion = 26
+
+    googleSupportLibrary = "25.3.1"
+    googleServices = "10.2.1"
+}
+
+static def getVersionCode(version, git) {
+    def versionCode = version.replaceAll("\\.", "")
+    def postfix = git.tag.list().size()
+    def completeVersionCode = versionCode + postfix
+    completeVersionCode += 490200 // Temporary fix for Google Play VersionCode Update
+    return Integer.parseInt(completeVersionCode)
+}
+
+static def getVersionName(version, git) {
+    return version + "-" + git.describe()
+}
+
+task printVersion() {
+    println("Version Code: $versionCode")
+    println("Version Name: $versionName")
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectName", project.name
+        property "sonar.projectKey", project.name
+        property "sonar.projectVersion", rootProject.versionName
+
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.host.url", "https://sonarqube.com"
+
+        property "sonar.android.lint.report", "mobile/build/outputs/lint-results-debug.xml"
+        property "sonar.import_unknown_files", true
+        property "sonar.exclusions", "**/*.png,**/*.jpg,**/*.pdf,**/*.ttf,**/*.otf,"
+
+        //    # Comma-separated paths to directories with sources
+        //    # sonar.sources = "."
+        //    # path to test source directories
+        //    # sonar.tests=libraryTest/src
+        //    # Tell SonarQube where to get the code coverage reports
+        //    # sonar.emma.reportPath=target/emma
+    }
 }

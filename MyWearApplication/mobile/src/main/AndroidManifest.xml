@@ -1,37 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.schreiber.code.seamless.aperol">
+          package="com.schreiber.code.seamless.aperol">
 
     <application
         android:name=".SeamlessAperolApp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.main.MainActivity"
+            android:name=".view.main.CodesListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="file" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.pdf" />
-                <data android:mimeType="application/pdf" />
-                <data android:mimeType="image/*" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/pdf"/>
+            </intent-filter>
+
+            <!--TODO open links that are an image, pdf or plain text-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.VIEW"/>-->
+
+                <!--<category android:name="android.intent.category.BROWSABLE"/>-->
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+
+                <!--<data android:scheme="file"/>-->
+                <!--<data android:scheme="http"/>-->
+                <!--<data android:scheme="https"/>-->
+                <!--<data android:host="*"/>-->
+                <!--<data android:pathPattern=".*\\.pdf"/>-->
+                <!--<data android:mimeType="application/pdf"/>-->
+                <!--&lt;!&ndash;<data android:mimeType="image/*"/>&ndash;&gt;-->
+            <!--</intent-filter>-->
+
+        </activity>
+        <activity
+            android:name=".view.detail.CodeFileDetailActivity"
+            android:parentActivityName=".view.main.CodesListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.schreiber.code.seamless.aperol.view.main.CodesListActivity"/>
+        </activity>
+        <activity
+            android:name=".view.fullscreen.FullscreenImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:parentActivityName=".view.detail.CodeFileDetailActivity"
+            android:theme="@style/FullscreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"/>
         </activity>
     </application>
 
