@@ -20,7 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.databinding.FragmentMainBinding;
+import com.schreiber.code.seamless.aperol.databinding.FragmentCodesListBinding;
 import com.schreiber.code.seamless.aperol.databinding.ItemLoadingBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.model.CodeFile;
@@ -39,7 +39,7 @@ import com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivit
 import java.util.List;
 
 
-public class MainActivityFragment extends BaseFragment implements OnViewClickedListener {
+public class CodesListFragment extends BaseFragment implements OnViewClickedListener {
 
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
@@ -50,9 +50,9 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentMainBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
-        loadingViewBinding = binding.fragmentMainActivityLoadingView;
-        recyclerView = binding.fragmentMainActivityRecyclerView;
+        FragmentCodesListBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_codes_list, container, false);
+        loadingViewBinding = binding.fragmentCodesListLoadingView;
+        recyclerView = binding.fragmentCodesListRecyclerView;
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -140,12 +140,12 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
     private void replaceListData(List<CodeFileViewModel> adapterData) {
         adapter.replaceData(adapterData);
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null) {
+        CodesListActivity codesListActivity = (CodesListActivity) getActivity();
+        if (codesListActivity != null) {
             if (adapter.getItemCount() > 0) {
-                mainActivity.setVisibilityOfFabHint(View.GONE);
+                codesListActivity.setVisibilityOfFabHint(View.GONE);
             } else {
-                mainActivity.setVisibilityOfFabHint(View.VISIBLE);
+                codesListActivity.setVisibilityOfFabHint(View.VISIBLE);
             }
         }
     }

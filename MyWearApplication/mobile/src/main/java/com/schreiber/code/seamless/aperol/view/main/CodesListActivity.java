@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.schreiber.code.seamless.aperol.R;
-import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
+import com.schreiber.code.seamless.aperol.databinding.ActivityCodesListBinding;
 import com.schreiber.code.seamless.aperol.db.DatabaseReferenceWrapper;
 import com.schreiber.code.seamless.aperol.db.SharedPreferencesWrapper;
 import com.schreiber.code.seamless.aperol.util.UriUtils;
@@ -32,19 +32,19 @@ import com.schreiber.code.seamless.aperol.view.common.view.dialog.FontStatisticD
 import java.util.List;
 
 
-public class MainActivity extends BaseActivity implements
+public class CodesListActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         FontStatisticDialogFragment.DialogFragmentListener {
 
     private DrawerLayout drawerLayout;
 
-    private ActivityMainBinding binding;
+    private ActivityCodesListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_codes_list);
         initViews();
 
         handleIntent(getIntent());
@@ -105,27 +105,27 @@ public class MainActivity extends BaseActivity implements
     }
 
     public void setVisibilityOfFabHint(int visibility) {
-        binding.activityMainAppBarMain.appBarMainFabHint.setVisibility(visibility);
+        binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
     }
 
     private void initViews() {
-        Toolbar toolbar = binding.activityMainAppBarMain.appBarMainToolbar;
+        Toolbar toolbar = binding.activityCodesListAppBarMain.appBarMainToolbar;
         setSupportActionBar(toolbar);
-        drawerLayout = binding.activityMainDrawerLayout;
+        drawerLayout = binding.activityCodesListDrawerLayout;
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = binding.activityMainNavView;
+        NavigationView navigationView = binding.activityCodesListNavView;
         String subtitle = FirebaseAuth.getInstance().getCurrentUser() == null ? "No user signed in" : FirebaseAuth.getInstance().getCurrentUser().getUid();
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(subtitle);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FloatingActionButton actionButton = binding.activityMainAppBarMain.appBarMainFab;
+        FloatingActionButton actionButton = binding.activityCodesListAppBarMain.appBarMainFab;
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivityFragment fragment = getMainActivityFragment();
+                CodesListFragment fragment = getCodesListFragment();
                 if (fragment != null) {
                     fragment.performFileSearch();
                 }
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity implements
         actionButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                MainActivityFragment fragment = getMainActivityFragment();
+                CodesListFragment fragment = getCodesListFragment();
                 if (fragment != null) {
                     fragment.performFileSearchForImages();
                     return true;
@@ -151,7 +151,12 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void handleIntent(Intent intent) {
-        MainActivityFragment fragment = getMainActivityFragment();
+        CodesListFragment fragment = getCodesListFragment();
+        if (fragment == null) {
+            logError("CodesListFragment is null");
+            showSimpleDialog(R.string.error_generic);
+            return;
+        }
 
         String action = intent.getAction();
         String type = intent.getType();
@@ -207,7 +212,7 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void importAssets() {
-        MainActivityFragment fragment = getMainActivityFragment();
+        CodesListFragment fragment = getCodesListFragment();
         if (fragment != null) {
             fragment.importAssets();
         }
@@ -218,13 +223,13 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Nullable
-    private MainActivityFragment getMainActivityFragment() {
+    private CodesListFragment getCodesListFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_main_fragment);
-        if (fragment != null && fragment instanceof MainActivityFragment) {
-            return (MainActivityFragment) fragment;
+        if (fragment != null && fragment instanceof CodesListFragment) {
+            return (CodesListFragment) fragment;
         }
-        showSnack(MainActivityFragment.class + " not found");
-        logError(MainActivityFragment.class + " not found");
+        showSnack(CodesListFragment.class + " not found");
+        logError(CodesListFragment.class + " not found");
         return null;
     }
 

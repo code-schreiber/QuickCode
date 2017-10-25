@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".MainActivity">
+      tools:context=".view.main.CodesListActivity">
 
     <item
         android:id="@+id/menu_global_show_font_dialog"
