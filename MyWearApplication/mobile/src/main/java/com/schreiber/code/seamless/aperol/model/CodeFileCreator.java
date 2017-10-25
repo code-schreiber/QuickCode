@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Frame;
@@ -145,7 +146,8 @@ public class CodeFileCreator {
         return detector;
     }
 
-    private static int getSupportedBarcodeFormats() {
+    @VisibleForTesting
+    static int getSupportedBarcodeFormats() {
         int supportedBarcodeFormats = 0;
         for (int supportedBarcodeFormat : SUPPORTED_BARCODE_FORMATS) {
             supportedBarcodeFormats |= supportedBarcodeFormat;
