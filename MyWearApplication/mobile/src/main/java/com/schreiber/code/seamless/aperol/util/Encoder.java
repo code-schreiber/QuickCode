@@ -62,6 +62,8 @@ class Encoder {
 //                int minSize = Math.max(width, height);
 //                hints.put(EncodeHintType.MIN_SIZE, new Dimension(minSize, minSize));
                 break;
+            default:
+                break;
         }
         return hints;
     }

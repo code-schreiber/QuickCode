@@ -13,11 +13,6 @@ import timber.log.Timber;
 
 public class BaseFragment extends Fragment {
 
-
-    public BaseFragment() {
-
-    }
-
     protected void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ItemListBinding;
-import com.schreiber.code.seamless.aperol.model.CodeFile;
 import com.schreiber.code.seamless.aperol.model.CodeFileViewModel;
 import com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener;
 
@@ -18,13 +17,13 @@ import java.util.List;
 
 
 // TODO generalize ViewHolder https://medium.com/google-developers/android-data-binding-recyclerview-db7c40d9f0e4
-class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
+class CodeFileViewModelsAdapter extends RecyclerView.Adapter<CodeFileViewModelsAdapter.ViewHolder> {
 
     private List<CodeFileViewModel> data;
     private final OnViewClickedListener clickListener;
 
 
-    MyCustomAdapter(OnViewClickedListener listener) {
+    CodeFileViewModelsAdapter(OnViewClickedListener listener) {
         this.data = new ArrayList<>();
         this.clickListener = listener;
     }
@@ -37,7 +36,7 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
     }
 
     @Override
-    public MyCustomAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public CodeFileViewModelsAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         ItemListBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.item_list, parent, false);
         return new ViewHolder(binding);
@@ -52,10 +51,6 @@ class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    public boolean contains(CodeFile codeFile) {
-        return data.contains(CodeFileViewModel.create(codeFile));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

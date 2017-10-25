@@ -22,10 +22,11 @@ class PdfToBitmapConverter {
     @NonNull
     static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
         List<Bitmap> bitmaps = new ArrayList<>();
+        PdfRenderer renderer = null;
         try {
             ParcelFileDescriptor fileDescriptor = contentResolver.openFileDescriptor(uri, UriUtils.MODE_READ);
             if (fileDescriptor != null) {
-                PdfRenderer renderer = new PdfRenderer(fileDescriptor);
+                renderer = new PdfRenderer(fileDescriptor);
                 int pageCount = renderer.getPageCount();
                 for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
                     PdfRenderer.Page page = renderer.openPage(pageIndex);
@@ -34,10 +35,13 @@ class PdfToBitmapConverter {
                     page.close();
                     bitmaps.add(bitmap);
                 }
-                renderer.close();
             }
         } catch (IOException e) {
             Logger.logException(e);
+        } finally {
+            if (renderer != null) {
+                renderer.close();
+            }
         }
         return bitmaps;
     }
