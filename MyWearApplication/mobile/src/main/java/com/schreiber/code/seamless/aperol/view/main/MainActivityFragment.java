@@ -43,7 +43,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
 
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
-    private MyCustomAdapter adapter;
+    private CodeFileViewModelsAdapter adapter;
 
     private static final int READ_REQUEST_CODE = 111;
     private ValueEventListener onCodeFilesChangedListener;
@@ -56,7 +56,7 @@ public class MainActivityFragment extends BaseFragment implements OnViewClickedL
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new MyCustomAdapter(this);
+        adapter = new CodeFileViewModelsAdapter(this);
         recyclerView.setAdapter(adapter);
 
         CodeFileCreator.setupBarcodeDetector(getActivity());

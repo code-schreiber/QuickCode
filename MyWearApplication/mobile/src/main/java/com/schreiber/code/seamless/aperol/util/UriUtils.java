@@ -45,10 +45,11 @@ public class UriUtils {
     public static String readTextFromUri(ContentResolver contentResolver, Uri uri) {
         StringBuilder stringBuilder = new StringBuilder();
         InputStream inputStream = null;
+        BufferedReader reader = null;
         try {
             inputStream = contentResolver.openInputStream(uri);
             if (inputStream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
@@ -57,6 +58,13 @@ public class UriUtils {
         } catch (IOException e) {
             Logger.logException(e);
         } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                Logger.logException(e);
+            }
             try {
                 if (inputStream != null) {
                     inputStream.close();
