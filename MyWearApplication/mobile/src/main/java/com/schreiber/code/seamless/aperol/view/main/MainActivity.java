@@ -20,14 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.schreiber.code.seamless.aperol.R;
 import com.schreiber.code.seamless.aperol.databinding.ActivityMainBinding;
@@ -42,13 +34,8 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        FontStatisticDialogFragment.DialogFragmentListener,
-        DataApi.DataListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        FontStatisticDialogFragment.DialogFragmentListener {
 
-    private static final String COUNT_KEY = "TODO_FIND_A_WAY_TO_READ_FROM_ONE_SOURCE";//TODO
-    private GoogleApiClient mGoogleApiClient;
     private DrawerLayout drawerLayout;
 
     private ActivityMainBinding binding;
@@ -59,12 +46,6 @@ public class MainActivity extends BaseActivity implements
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initViews();
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
 
         handleIntent(getIntent());
     }
@@ -115,40 +96,12 @@ public class MainActivity extends BaseActivity implements
     protected void onResume() {
         logDebug("onResume ");
         super.onResume();
-        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         logDebug("onPause");
         super.onPause();
-        Wearable.DataApi.removeListener(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        logDebug("onConnected " + bundle);
-        logDebug("mGoogleApiClient " + mGoogleApiClient);
-        Wearable.DataApi.addListener(mGoogleApiClient, this);
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        logDebug(dataEventBuffer + " onDataChanged");
-        for (DataEvent event : dataEventBuffer) {
-            logDebug("event.getType() " + event.getType());
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        logDebug("onConnectionSuspended " + i);
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        logDebug("onConnectionFailed " + connectionResult);
     }
 
     public void setVisibilityOfFabHint(int visibility) {
@@ -280,23 +233,4 @@ public class MainActivity extends BaseActivity implements
         Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
     }
 
-    // Create a data map and put data in it
-    public void increaseCounter(int count) {
-        String path = "/count";
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(path);
-        // For sending text 100KB of data is 102400 characters
-        putDataMapReq.getDataMap().putInt(COUNT_KEY, count);
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        logDebug(count + " putDataItem " + putDataReq);
-//        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
-        // FIXME devices not connected http://stackoverflow.com/questions/22524760/not-able-to-connect-android-wear-emulator-with-device
-//        React to when it sends the data
-// developer.android.com/training/wearables/data-layer/events.html#Wait
-//        pendingResult.addBatchCallback(new PendingResult.BatchCallback() {
-//            @Override
-//            public void zzs(Status status) {
-//                logDebug("zzs " + status);
-//            }
-//        });
-    }
 }
