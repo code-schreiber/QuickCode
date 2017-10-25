@@ -1,5 +1,8 @@
 #!/bin/bash
 
+EXPECTED_TRAVIS_REPO_SLUG="code-schreiber/seamless-aperol"
+EXPECTED_TRAVIS_BRANCH="develop"
+
 # Script should bail on first error
 set -e
 
@@ -19,12 +22,12 @@ echo "travis.sh: Running gradle sonarqube"
 echo "travis.sh: mobile/build/outputs/apk now contains:"
 ls mobile/build/outputs/apk
 
-if [ "$TRAVIS_REPO_SLUG" != "code-schreiber/seamless-aperol" ]; then
-  echo "travis.sh: Skipping deployment: wrong repository. Expected code-schreiber/seamless-aperol but was '$TRAVIS_REPO_SLUG'."
+if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
+  echo "travis.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "travis.sh: Skipping deployment: was pull request."
-elif [ "$TRAVIS_BRANCH" != "develop" ]; then
-  echo "travis.sh: Skipping deployment: wrong branch. Expected develop but was '$TRAVIS_BRANCH'."
+elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
+  echo "travis.sh: Skipping deployment: wrong branch. Expected '$EXPECTED_TRAVIS_BRANCH' but was '$TRAVIS_BRANCH'."
 else
   echo "travis.sh: Running gradle firebaseUploadProdReleaseProguardMapping"
   ./gradlew firebaseUploadProdReleaseProguardMapping
@@ -35,4 +38,4 @@ else
   echo "travis.sh: Deployed to Google Play"
   exit $?
 fi
-echo "Exiting travis.sh"
+echo "Exiting travis.sh skipping deployment"
