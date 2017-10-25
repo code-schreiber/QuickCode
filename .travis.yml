@@ -41,7 +41,7 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
 
-script: ./fastlane/travis.sh
+script: ./fastlane/deploy.sh
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_f305c44bb590_key -iv $encrypted_f305c44bb590_iv -in secrets.tar.enc -out secrets.tar -d
