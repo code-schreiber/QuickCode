@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:667384481817:android:cb35f8c75b920e24",
+        "mobilesdk_app_id": "1:667384481817:android:0743d38a4cd2bc44",
         "android_client_info": {
-          "package_name": "com.schreiber.code.seamless.aperol"
+          "package_name": "com.toolslab.quickcode"
         }
       },
       "oauth_client": [
