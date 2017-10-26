@@ -34,7 +34,7 @@ import org.ajoberstar.grgit.Grgit
 
 
 ext {
-    def version = "0.2.0"
+    def version = "0.0.1"
     def git = Grgit.open(currentDir: projectDir)
     versionCode = getVersionCode(version, git)
     versionName = getVersionName(version, git)
@@ -52,7 +52,6 @@ static def getVersionCode(version, git) {
     def versionCode = version.replaceAll("\\.", "")
     def postfix = git.tag.list().size()
     def completeVersionCode = versionCode + postfix
-    completeVersionCode += 490200 // Temporary fix for Google Play VersionCode Update
     return Integer.parseInt(completeVersionCode)
 }
 
