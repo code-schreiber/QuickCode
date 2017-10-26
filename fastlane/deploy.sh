@@ -34,7 +34,7 @@ else
   cd ..
   echo "deploy.sh: Running fastlane supply"
   fastlane supply --version
-  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/mobile-prod-release.apk --track alpha
+  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/mobile-prod-release.apk --track alpha --validate_only
   echo "deploy.sh: Deployed to Google Play"
   exit $?
 fi
