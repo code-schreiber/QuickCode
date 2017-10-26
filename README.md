@@ -1,16 +1,16 @@
 Master
 
-[![Build Status](https://travis-ci.org/code-schreiber/seamless-aperol.svg?branch=master)](https://travis-ci.org/code-schreiber/seamless-aperol) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=MyWearApplication)](https://sonarcloud.io/dashboard?id=MyWearApplication)
+[![Build Status](https://travis-ci.org/code-schreiber/QuickCode.svg?branch=master)](https://travis-ci.org/code-schreiber/QuickCode) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=QuickCode)](https://sonarcloud.io/dashboard?id=QuickCode)
 
 
 Develop
 
-[![Build Status](https://travis-ci.org/code-schreiber/seamless-aperol.svg?branch=develop)](https://travis-ci.org/code-schreiber/seamless-aperol) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=MyWearApplication%3Adevelop)](https://sonarcloud.io/dashboard?id=MyWearApplication%3Adevelop)
+[![Build Status](https://travis-ci.org/code-schreiber/QuickCode.svg?branch=develop)](https://travis-ci.org/code-schreiber/QuickCode) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=QuickCode%3Adevelop)](https://sonarcloud.io/dashboard?id=QuickCode%3Adevelop)
 
 
 
-<img align='center' src='https://raw.githubusercontent.com/code-schreiber/seamless-aperol/develop/MyWearApplication/mobile/src/main/res/mipmap-xxhdpi/ic_launcher.png' width='100' height='100'/>
+<img align='center' src='https://raw.githubusercontent.com/code-schreiber/QuickCode/develop/Quick Code/mobile/src/main/res/mipmap-xxhdpi/ic_launcher.png' width='100' height='100'/>
 
-### Seamless Aperol
+### Quick Code
 
 
