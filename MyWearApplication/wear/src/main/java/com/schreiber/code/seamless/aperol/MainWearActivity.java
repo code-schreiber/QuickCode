@@ -1,4 +1,4 @@
-package com.schreiber.code.seamless.aperol;
+package com.toolslab.quickcode;
 
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;

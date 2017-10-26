@@ -7,11 +7,11 @@
 
         <variable
             name="codeFileViewModel"
-            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
+            type="com.toolslab.quickcode.model.CodeFileViewModel"/>
 
         <variable
             name="actionListener"
-            type="com.schreiber.code.seamless.aperol.view.common.view.OnViewClickedListener"/>
+            type="com.toolslab.quickcode.view.common.view.OnViewClickedListener"/>
 
     </data>
 

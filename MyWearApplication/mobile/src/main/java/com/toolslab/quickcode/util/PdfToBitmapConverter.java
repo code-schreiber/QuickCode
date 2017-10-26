@@ -1,0 +1,49 @@
+package com.toolslab.quickcode.util;
+
+
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+class PdfToBitmapConverter {
+
+    private PdfToBitmapConverter() {
+        // Hide utility class constructor
+    }
+
+    @NonNull
+    static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
+        List<Bitmap> bitmaps = new ArrayList<>();
+        PdfRenderer renderer = null;
+        try {
+            ParcelFileDescriptor fileDescriptor = contentResolver.openFileDescriptor(uri, UriUtils.MODE_READ);
+            if (fileDescriptor != null) {
+                renderer = new PdfRenderer(fileDescriptor);
+                int pageCount = renderer.getPageCount();
+                for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                    PdfRenderer.Page page = renderer.openPage(pageIndex);
+                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                    page.close();
+                    bitmaps.add(bitmap);
+                }
+            }
+        } catch (IOException e) {
+            Logger.logException(e);
+        } finally {
+            if (renderer != null) {
+                renderer.close();
+            }
+        }
+        return bitmaps;
+    }
+
+}

@@ -20,6 +20,6 @@
 
 # Firebase Realtime Database
 -keepattributes Signature
--keepclassmembers class com.schreiber.code.seamless.aperol.model.** {
+-keepclassmembers class com.toolslab.quickcode.model.** {
   *;
 }
