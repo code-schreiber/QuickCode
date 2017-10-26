@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.schreiber.code.seamless.aperol">
+          package="com.toolslab.quickcode">
 
     <application
         android:name=".SeamlessAperolApp"
@@ -69,7 +69,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.schreiber.code.seamless.aperol.view.main.CodesListActivity"/>
+                android:value=".view.main.CodesListActivity"/>
         </activity>
         <activity
             android:name=".view.fullscreen.FullscreenImageActivity"
@@ -78,7 +78,7 @@
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"/>
+                android:value=".view.detail.CodeFileDetailActivity"/>
         </activity>
     </application>
 

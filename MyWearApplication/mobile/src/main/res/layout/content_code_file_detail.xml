@@ -2,18 +2,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.schreiber.code.seamless.aperol.view.detail.CodeFileDetailActivity"
+        tools:context="com.toolslab.quickcode.view.detail.CodeFileDetailActivity"
         tools:showIn="@layout/activity_code_file_detail">
 
     <data>
 
         <variable
             name="codeFileViewModel"
-            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
+            type="com.toolslab.quickcode.model.CodeFileViewModel"/>
 
         <variable
             name="clickListener"
-            type="com.schreiber.code.seamless.aperol.view.common.view.OnImageClickedListener"/>
+            type="com.toolslab.quickcode.view.common.view.OnImageClickedListener"/>
     </data>
 
     <android.support.v4.widget.NestedScrollView

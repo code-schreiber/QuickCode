@@ -7,14 +7,14 @@
 
         <variable
             name="codeFileViewModel"
-            type="com.schreiber.code.seamless.aperol.model.CodeFileViewModel"/>
+            type="com.toolslab.quickcode.model.CodeFileViewModel"/>
 
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.schreiber.code.seamless.aperol.view.fullscreen.FullscreenImageActivity">
+        tools:context="com.toolslab.quickcode.view.fullscreen.FullscreenImageActivity">
 
         <ImageView
             android:id="@+id/activity_fullscreen_image_content"
