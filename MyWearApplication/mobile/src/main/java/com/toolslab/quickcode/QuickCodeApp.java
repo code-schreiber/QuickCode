@@ -6,7 +6,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 import timber.log.Timber;
 
-public class SeamlessAperolApp extends Application {
+public class QuickCodeApp extends Application {
 
     @Override
     public void onCreate() {

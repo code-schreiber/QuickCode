@@ -3,7 +3,7 @@
           package="com.toolslab.quickcode">
 
     <application
-        android:name=".SeamlessAperolApp"
+        android:name=".QuickCodeApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -48,18 +48,18 @@
 
             <!--TODO open links that are an image, pdf or plain text-->
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.VIEW"/>-->
+            <!--<action android:name="android.intent.action.VIEW"/>-->
 
-                <!--<category android:name="android.intent.category.BROWSABLE"/>-->
-                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+            <!--<category android:name="android.intent.category.BROWSABLE"/>-->
+            <!--<category android:name="android.intent.category.DEFAULT"/>-->
 
-                <!--<data android:scheme="file"/>-->
-                <!--<data android:scheme="http"/>-->
-                <!--<data android:scheme="https"/>-->
-                <!--<data android:host="*"/>-->
-                <!--<data android:pathPattern=".*\\.pdf"/>-->
-                <!--<data android:mimeType="application/pdf"/>-->
-                <!--&lt;!&ndash;<data android:mimeType="image/*"/>&ndash;&gt;-->
+            <!--<data android:scheme="file"/>-->
+            <!--<data android:scheme="http"/>-->
+            <!--<data android:scheme="https"/>-->
+            <!--<data android:host="*"/>-->
+            <!--<data android:pathPattern=".*\\.pdf"/>-->
+            <!--<data android:mimeType="application/pdf"/>-->
+            <!--&lt;!&ndash;<data android:mimeType="image/*"/>&ndash;&gt;-->
             <!--</intent-filter>-->
 
         </activity>
