@@ -38,4 +38,4 @@ else
   echo "deploy.sh: Deployed to Google Play"
   exit $?
 fi
-echo "Exiting deploy.sh skipping deployment"
+echo "Exiting deploy.sh, skipping deployment"
