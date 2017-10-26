@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPECTED_TRAVIS_REPO_SLUG="code-schreiber/seamless-aperol"
+EXPECTED_TRAVIS_REPO_SLUG="code-schreiber/QuickCode"
 EXPECTED_TRAVIS_BRANCH="develop"
 
 # Script should bail on first error
@@ -12,7 +12,7 @@ echo "deploy.sh: TRAVIS_REPO_SLUG: $TRAVIS_REPO_SLUG"
 echo "deploy.sh: TRAVIS_TAG: $TRAVIS_TAG"
 echo "deploy.sh: TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
 
-cd MyWearApplication
+cd QuickCode
 echo "deploy.sh: Running gradle printVersion"
 ./gradlew printVersion
 echo "deploy.sh: Running gradle build"
