@@ -34,10 +34,9 @@ import org.ajoberstar.grgit.Grgit
 
 
 ext {
-    def version = "0.0.1"
     def git = Grgit.open(currentDir: projectDir)
-    versionCode = getVersionCode(version, git)
-    versionName = getVersionName(version, git)
+    versionCode = git.tag.list().size()
+    versionName = git.describe()
 
     compileSdkVersion = 26
     buildToolsVersion = "26.0.1"
@@ -46,17 +45,6 @@ ext {
 
     googleSupportLibrary = "25.3.1"
     googleServices = "10.2.1"
-}
-
-static def getVersionCode(version, git) {
-    def versionCode = version.replaceAll("\\.", "")
-    def postfix = git.tag.list().size()
-    def completeVersionCode = versionCode + postfix
-    return Integer.parseInt(completeVersionCode)
-}
-
-static def getVersionName(version, git) {
-    return version + "-" + git.describe()
 }
 
 task printVersion() {
