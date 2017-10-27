@@ -41,7 +41,7 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-22
 
-script: rvm "$TRAVIS_RUBY_VERSION" do deploy.sh
+script: ./deploy.sh
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_6a3a5fc3045a_key -iv $encrypted_6a3a5fc3045a_iv -in secrets.tar.enc -out secrets.tar -d
