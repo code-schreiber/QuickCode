@@ -20,23 +20,15 @@ android {
         releaseConfig {
             keyAlias System.getenv(RELEASE_KEY_ALIAS)
             keyPassword System.getenv(RELEASE_KEY_PASSWORD)
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword System.getenv(RELEASE_STORE_PASSWORD)
-        }
-        debugConfig {
-            keyAlias DEBUG_KEY_ALIAS
-            keyPassword DEBUG_KEY_PASSWORD
-            storeFile file(DEBUG_STORE_FILE)
-            storePassword DEBUG_STORE_PASSWORD
+            storeFile file(RELEASE_KEYSTORE_FILE)
+            storePassword System.getenv(RELEASE_KEYSTORE_PASSWORD)
         }
     }
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.versionCode
-        versionName rootProject.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
     }
     buildTypes {
         release {
@@ -46,11 +38,9 @@ android {
     }
     productFlavors {
         fonts {
-            signingConfig signingConfigs.debugConfig
             versionNameSuffix '.dev'
         }
         dev {
-            signingConfig signingConfigs.debugConfig
             versionNameSuffix '.dev'
         }
         prod {
@@ -84,8 +74,6 @@ dependencies {
 
     apt 'me.mattlogan.auto.value:auto-value-firebase:1.0.1'
     provided 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.0.1'
-
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
