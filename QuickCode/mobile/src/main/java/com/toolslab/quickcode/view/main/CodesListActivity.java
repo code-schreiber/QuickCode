@@ -25,6 +25,7 @@ import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
 import com.toolslab.quickcode.db.SharedPreferencesWrapper;
+import com.toolslab.quickcode.util.Tracker;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.common.view.dialog.FontStatisticDialogFragment;
@@ -151,6 +152,7 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void handleIntent(Intent intent) {
+        logDebug("Handling intent: " + Tracker.getIntentDescription(intent));
         CodesListFragment fragment = getCodesListFragment();
         if (fragment == null) {
             logError("CodesListFragment is null");
