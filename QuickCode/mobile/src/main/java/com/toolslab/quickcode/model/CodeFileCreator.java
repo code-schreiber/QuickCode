@@ -24,7 +24,7 @@ import java.util.List;
 public class CodeFileCreator {
 
     private static final Integer[] SUPPORTED_BARCODE_FORMATS = {
-//            Barcode.CODE_128,
+            Barcode.CODE_128,
 //            Barcode.CODE_39,
 //            Barcode.CODE_93,
 //            Barcode.CODABAR,
