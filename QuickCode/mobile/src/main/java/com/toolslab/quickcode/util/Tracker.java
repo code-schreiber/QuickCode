@@ -2,7 +2,9 @@ package com.toolslab.quickcode.util;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CheckResult;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -38,21 +40,22 @@ public class Tracker {
 //            logEvent(tag, INSTALL_REFERRER, params);
 //        }
 //    }
-//
-//    /**
-//     * @param intent the intent to take data out of.
-//     * @return A string description of the intent.
-//     */
-//    public static String getIntentDescription(Intent intent) {
-//        String intentDescription = "";
-//        if (intent != null) {
-//            if (intent.getExtras() != null) {
-//                intentDescription = intent.getExtras().toString();
-//            } else {
-//                intentDescription = intent.toString();
-//            }
-//        }
-//        return intentDescription;
-//    }
+
+    /**
+     * @param intent the intent to take data out of.
+     * @return A string description of the intent.
+     */
+    @CheckResult
+    public static String getIntentDescription(Intent intent) {
+        String intentDescription = "";
+        if (intent != null) {
+            if (intent.getExtras() != null) {
+                intentDescription = intent.getExtras().toString();
+            } else {
+                intentDescription = intent.toString();
+            }
+        }
+        return intentDescription;
+    }
 
 }
