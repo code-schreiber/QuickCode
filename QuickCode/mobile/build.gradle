@@ -28,23 +28,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
+        signingConfig signingConfigs.releaseConfig
         multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    productFlavors {
-        fonts {
-            versionNameSuffix '.dev'
-        }
-        dev {
-            versionNameSuffix '.dev'
-        }
-        prod {
-            signingConfig signingConfigs.releaseConfig
         }
     }
     dataBinding {
