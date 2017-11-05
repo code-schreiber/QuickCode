@@ -8,7 +8,7 @@ notifications:
   email: false
   
 addons:
-  sonarqube:
+  sonarcloud:
     branches:
     - develop
     - master
@@ -49,8 +49,10 @@ before_install:
 cache:
   directories:
     - '$HOME/.m2'
+    - '$HOME/.m2/repository'
     - '$HOME/.gradle'
     - '$HOME/.sonar/cache'
+    - '.gradle'
 
 env:
   global:
