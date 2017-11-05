@@ -22,11 +22,9 @@ android:
     # use the latest revision of Android SDK Tools
     - tools
     - platform-tools
-    # Workaround to get Android SDK 25 running
-    - tools
 
     # BuildTools version used by project
-    - build-tools-26.0.1
+    - build-tools-26.0.2
 
     # SDK version to compile project
     - android-26
@@ -53,7 +51,6 @@ cache:
     - '$HOME/.m2'
     - '$HOME/.gradle'
     - '$HOME/.sonar/cache'
-    # - '.gradle'
 
 env:
   global:
