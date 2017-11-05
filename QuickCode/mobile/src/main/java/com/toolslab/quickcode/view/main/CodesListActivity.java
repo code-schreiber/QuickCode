@@ -18,9 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
@@ -118,8 +116,6 @@ public class CodesListActivity extends BaseActivity implements
         toggle.syncState();
 
         NavigationView navigationView = binding.activityCodesListNavView;
-        String subtitle = FirebaseAuth.getInstance().getCurrentUser() == null ? "No user signed in" : FirebaseAuth.getInstance().getCurrentUser().getUid();
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_header_main_textView)).setText(subtitle);
         navigationView.setNavigationItemSelectedListener(this);
 
         FloatingActionButton actionButton = binding.activityCodesListAppBarMain.appBarMainFab;
