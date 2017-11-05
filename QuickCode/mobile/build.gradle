@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.google.firebase.firebase-crash'
 
 buildscript {
@@ -72,12 +71,12 @@ dependencies {
 
     compile "com.jakewharton.timber:timber:4.5.1"
     compile 'com.google.zxing:core:3.0.1'
-    provided 'com.google.auto.value:auto-value:1.2'
-    apt 'com.google.auto.value:auto-value:1.2'
-    apt 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
+    compileOnly 'com.google.auto.value:auto-value:1.5.1'
+    annotationProcessor 'com.google.auto.value:auto-value:1.5.1'
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
 
-    apt 'me.mattlogan.auto.value:auto-value-firebase:1.0.1'
-    provided 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.0.1'
+    annotationProcessor 'me.mattlogan.auto.value:auto-value-firebase:1.1.0'
+    provided 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.1.0'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
@@ -87,7 +86,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-
 }
 
 apply plugin: 'com.google.gms.google-services'

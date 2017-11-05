@@ -8,11 +8,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
         classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'org.ajoberstar:grgit:1.5.0'
-        classpath 'com.google.firebase:firebase-plugins:1.0.5'
+        classpath ('com.google.firebase:firebase-plugins:1.1.0') {
+            exclude group: 'com.google.guava', module: 'guava-jdk5'
+        }
     }
 
 }
@@ -39,7 +40,7 @@ ext {
     versionName = git.describe()
 
     compileSdkVersion = 26
-    buildToolsVersion = "26.0.1"
+    buildToolsVersion = "26.0.2"
     minSdkVersion = 23
     targetSdkVersion = 26
 
