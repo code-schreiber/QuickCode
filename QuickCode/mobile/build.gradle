@@ -48,31 +48,31 @@ android {
 dependencies {
     //  wearApp project(':wear')
 
-    compile "com.android.support:design:${rootProject.googleSupportLibrary}"
-    compile "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
-    compile "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
-    compile "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
-    compile "com.android.support:mediarouter-v7:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:design:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:mediarouter-v7:${rootProject.googleSupportLibrary}"
 
-    compile "com.google.android.gms:play-services-vision:${rootProject.googleServices}"
-    compile "com.google.firebase:firebase-auth:${rootProject.googleServices}"
-    compile "com.google.firebase:firebase-core:${rootProject.googleServices}"
-    compile "com.google.firebase:firebase-crash:${rootProject.googleServices}"
-    compile "com.google.firebase:firebase-database:${rootProject.googleServices}"
+    implementation "com.google.android.gms:play-services-vision:${rootProject.googleServices}"
+    implementation "com.google.firebase:firebase-auth:${rootProject.googleServices}"
+    implementation "com.google.firebase:firebase-core:${rootProject.googleServices}"
+    implementation "com.google.firebase:firebase-crash:${rootProject.googleServices}"
+    implementation "com.google.firebase:firebase-database:${rootProject.googleServices}"
 
-    compile "com.jakewharton.timber:timber:4.5.1"
-    compile 'com.google.zxing:core:3.0.1'
+    implementation "com.jakewharton.timber:timber:4.5.1"
+    implementation 'com.google.zxing:core:3.0.1'
     compileOnly 'com.google.auto.value:auto-value:1.5.1'
     annotationProcessor 'com.google.auto.value:auto-value:1.5.1'
     annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.5'
 
     annotationProcessor 'me.mattlogan.auto.value:auto-value-firebase:1.1.0'
-    provided 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.1.0'
+    compileOnly 'me.mattlogan.auto.value:auto-value-firebase-annotation:1.1.0'
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'junit:junit:4.12'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testImplementation 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
