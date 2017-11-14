@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 public class CodeFileCreatorTest {
 
     @Test
-    public void getSupportedBarcodeFormats() {
+    public void supportedBarcodeFormatsAreCorrect() {
         assertThat(CodeFileCreator.getSupportedBarcodeFormats(), is(QR_CODE | PDF417 | AZTEC));
     }
 
