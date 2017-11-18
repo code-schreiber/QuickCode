@@ -9,6 +9,7 @@ notifications:
   
 addons:
   sonarcloud:
+    organization: "code-schreiber"
     branches:
     - develop
     - master
