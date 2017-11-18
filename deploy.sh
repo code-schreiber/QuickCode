@@ -19,8 +19,8 @@ echo "deploy.sh: Running gradle build"
 ./gradlew build
 echo "deploy.sh: Running gradle sonarqube"
 ./gradlew sonarqube
-echo "deploy.sh: mobile/build/outputs/apk now contains:"
-ls mobile/build/outputs/apk
+echo "deploy.sh: mobile/build/outputs/apk/release now contains:"
+ls mobile/build/outputs/apk/release
 
 if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
   echo "deploy.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
@@ -34,7 +34,7 @@ else
   cd ..
   echo "deploy.sh: Running fastlane supply"
   fastlane supply --version
-  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/mobile-prod-release.apk --track alpha --validate_only
+  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/release/mobile-release.apk --track alpha --validate_only
   echo "deploy.sh: Deployed to Google Play"
   exit $?
 fi
