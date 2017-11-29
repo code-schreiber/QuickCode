@@ -26,8 +26,8 @@ if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
   echo "deploy.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "deploy.sh: Skipping deployment: was pull request."
- elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
-  echo "deploy.sh: Skipping deployment: wrong branch. Expected '$EXPECTED_TRAVIS_BRANCH' but was '$TRAVIS_BRANCH'."
+#  elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
+#   echo "deploy.sh: Skipping deployment: wrong branch. Expected '$EXPECTED_TRAVIS_BRANCH' but was '$TRAVIS_BRANCH'."
 else
   echo "deploy.sh: Running gradle firebaseUploadReleaseProguardMapping"
   ./gradlew firebaseUploadReleaseProguardMapping
