@@ -58,8 +58,8 @@
 
     <style name="CodeFileDetailImageView">
         <item name="android:layout_marginEnd">@dimen/margin_small</item>
-        <item name="android:layout_height">@dimen/size_icon</item>
-        <item name="android:layout_width">@dimen/size_icon</item>
+        <item name="android:layout_height">@dimen/size_icon_small</item>
+        <item name="android:layout_width">@dimen/size_icon_small</item>
         <item name="android:layout_weight">0</item>
     </style>
 
