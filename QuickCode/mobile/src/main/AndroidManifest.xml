@@ -6,7 +6,7 @@
     <application
         android:name=".QuickCodeApp"
         android:allowBackup="false"
-        android:icon="@drawable/ic_add_black_24dp"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
