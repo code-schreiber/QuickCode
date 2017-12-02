@@ -20,7 +20,10 @@
     <dimen name="size_min_touchable_area">48dp</dimen>
     <dimen name="size_thumbnail">48dp</dimen>
     <dimen name="size_thumbnail_small">24dp</dimen>
-    <dimen name="size_icon">24dp</dimen>
+
+    <dimen name="size_icon_small">24dp</dimen>
+    <dimen name="size_icon_medium">48dp</dimen>
+    <dimen name="size_icon_large">72dp</dimen>
 
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>

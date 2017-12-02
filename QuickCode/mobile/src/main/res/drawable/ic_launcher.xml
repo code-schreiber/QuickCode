@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Created SVG with http://github.com/duopixel/Method-Draw/
+    Converted SVG to VectorDrawable with inloop.github.io/svg2android/
+-->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportHeight="500"
+    android:viewportWidth="500">
+
+    <!-- Lighting -->
+    <group
+        android:pivotX="250.0"
+        android:pivotY="240.0"
+        android:rotation="165.0">
+        <path
+            android:fillColor="#FF000000"
+            android:pathData="M221.411,376.476 L272.277,298.358 L251.286,289.138 L315.335,222.206
+                L294.408,211.029 L373.54,98.95 L239.297,184.839 L264.873,196.766 L181.442,251.78
+                L211.372,268.78 L123.246,326.493 L221.41,376.474 Z" />
+    </group>
+
+    <!-- Left bracket -->
+    <path
+        android:pathData="M102.75,30.4497 L20.0153,30.4497"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+    <path
+        android:pathData="M102.734,470.198 L19.9998,470.198"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+    <path
+        android:pathData="M29.9998,40.1993 L29.9998,466.902"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+
+    <!-- Right bracket -->
+    <path
+        android:pathData="M480.253,30.4497 L397.519,30.4497"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+    <path
+        android:pathData="M480.238,470.198 L397.503,470.198"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+    <path
+        android:pathData="M470.253,40.1993 L470.253,467.569"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20" />
+</vector>

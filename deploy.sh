@@ -26,7 +26,7 @@ if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
   echo "deploy.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "deploy.sh: Skipping deployment: was pull request."
- elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
+elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
   echo "deploy.sh: Skipping deployment: wrong branch. Expected '$EXPECTED_TRAVIS_BRANCH' but was '$TRAVIS_BRANCH'."
 else
   echo "deploy.sh: Running gradle firebaseUploadReleaseProguardMapping"
@@ -34,7 +34,7 @@ else
   cd ..
   echo "deploy.sh: Running fastlane supply"
   fastlane supply --version
-  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/release/mobile-release.apk --track alpha --validate_only
+  fastlane supply run --json_key dev-console-api-private-key.json --package_name com.toolslab.quickcode --apk QuickCode/mobile/build/outputs/apk/release/mobile-release.apk --track alpha
   echo "deploy.sh: Deployed to Google Play"
   exit $?
 fi
