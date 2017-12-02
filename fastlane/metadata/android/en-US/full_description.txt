@@ -1,1 +1,2 @@
-a full description
+With Quick Code, yau can save your codes to access them instantly and offline and be ready for scanning in seconds.
+Currently supported formats are QR Code, Pdf 417 and Aztec.
