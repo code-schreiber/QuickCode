@@ -9,7 +9,7 @@ Develop
 
 
 
-<img align='center' src='https://raw.githubusercontent.com/code-schreiber/QuickCode/develop/Quick Code/mobile/src/main/res/mipmap-xxhdpi/ic_launcher.png' width='100' height='100'/>
+<img align='center' src='https://github.com/code-schreiber/QuickCode/raw/develop/fastlane/metadata/android/en-US/images/icon.png' width='100' height='100'/>
 
 ### Quick Code
 
