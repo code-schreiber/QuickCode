@@ -30,11 +30,12 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
 
     abstract CodeFile codeFile();
 
-
     @Override
-    public int compareTo(@NonNull CodeFileViewModel o) {
+    public int compareTo(@NonNull CodeFileViewModel codeFileViewModel) {
         // Last created items first
-        return Long.compare(o.codeFile().originalCodeFile().importedOn(), this.codeFile().originalCodeFile().importedOn());
+        Long comparedModelImportedOn = codeFileViewModel.codeFile().originalCodeFile().importedOn();
+        Long thisImportedOn = this.codeFile().originalCodeFile().importedOn();
+        return comparedModelImportedOn.compareTo(thisImportedOn);
     }
 
     public CodeFile getCodeFile() {
