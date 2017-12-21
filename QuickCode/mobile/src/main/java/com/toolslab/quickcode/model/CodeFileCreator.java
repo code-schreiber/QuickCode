@@ -118,12 +118,13 @@ public class CodeFileCreator {
     private static SparseArray<Barcode> detectCodes(Bitmap bitmap, BarcodeDetector detector) {
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
         SparseArray<Barcode> detectedCodes = detector.detect(frame);
-
         if (detectedCodes.size() == 0) {
             // Try again with a smaller image, which seems to work sometimes
             Bitmap smallerBitmap = BitmapUtils.scaleDownImage500Pixels(bitmap);
-            if (smallerBitmap.getWidth() < bitmap.getWidth()) {
-                Logger.logDebug("Trying to detect again with a smaller image, this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() + " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
+            if (smallerBitmap != null && smallerBitmap.getWidth() < bitmap.getWidth()) {
+                Logger.logDebug("Trying to detect again with a smaller image," +
+                        " this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() +
+                        " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
                 return detectCodes(smallerBitmap, detector);
             } else {
                 Logger.logDebug("Trying to detect again with a smaller images did not work.");

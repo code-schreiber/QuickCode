@@ -12,6 +12,10 @@ import java.io.ByteArrayOutputStream;
 
 public final class BitmapUtils {
 
+    private static final int PIXELS_200 = 200;
+    private static final int PIXELS_500 = 500;
+    private static final int PIXELS_1000 = 1000;
+
     static final class Dimensions {
 
         final int width;
@@ -27,13 +31,24 @@ public final class BitmapUtils {
         // Hide utility class constructor
     }
 
+    @Nullable
+    public static Bitmap scaleDownImage200Pixels(Bitmap bitmap) {
+        return scaleDownImage(bitmap, PIXELS_200);
+    }
+
+    @Nullable
     public static Bitmap scaleDownImage500Pixels(Bitmap bitmap) {
-        int scaleSize = Math.max(bitmap.getWidth(), bitmap.getHeight()) - 500;
+        int scaleSize = Math.max(bitmap.getWidth(), bitmap.getHeight()) - PIXELS_500;
         return scaleDownImage(bitmap, scaleSize);
     }
 
     @Nullable
-    public static Bitmap scaleDownImage(Bitmap bitmap, int scaleSize) {
+    public static Bitmap scaleDownImage1000Pixels(Bitmap bitmap) {
+        return scaleDownImage(bitmap, PIXELS_1000);
+    }
+
+    @Nullable
+    private static Bitmap scaleDownImage(Bitmap bitmap, int scaleSize) {
         if (bitmap != null) {
             if (scaleSize > 0) {
                 int originalWidth = bitmap.getWidth();
