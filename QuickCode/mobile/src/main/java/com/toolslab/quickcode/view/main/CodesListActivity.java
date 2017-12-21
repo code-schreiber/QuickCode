@@ -1,6 +1,9 @@
 package com.toolslab.quickcode.view.main;
 
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
@@ -29,6 +33,7 @@ import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.common.view.dialog.FontStatisticDialogFragment;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class CodesListActivity extends BaseActivity implements
@@ -42,10 +47,8 @@ public class CodesListActivity extends BaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_codes_list);
-        initViews();
-
+        initViews(binding);
         handleIntent(getIntent());
     }
 
@@ -91,23 +94,16 @@ public class CodesListActivity extends BaseActivity implements
         }
     }
 
-    @Override
-    protected void onResume() {
-        logDebug("onResume ");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        logDebug("onPause");
-        super.onPause();
-    }
-
     public void setVisibilityOfFabHint(int visibility) {
         binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
     }
 
-    private void initViews() {
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void initViews(ActivityCodesListBinding binding) {
         Toolbar toolbar = binding.activityCodesListAppBarMain.appBarMainToolbar;
         setSupportActionBar(toolbar);
         drawerLayout = binding.activityCodesListDrawerLayout;
@@ -117,6 +113,22 @@ public class CodesListActivity extends BaseActivity implements
 
         NavigationView navigationView = binding.activityCodesListNavView;
         navigationView.setNavigationItemSelectedListener(this);
+
+        final String footerText = createNavigationFooterText();
+        binding.activityCodesListNavFooter.navFooterMainText.setText(footerText);
+        binding.activityCodesListNavFooter.navFooterMainText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    ClipData clip = ClipData.newPlainText("Navigation Footer Text", footerText);
+                    clipboard.setPrimaryClip(clip);
+                    showSnack(getString(R.string.copied_to_clipboard));
+                    return true;
+                }
+                return false;
+            }
+        });
 
         FloatingActionButton actionButton = binding.activityCodesListAppBarMain.appBarMainFab;
         actionButton.setOnClickListener(new View.OnClickListener() {
@@ -142,9 +154,12 @@ public class CodesListActivity extends BaseActivity implements
         });
     }
 
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
+    private String createNavigationFooterText() {
+        String format = "Version: %1$s (%2$s)%3$s";
+        return String.format(Locale.getDefault(), format,
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE,
+                DatabaseReferenceWrapper.getUser());
     }
 
     private void handleIntent(Intent intent) {
