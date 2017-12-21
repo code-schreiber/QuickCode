@@ -101,11 +101,11 @@ public abstract class CodeFile implements Parcelable {
     }
 
     private static Bitmap createThumbnail(Bitmap originalImage) {
-        return BitmapUtils.scaleDownImage(originalImage, 200);
+        return BitmapUtils.scaleDownImage200Pixels(originalImage);
     }
 
     private static Bitmap scaleDownOriginalImage(Bitmap originalImage) {
-        return BitmapUtils.scaleDownImage(originalImage, 1000);
+        return BitmapUtils.scaleDownImage1000Pixels(originalImage);
     }
 
     @Nullable
