@@ -100,15 +100,15 @@ public class CodeFileFactory {
 
     @Nullable
     private static List<Bitmap> getBitmapsFromUri(Context context, Uri uri) {
-        ContentResolver resolver = context.getContentResolver();
-        if (UriUtils.fileExists(resolver, uri)) {
-            if (UriUtils.isPdf(resolver, uri)) {
+        ContentResolver contentResolver = context.getContentResolver();
+        if (UriUtils.fileExists(contentResolver, uri)) {
+            if (UriUtils.isPdf(contentResolver, uri)) {
                 return UriUtils.pdfUriToBitmaps(context.getContentResolver(), uri);
-            } else if (UriUtils.isImage(resolver, uri)) {
-                Bitmap bitmap = UriUtils.getBitmapFromUri(context.getContentResolver(), uri);
+            } else if (UriUtils.isImage(contentResolver, uri)) {
+                Bitmap bitmap = UriUtils.getBitmapFromUri(contentResolver, uri);
                 return createListFromSingleItem(bitmap);
-            } else if (UriUtils.isText(resolver, uri)) {
-                Bitmap bitmap = UriUtils.getBitmapFromText(resolver, uri);
+            } else if (UriUtils.isText(contentResolver, uri)) {
+                Bitmap bitmap = UriUtils.getBitmapFromText(contentResolver, uri);
                 return createListFromSingleItem(bitmap);
             } else {
                 Logger.logError("No known file type: " + uri);

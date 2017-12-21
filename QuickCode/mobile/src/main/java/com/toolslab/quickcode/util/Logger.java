@@ -29,14 +29,14 @@ public class Logger {
 
     public static void logWarning(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.report(new Exception("Warning:" + message));
+            FirebaseCrash.report(new Exception("Warning: " + message));
             Timber.w(message);
         }
     }
 
     public static void logError(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.report(new Exception("Error:" + message));
+            FirebaseCrash.report(new Exception("Error: " + message));
             Timber.e(message);
         }
     }
