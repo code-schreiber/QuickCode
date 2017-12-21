@@ -3,15 +3,14 @@
     <string name="app_name">Quick Code</string>
     <string name="subtitle">Quick Code</string>
 
+    <string name="undo">undo</string>
     <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the \u2795</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <string name="menu_debug">Debug</string>
     <string name="menu_debug_reset_app">Reset App and exit</string>
 
-    <string name="undo">undo</string>
-
+    <!--TODO typo-->
     <string name="code_fie_detail_tags">Tags</string>
     <string name="code_fie_detail_original_file">Original file</string>
     <string name="code_fie_detail_creation_date">Imported on</string>
@@ -29,5 +28,9 @@
     <string name="error_shared_text_too_long">Text was too long so it has been cut.</string>
 
     <string name="error_premium_links_not_allowed">Clicking Links in only allowed in premium version :(</string>
+
+    <!-- Content Descriptions -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

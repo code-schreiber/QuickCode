@@ -34,6 +34,15 @@ public final class DatabaseReferenceWrapper {
         // Hide utility class constructor
     }
 
+    public static String getUser() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            return "";
+        } else {
+            return "\nAnonymous User: " + auth.getCurrentUser().getUid();
+        }
+    }
+
     public static void addValueEventListenerForCodeFileId(final String codeFileId, final ValueEventListener listener) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
