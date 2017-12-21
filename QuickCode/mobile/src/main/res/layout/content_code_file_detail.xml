@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.toolslab.quickcode.view.detail.CodeFileDetailActivity"
-        tools:showIn="@layout/activity_code_file_detail">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.toolslab.quickcode.view.detail.CodeFileDetailActivity"
+    tools:showIn="@layout/activity_code_file_detail">
 
     <data>
 
@@ -33,7 +34,7 @@
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
-                    android:src="@drawable/ic_tag_black_24dp"/>
+                    app:srcCompat="@drawable/ic_tag_black_24dp"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
@@ -71,7 +72,7 @@
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
-                    android:src="@drawable/ic_date_black_24dp"/>
+                    app:srcCompat="@drawable/ic_date_black_24dp"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
@@ -89,7 +90,7 @@
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
-                    android:src="@drawable/ic_size_black_24dp"/>
+                    app:srcCompat="@drawable/ic_size_black_24dp"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
@@ -107,7 +108,7 @@
 
                 <ImageView
                     style="@style/CodeFileDetailImageView"
-                    android:src="@drawable/ic_file_black_24dp"/>
+                    app:srcCompat="@drawable/ic_file_black_24dp"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
@@ -136,7 +137,7 @@
 
                     <ImageView
                         style="@style/CodeFileDetailImageView"
-                        android:src="@drawable/ic_file_content_black_24dp"/>
+                        app:srcCompat="@drawable/ic_file_content_black_24dp"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
@@ -152,7 +153,7 @@
 
                     <ImageView
                         style="@style/CodeFileDetailImageView"
-                        android:src="@drawable/ic_file_content_black_24dp"/>
+                        app:srcCompat="@drawable/ic_file_content_black_24dp"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
@@ -168,7 +169,7 @@
 
                     <ImageView
                         style="@style/CodeFileDetailImageView"
-                        android:src="@drawable/ic_file_content_black_24dp"/>
+                        app:srcCompat="@drawable/ic_file_content_black_24dp"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
@@ -187,7 +188,7 @@
 
                     <ImageView
                         style="@style/CodeFileDetailImageView"
-                        android:src="@drawable/ic_file_content_black_24dp"/>
+                        app:srcCompat="@drawable/ic_file_content_black_24dp"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
