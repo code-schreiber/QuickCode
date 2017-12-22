@@ -27,6 +27,7 @@ import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
 import com.toolslab.quickcode.db.SharedPreferencesWrapper;
+import com.toolslab.quickcode.util.GooglePlayServicesUtil;
 import com.toolslab.quickcode.util.Tracker;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.view.base.BaseActivity;
@@ -47,9 +48,15 @@ public class CodesListActivity extends BaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_codes_list);
-        initViews(binding);
-        handleIntent(getIntent());
+        GooglePlayServicesUtil googlePlayServicesUtil = new GooglePlayServicesUtil(this);
+        if (googlePlayServicesUtil.isAvailable()) {
+            binding = DataBindingUtil.setContentView(this, R.layout.activity_codes_list);
+            initViews(binding);
+            handleIntent(getIntent());
+        } else {
+            logError("Play Services not available");
+            googlePlayServicesUtil.showUpdateDialog();
+        }
     }
 
     @Override
