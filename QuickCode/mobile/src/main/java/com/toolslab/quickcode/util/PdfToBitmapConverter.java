@@ -1,28 +1,47 @@
 package com.toolslab.quickcode.util;
 
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-class PdfToBitmapConverter {
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class PdfToBitmapConverter {
 
     private PdfToBitmapConverter() {
         // Hide utility class constructor
     }
 
     @NonNull
+    @CheckResult
     static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
+        if (!deviceSupportsPdfToBitmap()) {
+            Logger.logError("Build version " + Build.VERSION.SDK_INT +
+                    " does not support android.graphics.pdf.PdfRenderer: " + uri);
+            return new ArrayList<>();
+        } else {
+            return convertPdfUriToBitmaps(contentResolver, uri);
+        }
+    }
+
+    public static boolean deviceSupportsPdfToBitmap() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    @NonNull
+    private static List<Bitmap> convertPdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
         List<Bitmap> bitmaps = new ArrayList<>();
         PdfRenderer renderer = null;
         try {
@@ -45,6 +64,7 @@ class PdfToBitmapConverter {
     }
 
     @NonNull
+    @CheckResult
     private static Bitmap getBitmapFromPage(PdfRenderer renderer, int pageIndex) {
         PdfRenderer.Page page = renderer.openPage(pageIndex);
         Bitmap bitmap = createWhiteBitmap(page.getWidth(), page.getHeight());
@@ -54,6 +74,7 @@ class PdfToBitmapConverter {
     }
 
     @NonNull
+    @CheckResult
     private static Bitmap createWhiteBitmap(int width, int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

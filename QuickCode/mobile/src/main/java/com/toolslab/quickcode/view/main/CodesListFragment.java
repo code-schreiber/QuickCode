@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.toolslab.quickcode.model.CodeFileCreator;
 import com.toolslab.quickcode.model.CodeFileFactory;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.AssetPathLoader;
+import com.toolslab.quickcode.util.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.Tracker;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.view.base.BaseActivity;
@@ -41,15 +43,18 @@ import java.util.List;
 
 public class CodesListFragment extends BaseFragment implements OnViewClickedListener {
 
+    private static final String INTENT_TYPE_FILTER_ALL = "*/*";
+    private static final String INTENT_TYPE_FILTER_IMAGE = "image/*";
+    private static final int READ_REQUEST_CODE = 111;
+    private static final int MAX_CHARACTERS = 2953;
+
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
     private CodeFileViewModelsAdapter adapter;
-
-    private static final int READ_REQUEST_CODE = 111;
     private ValueEventListener onCodeFilesChangedListener;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentCodesListBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_codes_list, container, false);
         loadingViewBinding = binding.fragmentCodesListLoadingView;
         recyclerView = binding.fragmentCodesListRecyclerView;
@@ -151,13 +156,15 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     void performFileSearch() {
-        String typeFilter = "*/*";
-        performFileSearch(typeFilter);
+        if (PdfToBitmapConverter.deviceSupportsPdfToBitmap()) {
+            performFileSearch(INTENT_TYPE_FILTER_ALL);
+        } else {
+            performFileSearchForImages();
+        }
     }
 
     void performFileSearchForImages() {
-        String typeFilter = "image/*";
-        performFileSearch(typeFilter);
+        performFileSearch(INTENT_TYPE_FILTER_IMAGE);
     }
 
     private void performFileSearch(String typeFilter) {
@@ -194,10 +201,11 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     void handleFile(Uri uri) {
-        if (UriUtils.isSupportedImportFile(getActivity().getContentResolver(), uri)) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            showSimpleDialog(R.string.error_file_not_added_unsupported_type, getActivity().getContentResolver().getType(uri), UriUtils.getSupportedImportFormatsAsString());
+            showSimpleDialog(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
         }
     }
 
@@ -217,12 +225,11 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     void loadSharedTextInBackground(String text) {
-        final int maxCharacters = 2953;
-        if (text.length() > maxCharacters) {
+        if (text.length() > MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
             showSimpleDialog(message);
-            text = text.substring(0, maxCharacters - 3) + "...";
+            text = text.substring(0, MAX_CHARACTERS - 3) + "...";
         }
 
         String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
