@@ -105,14 +105,14 @@ public class UriUtils {
         return PdfToBitmapConverter.pdfUriToBitmaps(contentResolver, uri);
     }
 
-    @NonNull
+    @Nullable
     @CheckResult
     public static Bitmap getBitmapFromText(ContentResolver contentResolver, Uri uri) {
         String textContent = readTextFromUri(contentResolver, uri);
         return getBitmapFromText(textContent);
     }
 
-    @NonNull
+    @Nullable
     @CheckResult
     public static Bitmap getBitmapFromText(String textContent) {
         return EncodingUtils.encodeQRCode(textContent);
