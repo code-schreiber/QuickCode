@@ -41,8 +41,8 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = 26
 
-    googleSupportLibrary = "27.0.1"
-    googleServices = "11.6.0"
+    googleSupportLibrary = "27.0.2"
+    googleServices = "11.8.0"
 }
 
 task printVersion() {
