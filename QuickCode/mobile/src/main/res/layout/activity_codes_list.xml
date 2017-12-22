@@ -31,6 +31,7 @@
                 android:layout_weight="1"
                 android:background="@color/white"
                 android:fitsSystemWindows="true"
+                app:elevation="0dp"
                 app:headerLayout="@layout/nav_header_main"
                 app:menu="@menu/menu_global"/>
 
