@@ -297,7 +297,16 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile);
+        DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    logInfo("addCodeFileToDatabase succeeded");
+                } else {
+                    logException("addCodeFileToDatabase failed", databaseError.toException());
+                }
+            }
+        });
     }
 
     @Deprecated
