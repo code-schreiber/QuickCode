@@ -113,7 +113,7 @@ public class FullscreenImageActivity extends BaseActivity {
                 logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileIdAuthFirst(codeFileId, onCodeFilesChangedListener);
     }
 
     @Override

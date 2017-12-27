@@ -74,7 +74,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileIdAuthFirst(codeFileId, onCodeFilesChangedListener);
     }
 
     @Override
