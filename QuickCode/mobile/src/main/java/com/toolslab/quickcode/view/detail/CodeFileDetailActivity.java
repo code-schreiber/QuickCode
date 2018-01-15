@@ -74,7 +74,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
                 logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addValueEventListenerForCodeFileIdAuthFirst(codeFileId, onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
     @Override
     public void onStop() {
-        DatabaseReferenceWrapper.removeEventListenerAuthFirst(codeFileId, onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.removeEventListener(codeFileId, onCodeFilesChangedListener);
         super.onStop();
     }
 

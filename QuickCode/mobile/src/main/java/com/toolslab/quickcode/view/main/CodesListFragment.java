@@ -78,13 +78,13 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
                 logException("onCancelled", databaseError.toException());
             }
         };
-        DatabaseReferenceWrapper.addValueEventListenerAuthFirst(onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.addValueEventListener(onCodeFilesChangedListener);
         return binding.getRoot();
     }
 
     @Override
     public void onStop() {
-        DatabaseReferenceWrapper.removeEventListenerAuthFirst(onCodeFilesChangedListener);
+        DatabaseReferenceWrapper.removeEventListener(onCodeFilesChangedListener);
         super.onStop();
     }
 
@@ -118,7 +118,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     public boolean onItemLongClicked(CodeFileViewModel item) {
         // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItemAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
+        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
                         if (databaseError == null) {
@@ -138,7 +138,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
                     }
                 }
         );
-        Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItemAuthFirst");
+        Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItem");
         return true;
     }
 
@@ -297,7 +297,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addCodeFileAuthFirst(codeFile, new DatabaseReference.CompletionListener() {
+        DatabaseReferenceWrapper.addCodeFile(codeFile, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError == null) {

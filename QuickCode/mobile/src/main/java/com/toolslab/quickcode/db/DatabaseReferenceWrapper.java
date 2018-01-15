@@ -47,7 +47,7 @@ public class DatabaseReferenceWrapper {
         }
     }
 
-    public static void addValueEventListenerForCodeFileIdAuthFirst(final String codeFileId, final ValueEventListener listener) {
+    public static void addValueEventListenerForCodeFileId(final String codeFileId, final ValueEventListener listener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -57,7 +57,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void addValueEventListenerAuthFirst(final ValueEventListener listener) {
+    public static void addValueEventListener(final ValueEventListener listener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -67,7 +67,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void addCodeFileAuthFirst(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
+    public static void addCodeFile(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -78,7 +78,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void deleteListItemAuthFirst(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
+    public static void deleteListItem(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -89,7 +89,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void clearAllAuthFirst() {// TODO rename AuthFirst methods
+    public static void clearAll() {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -126,7 +126,7 @@ public class DatabaseReferenceWrapper {
         return null;
     }
 
-    public static void removeEventListenerAuthFirst(final ValueEventListener listener) {
+    public static void removeEventListener(final ValueEventListener listener) {
         if (listener == null) {
             Logger.logError("listener is null");
         } else {
@@ -134,13 +134,13 @@ public class DatabaseReferenceWrapper {
 
                 @Override
                 public void onSignedIn(String userId) {
-                    removeEventListener(userId, listener);
+                    removeValueEventListener(userId, listener);
                 }
             });
         }
     }
 
-    public static void removeEventListenerAuthFirst(final String codeFileId, final ValueEventListener listener) {
+    public static void removeEventListener(final String codeFileId, final ValueEventListener listener) {
         if (listener == null) {
             Logger.logError("listener is null");
         } else {
@@ -231,7 +231,7 @@ public class DatabaseReferenceWrapper {
         getDbCodeFileListChild(userId).addValueEventListener(listener);
     }
 
-    private static void removeEventListener(String userId, ValueEventListener listener) {
+    private static void removeValueEventListener(String userId, ValueEventListener listener) {
         getDbCodeFileListChild(userId).removeEventListener(listener);
     }
 

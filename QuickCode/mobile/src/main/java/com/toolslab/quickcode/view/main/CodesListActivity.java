@@ -226,7 +226,7 @@ public class CodesListActivity extends BaseActivity implements
             showFontsDialog();
         } else if (id == R.id.menu_global_debug_reset_app) {
             SharedPreferencesWrapper.clearAll(this);
-            DatabaseReferenceWrapper.clearAllAuthFirst();
+            DatabaseReferenceWrapper.clearAll();
             finish();
         }
     }
