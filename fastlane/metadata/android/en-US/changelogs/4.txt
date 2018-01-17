@@ -1,0 +1,7 @@
+-- This is new for version code 4 --
+- Now using user-specific storage
+- Now supporting up to API 19
+- Better offline experience
+- UI enhancements
+- Check for devices without Google Play Services
+- Error & Bug fixing
