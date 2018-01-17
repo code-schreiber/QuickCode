@@ -6,7 +6,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import timber.log.Timber;
 
 
-// TODO add tags to logs
+// TODO [Before V1] add tags to logs
 public class Logger {
 
     private Logger() {
