@@ -16,10 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.FragmentCodesListBinding;
 import com.toolslab.quickcode.databinding.ItemLoadingBinding;
@@ -51,7 +50,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
     private CodeFileViewModelsAdapter adapter;
-    private ValueEventListener onCodeFilesChangedListener;
+    private ChildEventListener onCodeFilesChildListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,26 +64,18 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         recyclerView.setAdapter(adapter);
 
         CodeFileCreator.setupBarcodeDetector(getActivity());
-
-        onCodeFilesChangedListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<CodeFileViewModel> models = DatabaseReferenceWrapper.getCodeFilesFromDataSnapshot(dataSnapshot);
-                replaceListData(models);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                logException("onCancelled", databaseError.toException());
-            }
-        };
-        DatabaseReferenceWrapper.addValueEventListener(onCodeFilesChangedListener);
         return binding.getRoot();
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        addListeners();
+    }
+
+    @Override
     public void onStop() {
-        DatabaseReferenceWrapper.removeEventListener(onCodeFilesChangedListener);
+        removeListeners();
         super.onStop();
     }
 
@@ -118,33 +109,79 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     public boolean onItemLongClicked(CodeFileViewModel item) {
         // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(final DatabaseError databaseError, final DatabaseReference databaseReference) {
-                        if (databaseError == null) {
-                            // TODO [UI nice to have] make Snackbar implementation more elegant
-                            Snackbar.make(recyclerView, codeFile.displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.undo, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            addCodeFileToDatabase(codeFile);
-                                        }
-                                    })
-                                    .show();
-                        } else {
-                            showSnack("Problem deleting " + codeFile.displayName());
-                            logException("Problem deleting " + codeFile.displayName(), databaseError.toException());
-                        }
-                    }
-                }
-        );
+        DatabaseReferenceWrapper.deleteListItem(codeFile);
         Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItem");
         return true;
     }
 
-    private void replaceListData(List<CodeFileViewModel> adapterData) {
-        adapter.replaceData(adapterData);
+    private void addListeners() {
+        onCodeFilesChildListener = new ChildEventListener() {
 
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (model != null) {
+                    addCodeFileViewModel(model);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (model != null) {
+                    removeCodeFileViewModel(model);
+                    // TODO [UI nice to have] make Snackbar implementation more elegant
+                    Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo, new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    addCodeFileToDatabase(model.getCodeFile());
+                                }
+                            })
+                            .show();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (model != null) {
+                    addCodeFileViewModel(model);
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (model != null) {
+                    addCodeFileViewModel(model);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                logException("ChildEventListener onCancelled", databaseError.toException());
+            }
+        };
+        DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
+    }
+
+    private void removeListeners() {
+        DatabaseReferenceWrapper.removeEventListeners(onCodeFilesChildListener);
+    }
+
+    private void addCodeFileViewModel(CodeFileViewModel codeFileViewModel) {
+        adapter.addCodeFileViewModel(codeFileViewModel);
+        updateFabHint();
+    }
+
+    private void removeCodeFileViewModel(CodeFileViewModel codeFileViewModel) {
+        adapter.removeCodeFileViewModel(codeFileViewModel);
+        updateFabHint();
+    }
+
+    private void updateFabHint() {
         CodesListActivity codesListActivity = (CodesListActivity) getActivity();
         if (codesListActivity != null) {
             if (adapter.getItemCount() > 0) {
@@ -297,16 +334,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
-        DatabaseReferenceWrapper.addCodeFile(codeFile, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    logInfo("addCodeFileToDatabase succeeded");
-                } else {
-                    logException("addCodeFileToDatabase failed", databaseError.toException());
-                }
-            }
-        });
+        DatabaseReferenceWrapper.addCodeFile(codeFile);
     }
 
     @Deprecated

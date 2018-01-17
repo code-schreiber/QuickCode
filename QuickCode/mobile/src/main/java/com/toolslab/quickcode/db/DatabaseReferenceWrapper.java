@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,12 +18,8 @@ import com.toolslab.quickcode.model.CodeFile;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 // TODO [Refactoring] clean other classes from import com.google.android.gms.tasks
 // TODO [Refactoring] clean other classes from import com.google.firebase
-// TODO Fix first ever code not showing
 public class DatabaseReferenceWrapper {
 
     private static final String USERS_KEY = "users";
@@ -57,34 +54,34 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void addValueEventListener(final ValueEventListener listener) {
+    public static void addEventListeners(final ChildEventListener childEventListener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
             public void onSignedIn(String userId) {
-                addValueEventListener(userId, listener);
+                addEventListeners(userId, childEventListener);
             }
         });
     }
 
-    public static void addCodeFile(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
+    public static void addCodeFile(final CodeFile codeFile) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
             public void onSignedIn(String userId) {
                 getCodeFileFromDb(userId, codeFile.id())
-                        .setValue(codeFile.toFirebaseValue(), listener);
+                        .setValue(codeFile.toFirebaseValue());
             }
         });
     }
 
-    public static void deleteListItem(final CodeFile codeFile, final DatabaseReference.CompletionListener listener) {
+    public static void deleteListItem(final CodeFile codeFile) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
             public void onSignedIn(String userId) {
                 getCodeFileFromDb(userId, codeFile.id())
-                        .removeValue(listener);
+                        .removeValue();
             }
         });
     }
@@ -99,22 +96,6 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static List<CodeFileViewModel> getCodeFilesFromDataSnapshot(DataSnapshot dataSnapshot) {
-        List<CodeFileViewModel> models = new ArrayList<>();
-        Logger.logInfo("onDataChange in addOnCodeFilesChangedListener. Count " + dataSnapshot.getChildrenCount());
-        if (dataSnapshot.getChildren() != null) {
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                CodeFileViewModel model = getCodeFileFromDataSnapshot(snapshot);
-                if (model != null) {
-                    models.add(model);
-                }
-            }
-        } else {
-            Logger.logError("codeFiles is null in onDataChange: " + dataSnapshot);
-        }
-        return models;
-    }
-
     @Nullable
     public static CodeFileViewModel getCodeFileFromDataSnapshot(DataSnapshot dataSnapshot) {
         try {
@@ -126,21 +107,17 @@ public class DatabaseReferenceWrapper {
         return null;
     }
 
-    public static void removeEventListener(final ValueEventListener listener) {
-        if (listener == null) {
-            Logger.logError("listener is null");
-        } else {
-            signInAnonymously(new OnSignedInListener() {
+    public static void removeEventListeners(final ChildEventListener childEventListener) {
+        signInAnonymously(new OnSignedInListener() {
 
-                @Override
-                public void onSignedIn(String userId) {
-                    removeValueEventListener(userId, listener);
-                }
-            });
-        }
+            @Override
+            public void onSignedIn(String userId) {
+                removeEventListeners(userId, childEventListener);
+            }
+        });
     }
 
-    public static void removeEventListener(final String codeFileId, final ValueEventListener listener) {
+    public static void removeEventListenerForCodeFileId(final String codeFileId, final ValueEventListener listener) {
         if (listener == null) {
             Logger.logError("listener is null");
         } else {
@@ -157,10 +134,12 @@ public class DatabaseReferenceWrapper {
     private static void clearAll(String userId) {
         // Delete code files
         addListenerForSingleValueEvent(userId, new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    childSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
@@ -177,10 +156,12 @@ public class DatabaseReferenceWrapper {
 
         // Delete everything
         getDbReference().addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-                    appleSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    childSnapshot.getRef().removeValue(new DatabaseReference.CompletionListener() {
+
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
@@ -214,7 +195,7 @@ public class DatabaseReferenceWrapper {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Logger.logException("signInAnonymously: failure: ", e);
-
+                            // FIXME [Before Beta] this happens when user is offline for the first time, give user feedback
                         }
                     });
         } else {
@@ -227,12 +208,16 @@ public class DatabaseReferenceWrapper {
         getDbCodeFileListChild(userId).addListenerForSingleValueEvent(listener);
     }
 
-    private static void addValueEventListener(String userId, ValueEventListener listener) {
-        getDbCodeFileListChild(userId).addValueEventListener(listener);
+    private static void addEventListeners(String userId, ChildEventListener childEventListener) {
+        getDbCodeFileListChild(userId).addChildEventListener(childEventListener);
     }
 
-    private static void removeValueEventListener(String userId, ValueEventListener listener) {
-        getDbCodeFileListChild(userId).removeEventListener(listener);
+    private static void removeEventListeners(String userId, ChildEventListener childEventListener) {
+        if (childEventListener == null) {
+            Logger.logError("childEventListener is null in removeEventListeners");
+        } else {
+            getDbCodeFileListChild(userId).removeEventListener(childEventListener);
+        }
     }
 
     private static DatabaseReference getCodeFileFromDb(String userId, String codeFileId) {
