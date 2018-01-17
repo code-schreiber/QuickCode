@@ -50,8 +50,50 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
         setSupportActionBar(binding.toolbar);
         setDisplayHomeAsUpEnabled(true);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        addListeners();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransitionExit();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransitionExit();
+    }
+
+    @Override
+    public void onStop() {
+        removeListeners();
+        super.onStop();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onImageClicked() {
+        showDialog(ImageDialogFragment.newInstance(codeFileViewModel.getOriginalImage()));
+    }
+
+    private void addListeners() {
         onCodeFilesChangedListener = new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
@@ -72,42 +114,14 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 logException("onCancelled", databaseError.toException());
+                showSimpleDialog(R.string.error_generic);
             }
         };
         DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransitionExit();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransitionExit();
-    }
-
-    @Override
-    public void onStop() {
-        DatabaseReferenceWrapper.removeEventListener(codeFileId, onCodeFilesChangedListener);
-        super.onStop();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onImageClicked() {
-        showDialog(ImageDialogFragment.newInstance(codeFileViewModel.getOriginalImage()));
+    private void removeListeners() {
+        DatabaseReferenceWrapper.removeEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
     private void initViews() {
