@@ -49,6 +49,8 @@ public class FullscreenImageActivity extends BaseActivity {
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     };
+
+    private ActivityFullscreenImageBinding binding;
     private View mTextLayout;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
@@ -80,7 +82,7 @@ public class FullscreenImageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ActivityFullscreenImageBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
 
         setDisplayHomeAsUpEnabled(true);
 
@@ -92,28 +94,18 @@ public class FullscreenImageActivity extends BaseActivity {
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 toggle();
             }
         });
+    }
 
-        onCodeFilesChangedListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                CodeFileViewModel codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (codeFileViewModel != null) {
-                    setTitle(codeFileViewModel.getDisplayName());
-                    binding.setCodeFileViewModel(codeFileViewModel);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                logException("onCancelled", databaseError.toException());
-            }
-        };
-        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
+    @Override
+    public void onResume() {
+        super.onResume();
+        addListeners();
     }
 
     @Override
@@ -130,7 +122,7 @@ public class FullscreenImageActivity extends BaseActivity {
 
     @Override
     public void onStop() {
-        DatabaseReferenceWrapper.removeEventListener(codeFileId, onCodeFilesChangedListener);
+        removeListeners();
         super.onStop();
     }
 
@@ -165,6 +157,30 @@ public class FullscreenImageActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    private void addListeners() {
+        onCodeFilesChangedListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CodeFileViewModel codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                if (codeFileViewModel != null) {
+                    setTitle(codeFileViewModel.getDisplayName());
+                    binding.setCodeFileViewModel(codeFileViewModel);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                logException("onCancelled", databaseError.toException());
+            }
+        };
+        DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
+    }
+
+    private void removeListeners() {
+        DatabaseReferenceWrapper.removeEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);
     }
 
     private void toggle() {
