@@ -22,17 +22,25 @@ class CodeFileViewModelsAdapter extends RecyclerView.Adapter<CodeFileViewModelsA
     private List<CodeFileViewModel> data;
     private final OnViewClickedListener clickListener;
 
-
     CodeFileViewModelsAdapter(OnViewClickedListener listener) {
         this.data = new ArrayList<>();
         this.clickListener = listener;
     }
 
-    void replaceData(List<CodeFileViewModel> items) {
-        data.clear();
-        data.addAll(items);
-        Collections.sort(data);
-        notifyDataSetChanged();
+    void addCodeFileViewModel(CodeFileViewModel viewModel) {
+        if (!data.contains(viewModel)) {
+            data.add(viewModel);
+            Collections.sort(data);
+            notifyDataSetChanged();
+        }
+    }
+
+    void removeCodeFileViewModel(CodeFileViewModel viewModel) {
+        if (data.contains(viewModel)) {
+            data.remove(viewModel);
+            Collections.sort(data);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
