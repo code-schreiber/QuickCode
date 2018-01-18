@@ -1,2 +1,12 @@
-With Quick Code, yau can save your codes to access them instantly and offline and be ready for scanning in seconds.
-Currently supported formats are QR Code, Pdf 417 and Aztec.
+Where do you usually put a code that will be scanned soon, at an event or even at the airport?
+
+With Quick Code, you can instantly be ready for showing your code to be scanned in seconds, even when offline!
+Just import your pdf or image to Quick Code and have it two taps away.
+
+Currently supported code formats are:
+ • QR Code
+ • Pdf 417
+ • Aztec Code
+
+This app is open source and can be found at https://github.com/code-schreiber/QuickCode
+Contributions of any kind are welcome!
