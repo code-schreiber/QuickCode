@@ -109,8 +109,8 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     public boolean onItemLongClicked(CodeFileViewModel item) {
         // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile);
-        Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItem");
+        DatabaseReferenceWrapper.removeCodeFile(codeFile);
+        Tracker.trackOnClick(getActivity(), "onItemLongClicked - removeCodeFile");
         return true;
     }
 
