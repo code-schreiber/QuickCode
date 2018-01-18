@@ -173,7 +173,8 @@ public class FullscreenImageActivity extends BaseActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                logException("onCancelled", databaseError.toException());
+                logException("onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                showSimpleDialog(R.string.error_generic);
             }
         };
         DatabaseReferenceWrapper.addValueEventListenerForCodeFileId(codeFileId, onCodeFilesChangedListener);

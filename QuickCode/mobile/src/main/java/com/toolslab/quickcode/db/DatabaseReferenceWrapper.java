@@ -88,7 +88,7 @@ public class DatabaseReferenceWrapper {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                         if (databaseError != null) {
-                                            Logger.logException("Error in addCodeFile", databaseError.toException());
+                                            Logger.logException("Error in addCodeFile. DatabaseError code " + databaseError.getCode(), databaseError.toException());
                                         }
                                     }
                                 });
@@ -111,7 +111,7 @@ public class DatabaseReferenceWrapper {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 if (databaseError != null) {
-                                    Logger.logException("Error in removeCodeFile", databaseError.toException());
+                                    Logger.logException("Error in removeCodeFile. DatabaseError code " + databaseError.getCode(), databaseError.toException());
                                 }
                             }
                         });
@@ -196,6 +196,9 @@ public class DatabaseReferenceWrapper {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
+                            if (databaseError != null) {
+                                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                            }
                         }
                     });
                 }
@@ -203,7 +206,7 @@ public class DatabaseReferenceWrapper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("onCancelled", databaseError.toException());
+                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
             }
         });
 
@@ -218,6 +221,9 @@ public class DatabaseReferenceWrapper {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
+                            if (databaseError != null) {
+                                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                            }
                         }
                     });
                 }
@@ -225,7 +231,7 @@ public class DatabaseReferenceWrapper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("onCancelled", databaseError.toException());
+                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
             }
         });
     }

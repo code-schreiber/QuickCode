@@ -161,7 +161,8 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                logException("ChildEventListener onCancelled", databaseError.toException());
+                logException("ChildEventListener onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                showSimpleDialog(R.string.error_generic);
             }
         };
         DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);

@@ -113,7 +113,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                logException("onCancelled", databaseError.toException());
+                logException("onCancelled " + databaseError.getCode(), databaseError.toException());
                 showSimpleDialog(R.string.error_generic);
             }
         };
