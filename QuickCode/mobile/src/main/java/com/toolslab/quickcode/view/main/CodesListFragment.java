@@ -115,57 +115,71 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     private void addListeners() {
-        onCodeFilesChildListener = new ChildEventListener() {
+        DatabaseReferenceWrapper.signInAnonymously(new DatabaseReferenceWrapper.OnSignedInListener() {
 
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
+            public void onSignedIn(String userId) {
+                // Great! Now we can save stuff in the database
+                onCodeFilesChildListener = new ChildEventListener() {
+
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            removeCodeFileViewModel(model);
+                            // TODO [UI nice to have] make Snackbar implementation more elegant
+                            Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            addCodeFileToDatabase(model.getCodeFile());
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        logException("ChildEventListener onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                        showSimpleError(R.string.error_generic);
+                    }
+                };
+                DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    removeCodeFileViewModel(model);
-                    // TODO [UI nice to have] make Snackbar implementation more elegant
-                    Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                            .setAction(R.string.undo, new View.OnClickListener() {
-
-                                @Override
-                                public void onClick(View v) {
-                                    addCodeFileToDatabase(model.getCodeFile());
-                                }
-                            })
-                            .show();
-                }
+            public void onSignedInFailed(Exception exception) {
+                // Oh no! We can't save stuff in the database quite yet
+                logException("onSignedInFailed", exception);
+                showSimpleError(R.string.error_not_signed_in);
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                logException("ChildEventListener onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
-                showSimpleError(R.string.error_generic);
-            }
-        };
-        DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
+        });
     }
 
     private void removeListeners() {
@@ -336,12 +350,6 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
         DatabaseReferenceWrapper.addCodeFile(codeFile);
-    }
-
-    @Deprecated
-    private void showSnack(String m) {
-        logInfo(m);
-        Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
     }
 
 }
