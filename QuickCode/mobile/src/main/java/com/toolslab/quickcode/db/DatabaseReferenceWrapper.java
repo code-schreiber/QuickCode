@@ -28,7 +28,10 @@ public class DatabaseReferenceWrapper {
     private static DatabaseReference dbReference;
 
     private interface OnSignedInListener {
+
         void onSignedIn(String userId);
+
+        void onSignedInFailed(Exception exception);
     }
 
     private DatabaseReferenceWrapper() {
@@ -44,12 +47,17 @@ public class DatabaseReferenceWrapper {
         }
     }
 
-    public static void addValueEventListenerForCodeFileId(final String codeFileId, final ValueEventListener listener) {
+    public static void addValueEventListenerForCodeFileId(final String codeFileId, final ValueEventListener valueEventListener) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
             public void onSignedIn(String userId) {
-                getCodeFileFromDb(userId, codeFileId).addValueEventListener(listener);
+                getCodeFileFromDb(userId, codeFileId).addValueEventListener(valueEventListener);
+            }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                valueEventListener.onCancelled(DatabaseError.fromException(exception));
             }
         });
     }
@@ -61,6 +69,11 @@ public class DatabaseReferenceWrapper {
             public void onSignedIn(String userId) {
                 addEventListeners(userId, childEventListener);
             }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                childEventListener.onCancelled(DatabaseError.fromException(exception));
+            }
         });
     }
 
@@ -70,18 +83,43 @@ public class DatabaseReferenceWrapper {
             @Override
             public void onSignedIn(String userId) {
                 getCodeFileFromDb(userId, codeFile.id())
-                        .setValue(codeFile.toFirebaseValue());
+                        .setValue(codeFile.toFirebaseValue(),
+                                new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        if (databaseError != null) {
+                                            Logger.logException("Error in addCodeFile", databaseError.toException());
+                                        }
+                                    }
+                                });
+            }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                Logger.logException("Sign in error in addCodeFile", exception);
             }
         });
     }
 
-    public static void deleteListItem(final CodeFile codeFile) {
+    public static void deleteListItem(final CodeFile codeFile) {// TODO more consistent naming
         signInAnonymously(new OnSignedInListener() {
 
             @Override
             public void onSignedIn(String userId) {
                 getCodeFileFromDb(userId, codeFile.id())
-                        .removeValue();
+                        .removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Logger.logException("Error in deleteListItem", databaseError.toException());
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                Logger.logException("Sign in error in deleteListItem", exception);
             }
         });
     }
@@ -92,6 +130,11 @@ public class DatabaseReferenceWrapper {
             @Override
             public void onSignedIn(String userId) {
                 clearAll(userId);
+            }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                Logger.logException("Sign in error in clearAll", exception);
             }
         });
     }
@@ -114,18 +157,28 @@ public class DatabaseReferenceWrapper {
             public void onSignedIn(String userId) {
                 removeEventListeners(userId, childEventListener);
             }
+
+            @Override
+            public void onSignedInFailed(Exception exception) {
+                childEventListener.onCancelled(DatabaseError.fromException(exception));
+            }
         });
     }
 
-    public static void removeEventListenerForCodeFileId(final String codeFileId, final ValueEventListener listener) {
-        if (listener == null) {
-            Logger.logError("listener is null");
+    public static void removeEventListenerForCodeFileId(final String codeFileId, final ValueEventListener valueEventListener) {
+        if (valueEventListener == null) {
+            Logger.logError("valueEventListener is null");
         } else {
             signInAnonymously(new OnSignedInListener() {
 
                 @Override
                 public void onSignedIn(String userId) {
-                    getCodeFileFromDb(userId, codeFileId).removeEventListener(listener);
+                    getCodeFileFromDb(userId, codeFileId).removeEventListener(valueEventListener);
+                }
+
+                @Override
+                public void onSignedInFailed(Exception exception) {
+                    valueEventListener.onCancelled(DatabaseError.fromException(exception));
                 }
             });
         }
@@ -177,7 +230,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    private static void signInAnonymously(final OnSignedInListener listener) {
+    private static void signInAnonymously(final OnSignedInListener onSignedInListener) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
             auth.signInAnonymously()
@@ -187,7 +240,7 @@ public class DatabaseReferenceWrapper {
                         public void onSuccess(AuthResult authResult) {
                             String userId = authResult.getUser().getUid();
                             Logger.logInfo("signInAnonymously: success for userId " + userId);
-                            listener.onSignedIn(userId);
+                            onSignedInListener.onSignedIn(userId);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -195,17 +248,17 @@ public class DatabaseReferenceWrapper {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Logger.logException("signInAnonymously: failure: ", e);
-                            // FIXME [Before Beta] this happens when user is offline for the first time, give user feedback
+                            onSignedInListener.onSignedInFailed(e);
                         }
                     });
         } else {
             // Already signed in
-            listener.onSignedIn(auth.getCurrentUser().getUid());
+            onSignedInListener.onSignedIn(auth.getCurrentUser().getUid());
         }
     }
 
-    private static void addListenerForSingleValueEvent(String userId, ValueEventListener listener) {
-        getDbCodeFileListChild(userId).addListenerForSingleValueEvent(listener);
+    private static void addListenerForSingleValueEvent(String userId, ValueEventListener valueEventListener) {
+        getDbCodeFileListChild(userId).addListenerForSingleValueEvent(valueEventListener);
     }
 
     private static void addEventListeners(String userId, ChildEventListener childEventListener) {
