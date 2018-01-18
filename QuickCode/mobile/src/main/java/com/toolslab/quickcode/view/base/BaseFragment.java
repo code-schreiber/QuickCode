@@ -18,14 +18,13 @@ public class BaseFragment extends Fragment {
         showDialog(SimpleDialogFragment.newInstance(message));
     }
 
-    protected void showSimpleDialog(@StringRes int resId, Object... formatArgs) {
-        showSimpleDialog(getString(resId, formatArgs));
+    protected void showSimpleError(@StringRes int resId, Object... formatArgs) {
+        showSimpleError(getString(resId, formatArgs));
     }
 
-    protected void showDialog(DialogFragment dialog) {
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).showDialog(dialog);
-        }
+    protected void showSimpleError(String message) {
+        logError("Showing error with message: " + message);
+        showDialog(SimpleDialogFragment.newInstance(message));
     }
 
     protected static void logInfo(String message) {
@@ -52,14 +51,14 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    protected static void logException(Exception e) {
+        logException(e.getMessage(), e);
+    }
+
     protected static void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
             Timber.e(e, message);
         }
-    }
-
-    protected static void logException(Exception e) {
-        logException(e.getMessage(), e);
     }
 
     private static boolean isMessageOk(String message) {
@@ -68,6 +67,14 @@ public class BaseFragment extends Fragment {
             Timber.e(new Exception(), "No message provided to log! Message: \"" + message + "\"");
         }
         return isMessageOk;
+    }
+
+    private void showDialog(DialogFragment dialog) {
+        if (getActivity() instanceof BaseActivity) {
+            ((BaseActivity) getActivity()).showDialog(dialog);
+        } else {
+            throw new IllegalArgumentException(getActivity() + " is not BaseActivity!");
+        }
     }
 
 }

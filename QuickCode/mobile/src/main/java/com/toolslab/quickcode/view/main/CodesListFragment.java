@@ -162,7 +162,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 logException("ChildEventListener onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
-                showSimpleDialog(R.string.error_generic);
+                showSimpleError(R.string.error_generic);
             }
         };
         DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
@@ -211,7 +211,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         if (detector == null) {
             // Not able to scan, so why bother the user
             final String message = "Could not set up the barcode detector!";
-            showSimpleDialog(message);
+            showSimpleError(message);
             logError(message);
             return;
         }
@@ -243,7 +243,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            showSimpleDialog(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
+            showSimpleError(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
         }
     }
 
@@ -266,7 +266,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         if (text.length() > MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
-            showSimpleDialog(message);
+            showSimpleError(message);
             text = text.substring(0, MAX_CHARACTERS - 3) + "...";
         }
 
@@ -326,7 +326,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
 
     private void addCodeFilesToDatabase(List<CodeFile> items) {
         if (items.isEmpty()) {
-            showSimpleDialog(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
+            showSimpleError(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
         } else {
             for (CodeFile codeFile : items) {
                 addCodeFileToDatabase(codeFile);
