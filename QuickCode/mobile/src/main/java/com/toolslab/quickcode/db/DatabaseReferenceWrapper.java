@@ -27,7 +27,7 @@ public class DatabaseReferenceWrapper {
 
     private static DatabaseReference dbReference;
 
-    private interface OnSignedInListener {
+    public interface OnSignedInListener {
 
         void onSignedIn(String userId);
 
@@ -151,18 +151,22 @@ public class DatabaseReferenceWrapper {
     }
 
     public static void removeEventListeners(final ChildEventListener childEventListener) {
-        signInAnonymously(new OnSignedInListener() {
+        if (childEventListener == null) {
+            Logger.logError("childEventListener is null");
+        } else {
+            signInAnonymously(new OnSignedInListener() {
 
-            @Override
-            public void onSignedIn(String userId) {
-                removeEventListeners(userId, childEventListener);
-            }
+                @Override
+                public void onSignedIn(String userId) {
+                    removeEventListeners(userId, childEventListener);
+                }
 
-            @Override
-            public void onSignedInFailed(Exception exception) {
-                childEventListener.onCancelled(DatabaseError.fromException(exception));
-            }
-        });
+                @Override
+                public void onSignedInFailed(Exception exception) {
+                    childEventListener.onCancelled(DatabaseError.fromException(exception));
+                }
+            });
+        }
     }
 
     public static void removeEventListenerForCodeFileId(final String codeFileId, final ValueEventListener valueEventListener) {
@@ -181,6 +185,33 @@ public class DatabaseReferenceWrapper {
                     valueEventListener.onCancelled(DatabaseError.fromException(exception));
                 }
             });
+        }
+    }
+
+    public static void signInAnonymously(final OnSignedInListener onSignedInListener) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            auth.signInAnonymously()
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            String userId = authResult.getUser().getUid();
+                            Logger.logInfo("signInAnonymously: success for userId " + userId);
+                            onSignedInListener.onSignedIn(userId);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Logger.logException("signInAnonymously: failure: ", e);
+                            onSignedInListener.onSignedInFailed(e);
+                        }
+                    });
+        } else {
+            // Already signed in
+            onSignedInListener.onSignedIn(auth.getCurrentUser().getUid());
         }
     }
 
@@ -234,33 +265,6 @@ public class DatabaseReferenceWrapper {
                 Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
             }
         });
-    }
-
-    private static void signInAnonymously(final OnSignedInListener onSignedInListener) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() == null) {
-            auth.signInAnonymously()
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            String userId = authResult.getUser().getUid();
-                            Logger.logInfo("signInAnonymously: success for userId " + userId);
-                            onSignedInListener.onSignedIn(userId);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Logger.logException("signInAnonymously: failure: ", e);
-                            onSignedInListener.onSignedInFailed(e);
-                        }
-                    });
-        } else {
-            // Already signed in
-            onSignedInListener.onSignedIn(auth.getCurrentUser().getUid());
-        }
     }
 
     private static void addListenerForSingleValueEvent(String userId, ValueEventListener valueEventListener) {
