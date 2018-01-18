@@ -101,7 +101,7 @@ public class DatabaseReferenceWrapper {
         });
     }
 
-    public static void deleteListItem(final CodeFile codeFile) {// TODO more consistent naming
+    public static void removeCodeFile(final CodeFile codeFile) {
         signInAnonymously(new OnSignedInListener() {
 
             @Override
@@ -111,7 +111,7 @@ public class DatabaseReferenceWrapper {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 if (databaseError != null) {
-                                    Logger.logException("Error in deleteListItem", databaseError.toException());
+                                    Logger.logException("Error in removeCodeFile", databaseError.toException());
                                 }
                             }
                         });
@@ -119,7 +119,7 @@ public class DatabaseReferenceWrapper {
 
             @Override
             public void onSignedInFailed(Exception exception) {
-                Logger.logException("Sign in error in deleteListItem", exception);
+                Logger.logException("Sign in error in removeCodeFile", exception);
             }
         });
     }
