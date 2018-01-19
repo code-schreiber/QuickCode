@@ -1,3 +1,2 @@
-ERRASE THIS LINE -- This is new for version code 5 -- Keep it short, 3 max 4 lines
-- Better offline experience on first launch
-- Better error handling and error feedback
+ • Better offline experience on first launch
+ • Better error handling and error feedback
