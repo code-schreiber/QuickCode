@@ -67,7 +67,9 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void showDialog(DialogFragment dialog) {
         if (isFinishing()) {
-            logWarning("Not showing dialog, activity finishing. " + dialog);
+            logWarning("Not showing dialog, activity finishing.");
+        } else if (getSupportFragmentManager().isStateSaved()) {
+            logWarning("Not showing dialog, Can not perform this action after onSaveInstanceState.");
         } else {
             dialog.show(getSupportFragmentManager(), dialog.toString());
         }

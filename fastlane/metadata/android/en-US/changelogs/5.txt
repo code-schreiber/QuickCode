@@ -1,0 +1,2 @@
+ • Better offline experience on first launch
+ • Better error handling and error feedback

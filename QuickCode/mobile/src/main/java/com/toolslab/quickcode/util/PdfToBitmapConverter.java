@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +51,10 @@ public class PdfToBitmapConverter {
                 renderer = new PdfRenderer(fileDescriptor);
                 int pageCount = renderer.getPageCount();
                 for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-                    bitmaps.add(getBitmapFromPage(renderer, pageIndex));
+                    Bitmap bitmap = getBitmapFromPage(renderer, pageIndex);
+                    if (bitmap != null) {
+                        bitmaps.add(bitmap);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -63,14 +67,23 @@ public class PdfToBitmapConverter {
         return bitmaps;
     }
 
-    @NonNull
+    @Nullable
     @CheckResult
     private static Bitmap getBitmapFromPage(PdfRenderer renderer, int pageIndex) {
-        PdfRenderer.Page page = renderer.openPage(pageIndex);
-        Bitmap bitmap = createWhiteBitmap(page.getWidth(), page.getHeight());
-        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-        page.close();
-        return bitmap;
+        PdfRenderer.Page page = null;
+        try {
+            page = renderer.openPage(pageIndex);
+            Bitmap bitmap = createWhiteBitmap(page.getWidth(), page.getHeight());
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+            return bitmap;
+        } catch (Exception e) {
+            Logger.logException(e);
+        } finally {
+            if (page != null) {
+                page.close();
+            }
+        }
+        return null;
     }
 
     @NonNull

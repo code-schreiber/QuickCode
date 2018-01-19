@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.Size;
 
 import com.toolslab.quickcode.db.PremiumPreferences;
 import com.toolslab.quickcode.util.Logger;
@@ -21,6 +22,8 @@ import java.util.List;
 
 
 public class CodeFileFactory {
+
+    public static final int MAX_CHARACTERS = 2953;
 
     private CodeFileFactory() {
         // Hide utility class constructor
@@ -69,7 +72,7 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    public static List<CodeFile> createCodeFilesFromText(Context context, String text) {
+    public static List<CodeFile> createCodeFilesFromText(Context context, @Size(min = 0, max = MAX_CHARACTERS) String text) {
         String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
         String fileType = UriUtils.getTextTypeName();
         String importedFrom = "Imported from shared text: " + originalFilename;

@@ -29,8 +29,8 @@ import com.toolslab.quickcode.model.CodeFileFactory;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.AssetPathLoader;
 import com.toolslab.quickcode.util.PdfToBitmapConverter;
-import com.toolslab.quickcode.util.Tracker;
 import com.toolslab.quickcode.util.UriUtils;
+import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.base.BaseFragment;
 import com.toolslab.quickcode.view.common.view.OnViewClickedListener;
@@ -45,7 +45,6 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     private static final String INTENT_TYPE_FILTER_ALL = "*/*";
     private static final String INTENT_TYPE_FILTER_IMAGE = "image/*";
     private static final int READ_REQUEST_CODE = 111;
-    private static final int MAX_CHARACTERS = 2953;
 
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
@@ -109,62 +108,77 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     public boolean onItemLongClicked(CodeFileViewModel item) {
         // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
-        DatabaseReferenceWrapper.deleteListItem(codeFile);
-        Tracker.trackOnClick(getActivity(), "onItemLongClicked - deleteListItem");
+        DatabaseReferenceWrapper.removeCodeFile(codeFile);
+        Tracker.trackOnClick(getActivity(), "onItemLongClicked - removeCodeFile");
         return true;
     }
 
     private void addListeners() {
-        onCodeFilesChildListener = new ChildEventListener() {
+        DatabaseReferenceWrapper.signInAnonymously(new DatabaseReferenceWrapper.OnSignedInListener() {
 
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
+            public void onSignedIn(String userId) {
+                // Great! Now we can save stuff in the database
+                onCodeFilesChildListener = new ChildEventListener() {
+
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            removeCodeFileViewModel(model);
+                            // TODO [UI nice to have] make Snackbar implementation more elegant
+                            Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.undo, new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            addCodeFileToDatabase(model.getCodeFile());
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+                        if (model != null) {
+                            addCodeFileViewModel(model);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        logException("ChildEventListener onCancelled. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                        showSimpleError(R.string.error_generic);
+                    }
+                };
+                DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
             }
 
             @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    removeCodeFileViewModel(model);
-                    // TODO [UI nice to have] make Snackbar implementation more elegant
-                    Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                            .setAction(R.string.undo, new View.OnClickListener() {
-
-                                @Override
-                                public void onClick(View v) {
-                                    addCodeFileToDatabase(model.getCodeFile());
-                                }
-                            })
-                            .show();
-                }
+            public void onSignedInFailed(Exception exception) {
+                // Oh no! We can't save stuff in the database quite yet
+                logException("onSignedInFailed", exception);
+                showSimpleError(R.string.error_not_signed_in);
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                if (model != null) {
-                    addCodeFileViewModel(model);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                logException("ChildEventListener onCancelled", databaseError.toException());
-            }
-        };
-        DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
+        });
     }
 
     private void removeListeners() {
@@ -210,7 +224,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         if (detector == null) {
             // Not able to scan, so why bother the user
             final String message = "Could not set up the barcode detector!";
-            showSimpleDialog(message);
+            showSimpleError(message);
             logError(message);
             return;
         }
@@ -242,7 +256,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            showSimpleDialog(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
+            showSimpleError(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
         }
     }
 
@@ -262,11 +276,11 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     void loadSharedTextInBackground(String text) {
-        if (text.length() > MAX_CHARACTERS) {
+        if (text.length() > CodeFileFactory.MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
-            showSimpleDialog(message);
-            text = text.substring(0, MAX_CHARACTERS - 3) + "...";
+            showSimpleError(message);
+            text = text.substring(0, CodeFileFactory.MAX_CHARACTERS - 3) + "...";
         }
 
         String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
@@ -325,7 +339,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
 
     private void addCodeFilesToDatabase(List<CodeFile> items) {
         if (items.isEmpty()) {
-            showSimpleDialog(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
+            showSimpleError(R.string.error_file_not_added, CodeFileCreator.getSupportedBarcodeFormatsAsString());
         } else {
             for (CodeFile codeFile : items) {
                 addCodeFileToDatabase(codeFile);
@@ -335,12 +349,6 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
 
     private void addCodeFileToDatabase(CodeFile codeFile) {
         DatabaseReferenceWrapper.addCodeFile(codeFile);
-    }
-
-    @Deprecated
-    private void showSnack(String m) {
-        logInfo(m);
-        Snackbar.make(recyclerView, m, Snackbar.LENGTH_SHORT).show();
     }
 
 }
