@@ -29,8 +29,8 @@ import com.toolslab.quickcode.model.CodeFileFactory;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.AssetPathLoader;
 import com.toolslab.quickcode.util.PdfToBitmapConverter;
-import com.toolslab.quickcode.util.Tracker;
 import com.toolslab.quickcode.util.UriUtils;
+import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.base.BaseFragment;
 import com.toolslab.quickcode.view.common.view.OnViewClickedListener;
@@ -45,7 +45,6 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     private static final String INTENT_TYPE_FILTER_ALL = "*/*";
     private static final String INTENT_TYPE_FILTER_IMAGE = "image/*";
     private static final int READ_REQUEST_CODE = 111;
-    private static final int MAX_CHARACTERS = 2953;
 
     private ItemLoadingBinding loadingViewBinding;
     private RecyclerView recyclerView;
@@ -277,11 +276,11 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     }
 
     void loadSharedTextInBackground(String text) {
-        if (text.length() > MAX_CHARACTERS) {
+        if (text.length() > CodeFileFactory.MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
             showSimpleError(message);
-            text = text.substring(0, MAX_CHARACTERS - 3) + "...";
+            text = text.substring(0, CodeFileFactory.MAX_CHARACTERS - 3) + "...";
         }
 
         String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
