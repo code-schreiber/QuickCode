@@ -23,6 +23,7 @@ import java.util.List;
 
 public class CodeFileFactory {
 
+    public static final int FILENAME_MAX_CHARACTERS = 20;
     public static final int MAX_CHARACTERS = 2953;
 
     private CodeFileFactory() {
@@ -72,8 +73,9 @@ public class CodeFileFactory {
     }
 
     @NonNull
-    public static List<CodeFile> createCodeFilesFromText(Context context, @Size(min = 0, max = MAX_CHARACTERS) String text) {
-        String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
+    public static List<CodeFile> createCodeFilesFromText(Context context,
+                                                         @Size(min = 0, max = FILENAME_MAX_CHARACTERS) String originalFilename,
+                                                         @Size(min = 0, max = MAX_CHARACTERS) String text) {
         String fileType = UriUtils.getTextTypeName();
         String importedFrom = "Imported from shared text: " + originalFilename;
         Bitmap originalImage = UriUtils.getBitmapFromText(text);

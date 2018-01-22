@@ -283,14 +283,19 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
             text = text.substring(0, CodeFileFactory.MAX_CHARACTERS - 3) + "...";
         }
 
-        String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
+        final String originalFilename;
+        if (text.length() <= CodeFileFactory.FILENAME_MAX_CHARACTERS) {
+            originalFilename = text;
+        } else {
+            originalFilename = text.substring(0, CodeFileFactory.FILENAME_MAX_CHARACTERS) + "…";
+        }
         showLoadingView(originalFilename);
         final String finalText = text;
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), finalText);
+                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), originalFilename, finalText);
                 hideLoadingView(items);
             }
         }).start();
