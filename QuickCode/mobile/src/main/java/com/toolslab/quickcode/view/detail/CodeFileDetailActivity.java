@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodeFileDetailBinding;
 import com.toolslab.quickcode.databinding.ContentCodeFileDetailBinding;
@@ -49,7 +50,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
         binding.activityCodeFileDetailContent.setClickListener(this);
 
         setSupportActionBar(binding.toolbar);
-        setDisplayHomeAsUpEnabled(true);
+        enableDisplayHomeAsUp();
     }
 
     @Override
@@ -153,8 +154,7 @@ public class CodeFileDetailActivity extends BaseActivity implements OnImageClick
     }
 
     private void initDebugViews() {
-        // TODO [Before beta] use BuildConfig.DEBUG
-        if (true) {
+        if (BuildConfig.DEBUG) {
             binding.activityCodeFileDetailContent.contentCodeFileDetailDebugTags.setVisibility(View.VISIBLE);
             binding.activityCodeFileDetailContent.contentCodeFileDetailDebugSize.setVisibility(View.VISIBLE);
             binding.activityCodeFileDetailContent.contentCodeFileDetailDebugType.setVisibility(View.VISIBLE);
