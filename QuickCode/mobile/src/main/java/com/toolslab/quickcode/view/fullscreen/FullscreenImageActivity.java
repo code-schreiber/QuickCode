@@ -84,7 +84,7 @@ public class FullscreenImageActivity extends BaseActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_fullscreen_image);
 
-        setDisplayHomeAsUpEnabled(true);
+        enableDisplayHomeAsUp();
 
         mVisible = true;
         codeFileId = getIntent().getStringExtra(CODE_FILE_ID);
