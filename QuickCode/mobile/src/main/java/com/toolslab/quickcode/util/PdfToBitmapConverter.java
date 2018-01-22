@@ -14,6 +14,8 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.toolslab.quickcode.util.log.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

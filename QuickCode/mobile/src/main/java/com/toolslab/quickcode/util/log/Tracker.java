@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.toolslab.quickcode.util.Logger;
 
 
 public class Tracker {

@@ -11,6 +11,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.toolslab.quickcode.util.log.Logger;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;

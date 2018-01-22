@@ -11,8 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 
 import com.toolslab.quickcode.db.PremiumPreferences;
-import com.toolslab.quickcode.util.Logger;
 import com.toolslab.quickcode.util.UriUtils;
+import com.toolslab.quickcode.util.log.Logger;
 
 import java.io.File;
 import java.io.IOException;

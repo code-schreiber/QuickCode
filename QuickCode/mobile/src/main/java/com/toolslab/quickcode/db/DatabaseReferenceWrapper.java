@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.toolslab.quickcode.model.CodeFile;
 import com.toolslab.quickcode.model.CodeFileViewModel;
-import com.toolslab.quickcode.util.Logger;
+import com.toolslab.quickcode.util.log.Logger;
 
 // TODO [Refactoring] clean other classes from import com.google.android.gms.tasks
 // TODO [Refactoring] clean other classes from import com.google.firebase

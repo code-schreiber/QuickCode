@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.zxing.BarcodeFormat;
-import com.toolslab.quickcode.util.Logger;
+import com.toolslab.quickcode.util.log.Logger;
 
 
 class BarcodeFormatMapper {

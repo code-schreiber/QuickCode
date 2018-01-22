@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
+import com.toolslab.quickcode.util.log.Logger;
+
 import java.io.ByteArrayOutputStream;
 
 
