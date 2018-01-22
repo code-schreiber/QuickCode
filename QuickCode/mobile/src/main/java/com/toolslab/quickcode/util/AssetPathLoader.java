@@ -3,6 +3,8 @@ package com.toolslab.quickcode.util;
 
 import android.content.res.AssetManager;
 
+import com.toolslab.quickcode.util.log.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

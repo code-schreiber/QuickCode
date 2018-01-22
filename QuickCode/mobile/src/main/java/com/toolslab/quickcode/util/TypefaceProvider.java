@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
 
+import com.toolslab.quickcode.util.log.Logger;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

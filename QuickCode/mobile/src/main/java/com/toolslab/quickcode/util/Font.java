@@ -4,6 +4,8 @@ package com.toolslab.quickcode.util;
 import android.graphics.Typeface;
 import android.util.SparseArray;
 
+import com.toolslab.quickcode.util.log.Logger;
+
 
 class Font {
 
