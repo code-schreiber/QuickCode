@@ -18,10 +18,10 @@ public final class BitmapUtils {
     private static final int PIXELS_500 = 500;
     private static final int PIXELS_1000 = 1000;
 
-    static final class Dimensions {
+    public static final class Dimensions {
 
-        final int width;
-        final int height;
+        public final int width;
+        public final int height;
 
         Dimensions(int width, int height) {
             this.width = width;
@@ -86,7 +86,7 @@ public final class BitmapUtils {
     }
 
     @NonNull
-    static Dimensions getNewDimensions(int scaleSize, int originalWidth, int originalHeight) {
+    public static Dimensions getNewDimensions(int scaleSize, int originalWidth, int originalHeight) {
         int newWidth = -1;
         int newHeight = -1;
         float ratio;

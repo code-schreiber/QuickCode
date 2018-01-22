@@ -1,4 +1,4 @@
-package com.toolslab.quickcode.util;
+package com.toolslab.quickcode.util.encode;
 
 
 import android.graphics.Bitmap;
@@ -6,6 +6,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
+import com.toolslab.quickcode.util.BitmapUtils;
 
 
 public class EncodingUtils {
