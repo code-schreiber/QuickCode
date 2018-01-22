@@ -12,8 +12,8 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.toolslab.quickcode.util.BitmapUtils;
-import com.toolslab.quickcode.util.EncodingUtils;
 import com.toolslab.quickcode.util.TypeUtils;
+import com.toolslab.quickcode.util.encode.EncodingUtils;
 import com.toolslab.quickcode.util.log.Logger;
 
 import java.util.ArrayList;
