@@ -1,4 +1,4 @@
-package com.toolslab.quickcode.util;
+package com.toolslab.quickcode.util.bitmap;
 
 
 import android.annotation.TargetApi;
@@ -14,6 +14,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.util.log.Logger;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class PdfToBitmapConverter {
 
     @NonNull
     @CheckResult
-    static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
+    public static List<Bitmap> pdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
         if (!deviceSupportsPdfToBitmap()) {
             Logger.logError("Build version " + Build.VERSION.SDK_INT +
                     " does not support android.graphics.pdf.PdfRenderer: " + uri);
