@@ -4,7 +4,7 @@
     <string name="subtitle">Quick Code</string>
 
     <string name="undo">undo</string>
-    <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the \u2795</string>
+    <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the plus \u2795</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <string name="menu_debug">Debug</string>
