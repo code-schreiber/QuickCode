@@ -24,8 +24,8 @@ Features to come:
 
 Currently supported code formats are:
 - QR Code
-- Pdf 417
-- Aztec Code
+- PDF417
+- Aztec
 
 This app is open source and will soon be available at Google Play: https://play.google.com/store/apps/developer?id=Tools+Lab
 
