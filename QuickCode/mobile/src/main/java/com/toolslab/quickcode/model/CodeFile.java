@@ -8,8 +8,8 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.firebase.database.DataSnapshot;
-import com.toolslab.quickcode.util.BitmapUtils;
 import com.toolslab.quickcode.util.TypeUtils;
+import com.toolslab.quickcode.util.bitmap.BitmapUtils;
 
 import java.util.ArrayList;
 import java.util.List;

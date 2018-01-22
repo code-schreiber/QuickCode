@@ -1,4 +1,4 @@
-package com.toolslab.quickcode.util;
+package com.toolslab.quickcode.util.bitmap;
 
 
 import android.graphics.Bitmap;
