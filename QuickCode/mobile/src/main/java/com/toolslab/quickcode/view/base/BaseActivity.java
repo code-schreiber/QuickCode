@@ -1,6 +1,7 @@
 package com.toolslab.quickcode.view.base;
 
 
+import android.annotation.SuppressLint;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -13,6 +14,7 @@ import com.toolslab.quickcode.view.common.view.dialog.SimpleDialogFragment;
 import timber.log.Timber;
 
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     public void overridePendingTransitionEnter() {
@@ -45,10 +47,10 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+    protected void enableDisplayHomeAsUp() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 

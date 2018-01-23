@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.installreferrer.api.InstallReferrerClient;
+import com.android.installreferrer.api.InstallReferrerClient.InstallReferrerResponse;
+import com.android.installreferrer.api.InstallReferrerStateListener;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,8 +32,8 @@ import com.toolslab.quickcode.model.CodeFileCreator;
 import com.toolslab.quickcode.model.CodeFileFactory;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.AssetPathLoader;
-import com.toolslab.quickcode.util.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.UriUtils;
+import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.base.BaseFragment;
@@ -40,7 +44,8 @@ import com.toolslab.quickcode.view.fullscreen.FullscreenImageActivity;
 import java.util.List;
 
 
-public class CodesListFragment extends BaseFragment implements OnViewClickedListener {
+public class CodesListFragment extends BaseFragment
+        implements OnViewClickedListener, InstallReferrerStateListener {
 
     private static final String INTENT_TYPE_FILTER_ALL = "*/*";
     private static final String INTENT_TYPE_FILTER_IMAGE = "image/*";
@@ -50,6 +55,7 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
     private RecyclerView recyclerView;
     private CodeFileViewModelsAdapter adapter;
     private ChildEventListener onCodeFilesChildListener;
+    private InstallReferrerClient referrerClient;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,6 +117,39 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
         DatabaseReferenceWrapper.removeCodeFile(codeFile);
         Tracker.trackOnClick(getActivity(), "onItemLongClicked - removeCodeFile");
         return true;
+    }
+
+    @Override
+    public void onInstallReferrerSetupFinished(int responseCode) {
+        switch (responseCode) {
+            case InstallReferrerResponse.OK:
+                logDebug("InstallReferrer connected");
+                handleReferrer();
+                break;
+            case InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
+                logWarning("InstallReferrer not supported");
+                break;
+            case InstallReferrerResponse.SERVICE_UNAVAILABLE:
+                logWarning("Unable to connect to the service");
+                break;
+            default:
+                logWarning("responseCode not found:" + responseCode);
+                break;
+        }
+    }
+
+    private void handleReferrer() {
+        try {
+            Tracker.trackInstallReferrer(getActivity(), referrerClient.getInstallReferrer());
+            referrerClient.endConnection();
+        } catch (RemoteException e) {
+            logException(e);
+        }
+    }
+
+    @Override
+    public void onInstallReferrerServiceDisconnected() {
+        logDebug("onInstallReferrerServiceDisconnected");
     }
 
     private void addListeners() {
@@ -179,10 +218,16 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
                 showSimpleError(R.string.error_not_signed_in);
             }
         });
+
+        referrerClient = InstallReferrerClient.newBuilder(getActivity()).build();
+        referrerClient.startConnection(this);
     }
 
     private void removeListeners() {
         DatabaseReferenceWrapper.removeEventListeners(onCodeFilesChildListener);
+        if (referrerClient != null && referrerClient.isReady()) {
+            referrerClient.endConnection();
+        }
     }
 
     private void addCodeFileViewModel(CodeFileViewModel codeFileViewModel) {
@@ -283,14 +328,19 @@ public class CodesListFragment extends BaseFragment implements OnViewClickedList
             text = text.substring(0, CodeFileFactory.MAX_CHARACTERS - 3) + "...";
         }
 
-        String originalFilename = text.length() > 20 ? text.substring(0, 20) + "…" : text;
+        final String originalFilename;
+        if (text.length() <= CodeFileFactory.FILENAME_MAX_CHARACTERS) {
+            originalFilename = text;
+        } else {
+            originalFilename = text.substring(0, CodeFileFactory.FILENAME_MAX_CHARACTERS) + "…";
+        }
         showLoadingView(originalFilename);
         final String finalText = text;
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), finalText);
+                final List<CodeFile> items = CodeFileFactory.createCodeFilesFromText(getActivity(), originalFilename, finalText);
                 hideLoadingView(items);
             }
         }).start();

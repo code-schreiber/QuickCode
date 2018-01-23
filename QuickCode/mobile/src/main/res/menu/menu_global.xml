@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".view.main.CodesListActivity">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.main.CodesListActivity">
 
-    <item
-        android:id="@+id/menu_global_show_font_dialog"
-        android:icon="@drawable/ic_file_black_24dp"
-        android:title="Show font dialog"/>
+    <!--<item-->
+    <!--android:id="@+id/menu_global_show_font_dialog"-->
+    <!--android:icon="@drawable/ic_file_black_24dp"-->
+    <!--android:title="Show font dialog"/>-->
 
-    <item android:title="@string/menu_debug">
-        <menu>
-            <item
-                android:id="@+id/menu_global_import_assets"
-                android:icon="@drawable/ic_add_black_24dp"
-                android:title="Import assets"/>
-            <item
-                android:id="@+id/menu_global_debug_reset_app"
-                android:icon="@drawable/ic_clear_black_24dp"
-                android:title="@string/menu_debug_reset_app"/>
-        </menu>
-    </item>
+    <!--<item android:title="@string/menu_debug">-->
+    <!--<menu>-->
+    <!--<item-->
+    <!--android:id="@+id/menu_global_import_assets"-->
+    <!--android:icon="@drawable/ic_add_black_24dp"-->
+    <!--android:title="Import assets"/>-->
+    <!--<item-->
+    <!--android:id="@+id/menu_global_debug_reset_app"-->
+    <!--android:icon="@drawable/ic_clear_black_24dp"-->
+    <!--android:title="@string/menu_debug_reset_app"/>-->
+    <!--</menu>-->
+    <!--</item>-->
 
 </menu>

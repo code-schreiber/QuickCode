@@ -26,7 +26,6 @@ import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
-import com.toolslab.quickcode.db.SharedPreferencesWrapper;
 import com.toolslab.quickcode.util.GooglePlayServicesUtil;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.util.log.Tracker;
@@ -41,8 +40,10 @@ public class CodesListActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         FontStatisticDialogFragment.DialogFragmentListener {
 
+    @Nullable
     private DrawerLayout drawerLayout;
 
+    @Nullable
     private ActivityCodesListBinding binding;
 
     @Override
@@ -61,7 +62,7 @@ public class CodesListActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -90,7 +91,9 @@ public class CodesListActivity extends BaseActivity implements
         // Handle navigation view item clicks here.
         onMenuItemSelected(item);
 
-        drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
@@ -102,7 +105,9 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     public void setVisibilityOfFabHint(int visibility) {
-        binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
+        if (binding != null) {
+            binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
+        }
     }
 
     protected void onNewIntent(Intent intent) {
@@ -169,6 +174,7 @@ public class CodesListActivity extends BaseActivity implements
                 DatabaseReferenceWrapper.getUser());
     }
 
+    // TODO [Refactoring] handle intent in fragment
     private void handleIntent(Intent intent) {
         if (intent.getExtras() != null) {
             Tracker.trackIntent(this, intent);
@@ -220,28 +226,30 @@ public class CodesListActivity extends BaseActivity implements
         showSimpleDialog(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
     }
 
+    @Deprecated
     private void onMenuItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_global_import_assets) {
-            importAssets();
-        } else if (id == R.id.menu_global_show_font_dialog) {
-            showFontsDialog();
-        } else if (id == R.id.menu_global_debug_reset_app) {
-            SharedPreferencesWrapper.clearAll(this);
-            DatabaseReferenceWrapper.clearAll();
-            finish();
-        }
+//        int id = item.getItemId();
+//        if (id == R.id.menu_global_import_assets) {
+//            importAssets();
+//        } else if (id == R.id.menu_global_show_font_dialog) {
+//            showFontsDialog();
+//        } else if (id == R.id.menu_global_debug_reset_app) {
+//            SharedPreferencesWrapper.clearAll(this);
+//            DatabaseReferenceWrapper.clearAll();
+//            finish();
+//        }
+//    }
+//
+//    private void importAssets() {
+//        CodesListFragment fragment = getCodesListFragment();
+//        if (fragment != null) {
+//            fragment.importAssets();
+//        }
     }
 
-    private void importAssets() {
-        CodesListFragment fragment = getCodesListFragment();
-        if (fragment != null) {
-            fragment.importAssets();
-        }
-    }
-
+    @Deprecated
     private void showFontsDialog() {
-        showDialog(FontStatisticDialogFragment.newInstance());
+//        showDialog(FontStatisticDialogFragment.newInstance());
     }
 
     @Nullable
@@ -256,8 +264,10 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void showSnack(String m) {
-        logInfo(m);
-        Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
+        logDebug("Showing Snack: " + m);
+        if (drawerLayout != null) {
+            Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 }

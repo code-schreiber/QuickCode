@@ -12,6 +12,10 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
+import com.toolslab.quickcode.util.encode.EncodingUtils;
+import com.toolslab.quickcode.util.log.Logger;
+
 import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;

@@ -10,8 +10,8 @@ Features to come:
 
 Currently supported code formats are:
  • QR Code
- • Pdf 417
- • Aztec Code
+ • PDF417
+ • Aztec
 
 This app is open source and can be found at https://github.com/code-schreiber/QuickCode
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode

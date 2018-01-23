@@ -1,7 +1,8 @@
-package com.toolslab.quickcode.util;
+package com.toolslab.quickcode.util.log;
 
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.toolslab.quickcode.util.TypeUtils;
 
 import timber.log.Timber;
 
