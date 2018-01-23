@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 
@@ -31,6 +32,18 @@ public class Tracker {
             }
         } else {
             Logger.logError("No intent for trackInstallReferrer");
+        }
+    }
+
+    public static void trackInstallReferrer(Context context, ReferrerDetails referrerDetails) {
+        if (referrerDetails != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(Param.INSTALL_REFERRER, referrerDetails.getInstallReferrer());
+            bundle.putLong(Param.INSTALL_BEGIN_TIMESTAMP, referrerDetails.getInstallBeginTimestampSeconds());
+            bundle.putLong(Param.REFERRER_CLICK_TIMESTAMP, referrerDetails.getReferrerClickTimestampSeconds());
+            logEvent(context, Event.REFERRER_DETAILS, bundle);
+        } else {
+            Logger.logError("No referrerDetails for trackInstallReferrer");
         }
     }
 
@@ -68,10 +81,14 @@ public class Tracker {
 
     private static class Event extends FirebaseAnalytics.Event {
         private static final String FIRST_LAUNCH = "first_launch";
+        private static final String REFERRER_DETAILS = "referrer_details";
         private static final String INTENT = "intent";
     }
 
     private static class Param extends FirebaseAnalytics.Param {
+        private static final String INSTALL_REFERRER = "install_referrer";
+        private static final String REFERRER_CLICK_TIMESTAMP = "referrer_click_timestamp";
+        private static final String INSTALL_BEGIN_TIMESTAMP = "install_begin_timestamp";
     }
 
 }
