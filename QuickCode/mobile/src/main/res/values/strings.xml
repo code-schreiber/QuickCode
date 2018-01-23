@@ -28,7 +28,7 @@
     <string name="error_file_not_added_unsupported_type">No file added: File type not supported, %1$s is not one of the supported formats: %2$s.</string>
     <string name="error_shared_text_too_long">Text was too long so it has been cut.</string>
 
-    <string name="error_premium_links_not_allowed">Clicking Links in only allowed in premium version :(</string>
+    <string name="error_premium_links_not_allowed">Clicking links in only allowed in premium version :(</string>
 
     <!-- Content Descriptions -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
