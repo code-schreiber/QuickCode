@@ -6,6 +6,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
 import com.toolslab.quickcode.util.TypeUtils;
+import com.toolslab.quickcode.util.log.Logger;
 import com.toolslab.quickcode.view.common.view.dialog.SimpleDialogFragment;
 
 import timber.log.Timber;
@@ -28,45 +29,27 @@ public class BaseFragment extends Fragment {
     }
 
     protected static void logInfo(String message) {
-        if (isMessageOk(message)) {
-            Timber.i(message);
-        }
+        Logger.logInfo(message);
     }
 
     protected static void logDebug(String message) {
-        if (isMessageOk(message)) {
-            Timber.d(message);
-        }
+        Logger.logDebug(message);
     }
 
     protected static void logWarning(String message) {
-        if (isMessageOk(message)) {
-            Timber.w(message);
-        }
+        Logger.logWarning(message);
     }
 
     protected static void logError(String message) {
-        if (isMessageOk(message)) {
-            Timber.e(message);
-        }
+        Logger.logError(message);
     }
 
     protected static void logException(Exception e) {
-        logException(e.getMessage(), e);
+        Logger.logException(e);
     }
 
     protected static void logException(String message, Throwable e) {
-        if (isMessageOk(message)) {
-            Timber.e(e, message);
-        }
-    }
-
-    private static boolean isMessageOk(String message) {
-        boolean isMessageOk = !TypeUtils.isEmpty(message);
-        if (!isMessageOk) {
-            Timber.e(new Exception(), "No message provided to log! Message: \"" + message + "\"");
-        }
-        return isMessageOk;
+        Logger.logException(message,e);
     }
 
     private void showDialog(DialogFragment dialog) {
