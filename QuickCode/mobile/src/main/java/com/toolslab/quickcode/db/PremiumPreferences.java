@@ -14,7 +14,7 @@ public final class PremiumPreferences {
     private static final String PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT_KEY = "PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT_KEY";
     private static final String PREMIUM_ALLOW_CLICKING_LINKS_KEY = "PREMIUM_ALLOW_CLICKING_LINKS_KEY";
 
-    private static final boolean DEFAULT = true; // TODO remove and default to false
+    private static final boolean DEFAULT = false;
 
     private PremiumPreferences() {
         // Hide utility class constructor
@@ -27,7 +27,6 @@ public final class PremiumPreferences {
     public static boolean allowMultipleCodesInImageImport(Context context) {
         return getSharedPreferences(context).getBoolean(PREMIUM_ALLOW_MULTIPLE_CODES_IN_IMAGE_IMPORT_KEY, DEFAULT);
     }
-
 
     public static boolean allowClickingLinks(Context context) {
         return getSharedPreferences(context).getBoolean(PREMIUM_ALLOW_CLICKING_LINKS_KEY, DEFAULT);

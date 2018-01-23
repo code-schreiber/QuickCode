@@ -153,7 +153,9 @@ public class FullscreenImageActivity extends BaseActivity {
             textview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.showSimpleDialog(R.string.error_premium_links_not_allowed);
+                    logError("Linkify disabled because of allowClickingLinks.");
+                    // TODO [Premium] use dialog when premium exists
+//                    context.showSimpleDialog(R.string.error_premium_links_not_allowed);
                 }
             });
         }
