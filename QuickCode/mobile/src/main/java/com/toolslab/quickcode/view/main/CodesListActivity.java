@@ -26,7 +26,6 @@ import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
-import com.toolslab.quickcode.db.SharedPreferencesWrapper;
 import com.toolslab.quickcode.util.GooglePlayServicesUtil;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.util.log.Tracker;
@@ -220,28 +219,30 @@ public class CodesListActivity extends BaseActivity implements
         showSimpleDialog(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
     }
 
+    @Deprecated
     private void onMenuItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_global_import_assets) {
-            importAssets();
-        } else if (id == R.id.menu_global_show_font_dialog) {
-            showFontsDialog();
-        } else if (id == R.id.menu_global_debug_reset_app) {
-            SharedPreferencesWrapper.clearAll(this);
-            DatabaseReferenceWrapper.clearAll();
-            finish();
-        }
+//        int id = item.getItemId();
+//        if (id == R.id.menu_global_import_assets) {
+//            importAssets();
+//        } else if (id == R.id.menu_global_show_font_dialog) {
+//            showFontsDialog();
+//        } else if (id == R.id.menu_global_debug_reset_app) {
+//            SharedPreferencesWrapper.clearAll(this);
+//            DatabaseReferenceWrapper.clearAll();
+//            finish();
+//        }
+//    }
+//
+//    private void importAssets() {
+//        CodesListFragment fragment = getCodesListFragment();
+//        if (fragment != null) {
+//            fragment.importAssets();
+//        }
     }
 
-    private void importAssets() {
-        CodesListFragment fragment = getCodesListFragment();
-        if (fragment != null) {
-            fragment.importAssets();
-        }
-    }
-
+    @Deprecated
     private void showFontsDialog() {
-        showDialog(FontStatisticDialogFragment.newInstance());
+//        showDialog(FontStatisticDialogFragment.newInstance());
     }
 
     @Nullable
