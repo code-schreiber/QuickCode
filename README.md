@@ -31,4 +31,4 @@ This app is open source and will soon be available at Google Play: https://play.
 
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode
 
-Contact the author at hello.tools.lab+quickcode at gmail.com
+Contact the author at hello.tools.lab+quickcode at gmail dot com
