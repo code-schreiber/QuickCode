@@ -40,8 +40,10 @@ public class CodesListActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         FontStatisticDialogFragment.DialogFragmentListener {
 
+    @Nullable
     private DrawerLayout drawerLayout;
 
+    @Nullable
     private ActivityCodesListBinding binding;
 
     @Override
@@ -60,7 +62,7 @@ public class CodesListActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -89,7 +91,9 @@ public class CodesListActivity extends BaseActivity implements
         // Handle navigation view item clicks here.
         onMenuItemSelected(item);
 
-        drawerLayout.closeDrawer(GravityCompat.START);
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
@@ -101,7 +105,9 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     public void setVisibilityOfFabHint(int visibility) {
-        binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
+        if (binding != null) {
+            binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
+        }
     }
 
     protected void onNewIntent(Intent intent) {
@@ -168,6 +174,7 @@ public class CodesListActivity extends BaseActivity implements
                 DatabaseReferenceWrapper.getUser());
     }
 
+    // TODO [Refactoring] handle intent in fragment
     private void handleIntent(Intent intent) {
         if (intent.getExtras() != null) {
             Tracker.trackIntent(this, intent);
@@ -257,8 +264,10 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void showSnack(String m) {
-        logInfo(m);
-        Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
+        logDebug("Showing Snack: " + m);
+        if (drawerLayout != null) {
+            Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 }
