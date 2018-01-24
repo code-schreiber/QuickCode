@@ -16,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -116,19 +115,34 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void initViews(ActivityCodesListBinding binding) {
+        initToolbar(binding);
+        initNavigationView(binding);
+        initFloatingActionButton(binding);
+    }
+
+    private void initToolbar(ActivityCodesListBinding binding) {
         Toolbar toolbar = binding.activityCodesListAppBarMain.appBarMainToolbar;
         setSupportActionBar(toolbar);
-        drawerLayout = binding.activityCodesListDrawerLayout;
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = binding.activityCodesListNavView;
-        navigationView.setNavigationItemSelectedListener(this);
+        // Temporarily showing logo instead of menu
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_launcher_24dp);
+        getSupportActionBar().setTitle(" " + getString(R.string.app_name));
+
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawerLayout = binding.activityCodesListDrawerLayout;
+//        drawerLayout.addDrawerListener(toggle);
+//        toggle.syncState();
+    }
+
+    private void initNavigationView(ActivityCodesListBinding binding) {
+//        NavigationView navigationView = binding.activityCodesListNavView;
+//        navigationView.setNavigationItemSelectedListener(this);
 
         final String footerText = createNavigationFooterText();
         binding.activityCodesListNavFooter.navFooterMainText.setText(footerText);
         binding.activityCodesListNavFooter.navFooterMainText.setOnLongClickListener(new View.OnLongClickListener() {
+
             @Override
             public boolean onLongClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -141,7 +155,9 @@ public class CodesListActivity extends BaseActivity implements
                 return false;
             }
         });
+    }
 
+    private void initFloatingActionButton(ActivityCodesListBinding binding) {
         FloatingActionButton actionButton = binding.activityCodesListAppBarMain.appBarMainFab;
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
