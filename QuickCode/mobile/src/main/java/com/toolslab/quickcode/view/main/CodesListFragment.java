@@ -138,6 +138,11 @@ public class CodesListFragment extends BaseFragment
         }
     }
 
+    @Override
+    public void onInstallReferrerServiceDisconnected() {
+        logDebug("onInstallReferrerServiceDisconnected");
+    }
+
     private void handleReferrer() {
         try {
             Tracker.trackInstallReferrer(getActivity(), referrerClient.getInstallReferrer());
@@ -145,11 +150,6 @@ public class CodesListFragment extends BaseFragment
         } catch (RemoteException e) {
             logException(e);
         }
-    }
-
-    @Override
-    public void onInstallReferrerServiceDisconnected() {
-        logDebug("onInstallReferrerServiceDisconnected");
     }
 
     private void addListeners() {
@@ -208,6 +208,7 @@ public class CodesListFragment extends BaseFragment
                         showSimpleError(R.string.error_generic);
                     }
                 };
+                updateFabHint();
                 DatabaseReferenceWrapper.addEventListeners(onCodeFilesChildListener);
             }
 
