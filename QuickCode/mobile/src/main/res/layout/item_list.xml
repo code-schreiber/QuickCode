@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="codeFileViewModel"
+            type="com.toolslab.quickcode.model.CodeFileViewModel"/>
+
+        <variable
+            name="actionListener"
+            type="com.toolslab.quickcode.view.common.view.OnViewClickedListener"/>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:minHeight="@dimen/size_min_touchable_area"
+        android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
+        android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin_medium"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingTop="@dimen/margin_medium">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/size_thumbnail"
+                android:layout_height="@dimen/size_thumbnail"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:imageBitmap="@{codeFileViewModel.getOriginalImageThumbnail()}"
+                tools:src="@drawable/ic_file_black_24dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingEnd="@dimen/margin_small"
+            android:paddingStart="@dimen/margin_small">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{codeFileViewModel.getDisplayName()}"
+                android:textSize="@dimen/text_size_medium"
+                tools:text="Display Name"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{codeFileViewModel.getCreationDateShort(context)}"
+                android:textSize="@dimen/text_size_small"
+                tools:text="12.12.2000 12:12"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/size_thumbnail_small"
+                android:layout_height="@dimen/size_thumbnail_small"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
+                android:scaleType="fitCenter"
+                app:imageBitmap="@{codeFileViewModel.getCodeImageThumbnail()}"
+                tools:src="@drawable/ic_file_content_black_24dp"/>
+
+            <ImageView
+                android:layout_width="@dimen/size_thumbnail_small"
+                android:layout_height="@dimen/size_thumbnail_small"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:imageResource="@{codeFileViewModel.getIsOnWatchResource()}"
+                tools:src="@drawable/ic_watch_black_24dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,21 @@
+<svg height="500" viewBox="0 0 500 500" width="500" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Converted from VectorDrawable ic_launcher.xml -->
+    <!-- Using these rules https://stackoverflow.com/a/46350218 -->
+
+    <!-- Lighting -->
+    <path
+        d="m221.410919,376.476349l50.86554,-78.118439l-20.991348,-9.219788l64.048843,-66.931976l-20.926758,-11.176666l79.132385,-112.07914l-134.242874,85.889565l25.576126,11.927261l-83.430573,55.014481l29.930115,17.000488l-88.125656,57.712921l98.1642,49.981293z"
+        fill="#000000" transform="rotate(164.902, 248.393, 237.713)"/>
+
+    <!-- Left bracket -->
+    <path d="M100,30 L20,30" stroke="#000000" stroke-width="20"/>
+    <path d="M30,40 L30,460" stroke="#000000" stroke-width="20"/>
+    <path d="M100,470 L20,470" stroke="#000000" stroke-width="20"/>
+
+    <!-- Right bracket -->
+    <path d="M480,30 L400,30" stroke="#000000" stroke-width="20"/>
+    <path d="M470,40 L470,460" stroke="#000000" stroke-width="20"/>
+    <path d="M480,470 L400,470" stroke="#000000" stroke-width="20"/>
+
+</svg>

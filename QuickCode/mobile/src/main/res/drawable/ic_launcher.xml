@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    Originally created SVG using http://github.com/duopixel/Method-Draw/
+    Converted SVG to VectorDrawable using inloop.github.io/svg2android/
+    Modified VectorDrawable using Android Studio
+-->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="500dp"
+    android:height="500dp"
+    android:viewportHeight="500"
+    android:viewportWidth="500">
+
+    <!-- Lighting -->
+    <group
+        android:pivotX="245.0"
+        android:pivotY="245.0"
+        android:rotation="165.0"
+        android:scaleX="1.1"
+        android:scaleY="1.1">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M221.411,376.476 L272.277,298.358 L251.286,289.138 L315.335,222.206
+                L294.408,211.029 L373.54,98.95 L239.297,184.839 L264.873,196.766 L181.442,251.78
+                L211.372,268.78 L123.246,326.493 L221.41,376.474 Z"/>
+    </group>
+    <group
+        android:pivotX="250.0"
+        android:pivotY="237.0"
+        android:rotation="163.0"
+        android:scaleX="1.1"
+        android:scaleY="1.1">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M221.411,376.476 L272.277,298.358 L251.286,289.138 L315.335,222.206
+                L294.408,211.029 L373.54,98.95 L239.297,184.839 L264.873,196.766 L181.442,251.78
+                L211.372,268.78 L123.246,326.493 L221.41,376.474 Z"/>
+    </group>
+    <group
+        android:pivotX="257.0"
+        android:pivotY="237.0"
+        android:rotation="166.0"
+        android:scaleX="1.1"
+        android:scaleY="1.1">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M221.411,376.476 L272.277,298.358 L251.286,289.138 L315.335,222.206
+                L294.408,211.029 L373.54,98.95 L239.297,184.839 L264.873,196.766 L181.442,251.78
+                L211.372,268.78 L123.246,326.493 L221.41,376.474 Z"/>
+    </group>
+    <group
+        android:pivotX="250.0"
+        android:pivotY="240.0"
+        android:rotation="165.0">
+        <path
+            android:fillColor="#FF000000"
+            android:pathData="M221.411,376.476 L272.277,298.358 L251.286,289.138 L315.335,222.206
+                L294.408,211.029 L373.54,98.95 L239.297,184.839 L264.873,196.766 L181.442,251.78
+                L211.372,268.78 L123.246,326.493 L221.41,376.474 Z"/>
+    </group>
+
+    <!-- Left bracket -->
+    <path
+        android:pathData="M90,30 L30,30"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M30,40 L30,460"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M90,470 L30,470"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M100,30 L20,30"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+    <path
+        android:pathData="M30,40 L30,460"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+    <path
+        android:pathData="M100,470 L20,470"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+
+    <!-- Right bracket -->
+    <path
+        android:pathData="M470,30 L410,30"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M470,40 L470,460"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M470,470 L410,470"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="square"
+        android:strokeWidth="25"/>
+    <path
+        android:pathData="M480,30 L400,30"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+    <path
+        android:pathData="M470,40 L470,460"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+    <path
+        android:pathData="M480,470 L400,470"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="20"/>
+
+</vector>

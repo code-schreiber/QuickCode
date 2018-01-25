@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View style="@style/Divider"/>
+
+        <TextView
+            android:id="@+id/nav_footer_main_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:ellipsize="end"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:maxLines="2"
+            android:paddingEnd="@dimen/margin_large"
+            android:paddingStart="@dimen/margin_large"
+            android:textColor="@color/transparent_black"
+            android:textSize="@dimen/text_size_small"
+            app:autoSizeTextType="uniform"
+            tools:text="Hi! My name is footer and I don't know anything"/>
+    </LinearLayout>
+
+</layout>
