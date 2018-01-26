@@ -22,7 +22,7 @@
             android:maxLines="2"
             android:paddingEnd="@dimen/margin_large"
             android:paddingStart="@dimen/margin_large"
-            android:textColor="@color/transparent_black"
+            android:textColor="@color/black_transparent"
             android:textSize="@dimen/text_size_small"
             app:autoSizeTextType="uniform"
             tools:text="Hi! My name is footer and I don't know anything"/>
