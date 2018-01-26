@@ -20,7 +20,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_extra_large"
+        android:layout_marginTop="@dimen/spacing_huge"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -130,7 +130,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:layout_margin="@dimen/margin_medium"
+                    android:layout_margin="@dimen/spacing_normal"
                     android:text="@string/code_fie_detail_code"/>
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">

@@ -20,10 +20,10 @@
             android:ellipsize="end"
             android:foreground="?android:attr/selectableItemBackground"
             android:maxLines="2"
-            android:paddingEnd="@dimen/margin_large"
-            android:paddingStart="@dimen/margin_large"
+            android:paddingEnd="@dimen/spacing_large"
+            android:paddingStart="@dimen/spacing_large"
             android:textColor="@color/black_transparent"
-            android:textSize="@dimen/text_size_small"
+            android:textSize="@dimen/font_small"
             app:autoSizeTextType="uniform"
             tools:text="Hi! My name is footer and I don't know anything"/>
     </LinearLayout>

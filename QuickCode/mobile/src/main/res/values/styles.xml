@@ -33,7 +33,7 @@
     </style>
 
     <style name="CodeFileDetailLinearLayout">
-        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:layout_margin">@dimen/spacing_small</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
@@ -41,23 +41,52 @@
     </style>
 
     <style name="CodeFileDetailTextView">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:textSize">@dimen/font_small</item>
+        <item name="android:layout_margin">@dimen/spacing_small</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_weight">1</item>
     </style>
 
     <style name="CodeFileDetailTextView.Title">
-        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textSize">@dimen/font_normal</item>
         <item name="android:layout_weight">2</item>
     </style>
 
     <style name="CodeFileDetailImageView">
-        <item name="android:layout_marginEnd">@dimen/margin_small</item>
-        <item name="android:layout_height">@dimen/size_icon_small</item>
-        <item name="android:layout_width">@dimen/size_icon_small</item>
+        <item name="android:layout_marginEnd">@dimen/spacing_small</item>
+        <item name="android:layout_height">@dimen/button_height_short</item>
+        <item name="android:layout_width">@dimen/button_height_short</item>
         <item name="android:layout_weight">0</item>
+    </style>
+
+    <style name="FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/spacing_large</item>
+    </style>
+
+    <style name="ListItemLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/button_height_normal</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingBottom">@dimen/spacing_normal</item>
+        <item name="android:paddingLeft">@dimen/spacing_large</item>
+        <item name="android:paddingRight">@dimen/spacing_large</item>
+        <item name="android:paddingTop">@dimen/spacing_normal</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:baselineAligned">false</item>
+    </style>
+
+    <style name="SmallClickableImageView">
+        <item name="android:layout_width">@dimen/button_height_short</item>
+        <item name="android:layout_height">@dimen/button_height_short</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:scaleType">fitCenter</item>
     </style>
 
 </resources>

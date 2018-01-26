@@ -17,19 +17,9 @@
     </data>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:baselineAligned="false"
-        android:gravity="center"
-        android:minHeight="@dimen/size_min_touchable_area"
+        style="@style/ListItemLayout"
         android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
-        android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}"
-        android:orientation="horizontal"
-        android:paddingBottom="@dimen/margin_medium"
-        android:paddingLeft="@dimen/activity_margin"
-        android:paddingRight="@dimen/activity_margin"
-        android:paddingTop="@dimen/margin_medium">
+        android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -39,8 +29,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="@dimen/size_thumbnail"
-                android:layout_height="@dimen/size_thumbnail"
+                android:layout_width="@dimen/button_height_normal"
+                android:layout_height="@dimen/button_height_normal"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
@@ -54,21 +44,21 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingEnd="@dimen/margin_small"
-            android:paddingStart="@dimen/margin_small">
+            android:paddingEnd="@dimen/spacing_small"
+            android:paddingStart="@dimen/spacing_small">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{codeFileViewModel.getDisplayName()}"
-                android:textSize="@dimen/text_size_medium"
+                android:textSize="@dimen/font_normal"
                 tools:text="Display Name"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{codeFileViewModel.getCreationDateShort(context)}"
-                android:textSize="@dimen/text_size_small"
+                android:textSize="@dimen/font_small"
                 tools:text="12.12.2000 12:12"/>
         </LinearLayout>
 
@@ -80,22 +70,13 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="@dimen/size_thumbnail_small"
-                android:layout_height="@dimen/size_thumbnail_small"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:foreground="?android:attr/selectableItemBackground"
+                style="@style/SmallClickableImageView"
                 android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
-                android:scaleType="fitCenter"
                 app:imageBitmap="@{codeFileViewModel.getCodeImageThumbnail()}"
                 tools:src="@drawable/ic_file_content_black_24dp"/>
 
             <ImageView
-                android:layout_width="@dimen/size_thumbnail_small"
-                android:layout_height="@dimen/size_thumbnail_small"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
+                style="@style/SmallClickableImageView"
                 app:imageResource="@{codeFileViewModel.getIsOnWatchResource()}"
                 tools:src="@drawable/ic_watch_black_24dp"/>
         </LinearLayout>
