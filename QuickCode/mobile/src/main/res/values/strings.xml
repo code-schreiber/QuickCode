@@ -1,11 +1,11 @@
 <resources>
 
     <string name="app_name">Quick Code</string>
-    <string name="subtitle">Quick Code</string>
+    <string name="app_name_subtitle">Quick Code</string>
 
     <string name="undo">undo</string>
-    <string name="fab_hint">No codes? \uD83D\uDE15\n\nAdd one with the plus \u2795</string>
-    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="hint_add_code_file">No codes? \uD83D\uDE15\n\nAdd one with the plus \u2795</string>
+    <string name="message_copied_to_clipboard">Copied to clipboard</string>
 
     <string name="menu_debug">Debug</string>
     <string name="menu_debug_reset_app">Reset App and exit</string>

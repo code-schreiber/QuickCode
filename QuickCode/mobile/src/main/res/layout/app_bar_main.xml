@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_large"
                 android:gravity="end"
-                android:text="@string/fab_hint"
+                android:text="@string/hint_add_code_file"
                 android:textSize="@dimen/font_larger"
                 android:visibility="gone"/>
 
