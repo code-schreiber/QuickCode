@@ -10,17 +10,16 @@
     <string name="menu_debug">Debug</string>
     <string name="menu_debug_reset_app">Reset App and exit</string>
 
-    <!--TODO typo-->
-    <string name="code_fie_detail_tags">Tags</string>
-    <string name="code_fie_detail_original_file">Original file</string>
-    <string name="code_fie_detail_creation_date">Imported on</string>
-    <string name="code_fie_detail_file_size">Original file size</string>
-    <string name="code_fie_detail_file_type">Original file type</string>
-    <string name="code_fie_detail_code">Code</string>
-    <string name="code_fie_detail_code_type">Type</string>
-    <string name="code_fie_detail_code_content_type">Content type</string>
-    <string name="code_fie_detail_code_display_content">Content</string>
-    <string name="code_fie_detail_code_raw_content">Raw content</string>
+    <string name="code_file_detail_tags">Tags</string>
+    <string name="code_file_detail_original_file">Original file</string>
+    <string name="code_file_detail_creation_date">Imported on</string>
+    <string name="code_file_detail_file_size">Original file size</string>
+    <string name="code_file_detail_file_type">Original file type</string>
+    <string name="code_file_detail_code">Code</string>
+    <string name="code_file_detail_code_type">Type</string>
+    <string name="code_file_detail_code_content_type">Content type</string>
+    <string name="code_file_detail_code_display_content">Content</string>
+    <string name="code_file_detail_code_raw_content">Raw content</string>
 
     <string name="error_generic">An internal error has occurred</string>
     <string name="error_not_signed_in">Unable to initialize app for the first time, please check your internet connection.</string>
