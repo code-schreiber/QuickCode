@@ -35,6 +35,7 @@ ext {
     def git = Grgit.open(currentDir: projectDir)
     versionCode = git.tag.list().size()
     versionName = git.describe()
+    git.close()
 
     compileSdkVersion = 26
     buildToolsVersion = "26.0.2"
@@ -48,6 +49,24 @@ ext {
 task printVersion() {
     println("Version Code: $versionCode")
     println("Version Name: $versionName")
+}
+
+task generateLastCommitsText() {
+    // Also useful in command line:
+    // git log --pretty=format:"%ar - %B"
+    def maxCommits = 50
+    def filename = "$projectDir/../fastlane/metadata/android/en-US/changelogs/$versionCode" + ".txt"
+    def git = Grgit.open(currentDir: projectDir)
+    def commits = ""
+
+    println("Last $maxCommits commits for version $versionCode:")
+    for (commit in git.log(maxCommits: maxCommits)) {
+        def line = " • $commit.fullMessage"
+        print(line)
+        commits += line
+    }
+    new File(filename).text = "$commits"
+    git.close()
 }
 
 sonarqube {
