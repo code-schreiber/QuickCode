@@ -8,8 +8,13 @@ Develop
 [![Build Status](https://travis-ci.org/code-schreiber/QuickCode.svg?branch=develop)](https://travis-ci.org/code-schreiber/QuickCode) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=QuickCode%3Adevelop)](https://sonarcloud.io/dashboard?id=QuickCode%3Adevelop)
 
 <p align="center">
- <b>Quick Code</b><br>
+ <b>Quick Code</b>
+ <br>
  <img src='https://github.com/code-schreiber/QuickCode/raw/develop/fastlane/metadata/android/en-US/images/icon.png' width='100' height='100'/>
+ <br>
+ <a href='https://play.google.com/store/apps/details?id=com.toolslab.quickcode&utm_source=github'>
+  <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='200'/>
+ </a>
 </p>
 
 Where do you usually put a code that will be scanned soon? 🤔
@@ -27,8 +32,10 @@ Currently supported code formats are:
 - PDF417
 - Aztec
 
-This app is open source and will soon be available at Google Play: https://play.google.com/store/apps/developer?id=Tools+Lab
+This app is
+[![Open Source Love svg3](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+and is available on Google Play: https://play.google.com/store/apps/developer?id=Tools+Lab
 
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode
 
-Contact the author at hellotoolslab+quickcode at gmail dot com
+Share your thoughts and feedback at https://quickcode.uservoice.com

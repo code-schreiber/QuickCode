@@ -20,7 +20,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_extra_large"
+        android:layout_marginTop="@dimen/spacing_huge"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -38,7 +38,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:text="@string/code_fie_detail_tags"/>
+                    android:text="@string/code_file_detail_tags"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
@@ -60,7 +60,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:text="@string/code_fie_detail_original_file"/>
+                    android:text="@string/code_file_detail_original_file"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
@@ -76,7 +76,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:text="@string/code_fie_detail_creation_date"/>
+                    android:text="@string/code_file_detail_creation_date"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
@@ -94,7 +94,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:text="@string/code_fie_detail_file_size"/>
+                    android:text="@string/code_file_detail_file_size"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
@@ -112,7 +112,7 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:text="@string/code_fie_detail_file_type"/>
+                    android:text="@string/code_file_detail_file_type"/>
 
                 <TextView
                     style="@style/CodeFileDetailTextView"
@@ -130,8 +130,8 @@
 
                 <TextView
                     style="@style/CodeFileDetailTextView.Title"
-                    android:layout_margin="@dimen/margin_medium"
-                    android:text="@string/code_fie_detail_code"/>
+                    android:layout_margin="@dimen/spacing_normal"
+                    android:text="@string/code_file_detail_code"/>
 
                 <LinearLayout style="@style/CodeFileDetailLinearLayout">
 
@@ -141,7 +141,7 @@
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
-                        android:text="@string/code_fie_detail_code_type"/>
+                        android:text="@string/code_file_detail_code_type"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView"
@@ -157,7 +157,7 @@
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
-                        android:text="@string/code_fie_detail_code_content_type"/>
+                        android:text="@string/code_file_detail_code_content_type"/>
 
                     <TextView
                         style="@style/CodeFileDetailTextView"
@@ -173,7 +173,7 @@
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
-                        android:text="@string/code_fie_detail_code_display_content"/>
+                        android:text="@string/code_file_detail_code_display_content"/>
 
                     <TextView
                         android:id="@+id/content_code_file_detail_code_display_content_textview"
@@ -192,7 +192,7 @@
 
                     <TextView
                         style="@style/CodeFileDetailTextView.Title"
-                        android:text="@string/code_fie_detail_code_raw_content"/>
+                        android:text="@string/code_file_detail_code_raw_content"/>
 
                     <TextView
                         android:id="@+id/content_code_file_detail_code_raw_content_textview"

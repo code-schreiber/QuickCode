@@ -77,7 +77,7 @@ public class CodeFileCreator {
             String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(supportedBarcodeFormat);
             supportedFormats.add(encodingFormatName);
         }
-        return TypeUtils.getCommaSeparatedStringsFromList(supportedFormats);
+        return TypeUtils.createCommaSeparatedStringFromList(supportedFormats);
     }
 
     @Nullable
@@ -108,6 +108,7 @@ public class CodeFileCreator {
     private static SparseArray<Barcode> getCodesFromBitmap(Context context, Bitmap bitmap) {
         BarcodeDetector detector = setupBarcodeDetector(context);
         if (detector == null) {
+            Logger.logError("getCodesFromBitmap: BarcodeDetector is not operational.");
             return new SparseArray<>();
         }
         SparseArray<Barcode> detectedCodes = detectCodes(bitmap, detector);
@@ -141,7 +142,6 @@ public class CodeFileCreator {
                 .setBarcodeFormats(supportedBarcodeFormats)
                 .build();
         if (!detector.isOperational()) {
-            Logger.logError("BarcodeDetector is not operational.");
             return null;
         }
         return detector;

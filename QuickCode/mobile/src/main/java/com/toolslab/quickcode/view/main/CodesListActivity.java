@@ -149,7 +149,7 @@ public class CodesListActivity extends BaseActivity implements
                 if (clipboard != null) {
                     ClipData clip = ClipData.newPlainText("Navigation Footer Text", footerText);
                     clipboard.setPrimaryClip(clip);
-                    showSnack(getString(R.string.copied_to_clipboard));
+                    showSnack(getString(R.string.message_copied_to_clipboard));
                     return true;
                 }
                 return false;

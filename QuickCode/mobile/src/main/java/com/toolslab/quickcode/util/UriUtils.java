@@ -233,7 +233,7 @@ public class UriUtils {
         for (String supportedImportFormat : SUPPORTED_IMPORT_FORMATS) {
             supportedImportFormats.add(getFormatName(supportedImportFormat));
         }
-        return TypeUtils.getCommaSeparatedStringsFromList(supportedImportFormats);
+        return TypeUtils.createCommaSeparatedStringFromList(supportedImportFormats);
     }
 
     @NonNull

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 EXPECTED_TRAVIS_REPO_SLUG="code-schreiber/QuickCode"
-EXPECTED_TRAVIS_BRANCH="develop"
+EXPECTED_TRAVIS_BRANCH="master"
 
 # Script should bail on first error
 set -e
@@ -29,6 +29,7 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
 elif [ "$TRAVIS_BRANCH" != "$EXPECTED_TRAVIS_BRANCH" ]; then
   echo "deploy.sh: Skipping deployment: wrong branch. Expected '$EXPECTED_TRAVIS_BRANCH' but was '$TRAVIS_BRANCH'."
 else
+  echo "deploy.sh: Deploying to Google Play"
   echo "deploy.sh: Running gradle firebaseUploadReleaseProguardMapping"
   ./gradlew firebaseUploadReleaseProguardMapping
   cd ..
