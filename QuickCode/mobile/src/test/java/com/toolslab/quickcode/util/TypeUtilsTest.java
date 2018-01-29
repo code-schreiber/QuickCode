@@ -27,7 +27,7 @@ public class TypeUtilsTest {
     public void createCommaSeparatedStringFromSingletonList() {
         List<String> input = new ArrayList<>();
         input.add("1");
-        String expectedResult = "test should fail";
+        String expectedResult = "1";
 
         String result = TypeUtils.createCommaSeparatedStringFromList(input);
 
