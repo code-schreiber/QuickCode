@@ -23,6 +23,7 @@
 
     <string name="error_generic">An internal error has occurred</string>
     <string name="error_not_signed_in">Unable to initialize app for the first time, please check your internet connection.</string>
+    <string name="error_barcode_detector_not_operational">Unable to initialize code detector.</string>
     <string name="error_file_not_added">No file added, make sure it is one of the supported formats: %1$s.</string>
     <string name="error_file_not_added_unsupported_type">No file added: File type not supported, %1$s is not one of the supported formats: %2$s.</string>
     <string name="error_shared_text_too_long">Text was too long so it has been cut.</string>

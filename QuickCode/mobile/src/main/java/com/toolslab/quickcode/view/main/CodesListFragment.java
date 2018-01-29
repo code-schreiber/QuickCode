@@ -269,9 +269,7 @@ public class CodesListFragment extends BaseFragment
         BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
         if (detector == null) {
             // Not able to scan, so why bother the user
-            final String message = "Could not set up the barcode detector!";
-            showSimpleError(message);
-            logError(message);
+            showSimpleError(R.string.error_barcode_detector_not_operational);
             return;
         }
 
