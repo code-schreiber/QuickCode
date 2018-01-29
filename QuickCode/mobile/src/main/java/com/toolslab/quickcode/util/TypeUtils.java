@@ -16,12 +16,19 @@ public class TypeUtils {
     }
 
     @NonNull
-    public static String getCommaSeparatedStringsFromList(List<String> strings) {
-        String commaSeparatedStrings = "";
-        for (String string : strings) {
-            commaSeparatedStrings += string + ", ";
+    @CheckResult
+    public static String createCommaSeparatedStringFromList(List<String> strings) {
+        StringBuilder commaSeparatedStrings = new StringBuilder();
+        if (strings != null) {
+            for (String string : strings) {
+                commaSeparatedStrings.append(string).append(", ");
+            }
         }
-        return commaSeparatedStrings.substring(0, commaSeparatedStrings.length() - 2);
+        if (commaSeparatedStrings.length() == 0) {
+            return commaSeparatedStrings.toString();
+        } else {
+            return commaSeparatedStrings.substring(0, commaSeparatedStrings.length() - 2);
+        }
     }
 
     @CheckResult
@@ -33,4 +40,5 @@ public class TypeUtils {
     public static boolean isEmpty(String s) {
         return s == null || s.length() == 0;
     }
+
 }

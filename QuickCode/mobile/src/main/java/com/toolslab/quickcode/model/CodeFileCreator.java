@@ -77,7 +77,7 @@ public class CodeFileCreator {
             String encodingFormatName = BarcodeFormatMapper.getEncodingFormatName(supportedBarcodeFormat);
             supportedFormats.add(encodingFormatName);
         }
-        return TypeUtils.getCommaSeparatedStringsFromList(supportedFormats);
+        return TypeUtils.createCommaSeparatedStringFromList(supportedFormats);
     }
 
     @Nullable
