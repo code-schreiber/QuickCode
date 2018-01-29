@@ -1,5 +1,5 @@
-##Contact and Feedback
+## Feedback
 
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode
 
-Contact the author at hellotoolslab+quickcode at gmail dot com
+Share your thoughts and feedback at https://quickcode.uservoice.com

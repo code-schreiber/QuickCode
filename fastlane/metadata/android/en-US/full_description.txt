@@ -14,5 +14,7 @@ Currently supported code formats are:
  • Aztec
 
 This app is open source and can be found at <a href="https://github.com/code-schreiber/QuickCode">Github </a> https://github.com/code-schreiber/QuickCode
+
 Become an early access tester at <a href="https://play.google.com/apps/testing/com.toolslab.quickcode">Google Play </a> https://play.google.com/apps/testing/com.toolslab.quickcode
-Contact the author at hellotoolslab+quickcode at gmail dot com
+
+Share your thoughts and feedback at <a href="https://quickcode.uservoice.com">quickcode.uservoice.com </a> https://quickcode.uservoice.com

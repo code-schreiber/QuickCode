@@ -38,4 +38,4 @@ and is available on Google Play: https://play.google.com/store/apps/developer?id
 
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode
 
-Contact the author at hellotoolslab+quickcode at gmail dot com
+Share your thoughts and feedback at https://quickcode.uservoice.com
