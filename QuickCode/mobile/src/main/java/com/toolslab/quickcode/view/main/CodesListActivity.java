@@ -6,7 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,12 +25,10 @@ import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
 import com.toolslab.quickcode.util.GooglePlayServicesUtil;
-import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.common.view.dialog.FontStatisticDialogFragment;
 
-import java.util.List;
 import java.util.Locale;
 
 
@@ -103,15 +100,16 @@ public class CodesListActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
     public void setVisibilityOfFabHint(int visibility) {
         if (binding != null) {
             binding.activityCodesListAppBarMain.appBarMainFabHint.setVisibility(visibility);
         }
-    }
-
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
     }
 
     private void initViews(ActivityCodesListBinding binding) {
@@ -190,7 +188,6 @@ public class CodesListActivity extends BaseActivity implements
                 DatabaseReferenceWrapper.getUser());
     }
 
-    // TODO [Refactoring] handle intent in fragment
     private void handleIntent(Intent intent) {
         if (intent.getExtras() != null) {
             Tracker.trackIntent(this, intent);
@@ -199,47 +196,9 @@ public class CodesListActivity extends BaseActivity implements
         if (fragment == null) {
             logError("CodesListFragment is null");
             showSimpleDialog(R.string.error_generic);
-            return;
+        } else {
+            fragment.handleIntent(intent);
         }
-
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        if (Intent.ACTION_VIEW.equals(action)) {
-            Uri linkData = intent.getData();
-            if (linkData != null) {
-                fragment.handleFile(linkData);
-            } else {
-                showUnknownTypeDialog(type, "ACTION_VIEW");
-            }
-        } else if (Intent.ACTION_SEND.equals(action)) {
-            if (UriUtils.isText(type)) {
-                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-                fragment.loadSharedTextInBackground(sharedText);
-            } else if (UriUtils.isImage(type)) {
-                Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                fragment.handleFile(imageUri);
-            } else if (UriUtils.isPdf(type)) {
-                Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                fragment.handleFile(pdfUri);
-            } else {
-                showUnknownTypeDialog(type, "ACTION_SEND");
-            }
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-            if (UriUtils.isImage(type)) {
-                List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                fragment.handleFile(imageUris);
-            } else {
-                showUnknownTypeDialog(type, "ACTION_SEND_MULTIPLE");
-            }
-        } else if (!Intent.ACTION_MAIN.equals(action)) {
-            logError("Activity started with unknown action: " + action);
-        }
-    }
-
-    private void showUnknownTypeDialog(String type, String action) {
-        logError("Activity started with " + action + " has unknown type: " + type);
-        showSimpleDialog(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
     }
 
     @Deprecated

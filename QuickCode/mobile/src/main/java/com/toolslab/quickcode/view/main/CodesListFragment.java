@@ -94,6 +94,9 @@ public class CodesListFragment extends BaseFragment
                     return;
                 }
             }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            // User clicked back
+            return;
         }
         logError("onActivityResult not handling result: resultCode: " + resultCode + " requestCode: " + requestCode + " resultData: " + resultData);
     }
@@ -141,6 +144,71 @@ public class CodesListFragment extends BaseFragment
     @Override
     public void onInstallReferrerServiceDisconnected() {
         logDebug("onInstallReferrerServiceDisconnected");
+    }
+
+    void handleIntent(Intent intent) {
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            handleActionViewIntent(intent, type);
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            handleActionSendIntent(intent, type);
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            handleActionSendMultipleIntent(intent, type);
+        } else if (!Intent.ACTION_MAIN.equals(action)) {
+            logError("Activity started with unknown action: " + action + ", " + type);
+        }
+    }
+
+    void performFileSearch() {
+        if (PdfToBitmapConverter.deviceSupportsPdfToBitmap()) {
+            performFileSearch(INTENT_TYPE_FILTER_ALL);
+        } else {
+            performFileSearchForImages();
+        }
+    }
+
+    void performFileSearchForImages() {
+        performFileSearch(INTENT_TYPE_FILTER_IMAGE);
+    }
+
+    private void handleActionViewIntent(Intent intent, String type) {
+        Uri linkData = intent.getData();
+        if (linkData != null) {
+            handleFile(linkData);
+        } else {
+            showUnknownTypeDialog(type, "ACTION_VIEW");
+        }
+    }
+
+    private void handleActionSendIntent(Intent intent, String type) {
+        if (UriUtils.isText(type)) {
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            loadSharedTextInBackground(sharedText);
+        } else if (UriUtils.isImage(type)) {
+            Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            handleFile(imageUri);
+        } else if (UriUtils.isPdf(type)) {
+            Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            handleFile(pdfUri);
+        } else {
+            showUnknownTypeDialog(type, "ACTION_SEND");
+        }
+    }
+
+    private void handleActionSendMultipleIntent(Intent intent, String type) {
+        if (UriUtils.isImage(type)) {
+            List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            handleFile(imageUris);
+        } else {
+            showUnknownTypeDialog(type, "ACTION_SEND_MULTIPLE");
+        }
+    }
+
+    private void showUnknownTypeDialog(String type, String action) {
+        logError("Activity started with " + action + " has unknown type: " + type);
+        showSimpleError(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
     }
 
     private void handleReferrer() {
@@ -252,18 +320,6 @@ public class CodesListFragment extends BaseFragment
         }
     }
 
-    void performFileSearch() {
-        if (PdfToBitmapConverter.deviceSupportsPdfToBitmap()) {
-            performFileSearch(INTENT_TYPE_FILTER_ALL);
-        } else {
-            performFileSearchForImages();
-        }
-    }
-
-    void performFileSearchForImages() {
-        performFileSearch(INTENT_TYPE_FILTER_IMAGE);
-    }
-
     private void performFileSearch(String typeFilter) {
         logDebug("performing file search on " + typeFilter);
         BarcodeDetector detector = CodeFileCreator.setupBarcodeDetector(getActivity());
@@ -289,13 +345,13 @@ public class CodesListFragment extends BaseFragment
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
-    public void handleFile(List<Uri> uris) {
+    private void handleFile(List<Uri> uris) {
         for (Uri uri : uris) {
             handleFile(uri);
         }
     }
 
-    void handleFile(Uri uri) {
+    private void handleFile(Uri uri) {
         ContentResolver contentResolver = getActivity().getContentResolver();
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
@@ -304,7 +360,7 @@ public class CodesListFragment extends BaseFragment
         }
     }
 
-    void importAssets() {
+    private void importAssets() {
         new Thread(new Runnable() {
 
             @Override
@@ -319,7 +375,7 @@ public class CodesListFragment extends BaseFragment
         }).start();
     }
 
-    void loadSharedTextInBackground(String text) {
+    private void loadSharedTextInBackground(String text) {
         if (text.length() > CodeFileFactory.MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
