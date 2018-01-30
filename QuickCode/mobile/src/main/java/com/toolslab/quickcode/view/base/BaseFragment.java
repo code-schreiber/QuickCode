@@ -2,61 +2,54 @@ package com.toolslab.quickcode.view.base;
 
 
 import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-
-import com.toolslab.quickcode.util.TypeUtils;
-import com.toolslab.quickcode.util.log.Logger;
-import com.toolslab.quickcode.view.common.view.dialog.SimpleDialogFragment;
-
-import timber.log.Timber;
+import android.support.v4.app.FragmentActivity;
 
 
 public class BaseFragment extends Fragment {
 
     protected void showSimpleDialog(String message) {
-        logDebug("Showing dialog with message: " + message);
-        showDialog(SimpleDialogFragment.newInstance(message));
+        getBaseActivity().showSimpleDialog(message);
     }
 
     protected void showSimpleError(@StringRes int resId, Object... formatArgs) {
-        showSimpleError(getString(resId, formatArgs));
+        getBaseActivity().showSimpleError(resId, formatArgs);
     }
 
     protected void showSimpleError(String message) {
-        logError("Showing error with message: " + message);
-        showDialog(SimpleDialogFragment.newInstance(message));
+        getBaseActivity().showSimpleError(message);
     }
 
-    protected static void logInfo(String message) {
-        Logger.logInfo(message);
+    protected void logInfo(String message) {
+        getBaseActivity().logInfo(message);
     }
 
-    protected static void logDebug(String message) {
-        Logger.logDebug(message);
+    protected void logDebug(String message) {
+        getBaseActivity().logDebug(message);
     }
 
-    protected static void logWarning(String message) {
-        Logger.logWarning(message);
+    protected void logWarning(String message) {
+        getBaseActivity().logWarning(message);
     }
 
-    protected static void logError(String message) {
-        Logger.logError(message);
+    protected void logError(String message) {
+        getBaseActivity().logError(message);
     }
 
-    protected static void logException(Exception e) {
-        Logger.logException(e);
+    protected void logException(Exception e) {
+        getBaseActivity().logException(e);
     }
 
-    protected static void logException(String message, Throwable e) {
-        Logger.logException(message,e);
+    protected void logException(String message, Throwable e) {
+        getBaseActivity().logException(message, e);
     }
 
-    private void showDialog(DialogFragment dialog) {
-        if (getActivity() instanceof BaseActivity) {
-            ((BaseActivity) getActivity()).showDialog(dialog);
+    private BaseActivity getBaseActivity() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof BaseActivity) {
+            return (BaseActivity) activity;
         } else {
-            throw new IllegalArgumentException(getActivity() + " is not BaseActivity!");
+            throw new IllegalArgumentException(activity + " is not BaseActivity!");
         }
     }
 

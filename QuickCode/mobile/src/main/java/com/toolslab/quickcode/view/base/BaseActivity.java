@@ -58,13 +58,18 @@ public class BaseActivity extends AppCompatActivity {
         showSimpleDialog(getString(resId));
     }
 
-    public void showSimpleDialog(String message) {
+    protected void showSimpleDialog(String message) {
         logDebug("Showing dialog with message: " + message);
         showDialog(SimpleDialogFragment.newInstance(message));
     }
 
-    protected void showSimpleDialog(@StringRes int resId, Object... formatArgs) {
-        showSimpleDialog(getString(resId, formatArgs));
+    protected void showSimpleError(@StringRes int resId, Object... formatArgs) {
+        showSimpleError(getString(resId, formatArgs));
+    }
+
+    protected void showSimpleError(String message) {
+        logError("Showing error with message: " + message);
+        showDialog(SimpleDialogFragment.newInstance(message));
     }
 
     protected void showDialog(DialogFragment dialog) {
@@ -77,41 +82,41 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public static void logInfo(String message) {
+    public void logInfo(String message) {
         if (isMessageOk(message)) {
             Timber.i(message);
         }
     }
 
-    public static void logDebug(String message) {
+    public void logDebug(String message) {
         if (isMessageOk(message)) {
             Timber.d(message);
         }
     }
 
-    public static void logWarning(String message) {
+    public void logWarning(String message) {
         if (isMessageOk(message)) {
             Timber.w(message);
         }
     }
 
-    public static void logError(String message) {
+    public void logError(String message) {
         if (isMessageOk(message)) {
             Timber.e(message);
         }
     }
 
-    public static void logException(String message, Throwable e) {
+    public void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
             Timber.e(e, message);
         }
     }
 
-    public static void logException(Exception e) {
+    public void logException(Exception e) {
         logException(e.getMessage(), e);
     }
 
-    private static boolean isMessageOk(String message) {
+    private boolean isMessageOk(String message) {
         boolean isMessageOk = !TypeUtils.isEmpty(message);
         if (!isMessageOk) {
             Timber.e(new Exception(), "No message provided to log! Message: \"" + message + "\"");
