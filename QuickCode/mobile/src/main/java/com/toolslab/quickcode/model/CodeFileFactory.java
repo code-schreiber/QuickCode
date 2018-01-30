@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 
 import com.toolslab.quickcode.db.PremiumPreferences;
@@ -55,7 +54,7 @@ public class CodeFileFactory {
 
         List<CodeFile> codeFiles = new ArrayList<>();
         List<Bitmap> originalImages = getBitmapsFromUri(context, uri);
-        if (originalImages != null && !originalImages.isEmpty()) {
+        if (!originalImages.isEmpty()) {
             if (originalImages.size() > 1 && !PremiumPreferences.allowMultiplePagesImport(context)) {
                 Logger.logWarning("allowMultiplePagesImport is disabled, returning only one codefile out of " + originalImages.size());
                 return createCodeFiles(context, originalFilename, fileType, size, originalImages.get(0), importedFrom);
@@ -85,10 +84,10 @@ public class CodeFileFactory {
 
     @NonNull
     static String getFileSuffix(String originalFilename) {
-        String suffix = originalFilename.substring(originalFilename.lastIndexOf(".") + 1, originalFilename.length());
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf('.') + 1, originalFilename.length());
         if (suffix.contains(" ")) {
             // handle pdf (1) case, removing the " (1) "
-            suffix = suffix.substring(0, suffix.indexOf(" "));
+            suffix = suffix.substring(0, suffix.indexOf(' '));
         }
         return suffix;
     }
@@ -103,7 +102,7 @@ public class CodeFileFactory {
         return codeFiles;
     }
 
-    @Nullable
+    @NonNull
     private static List<Bitmap> getBitmapsFromUri(Context context, Uri uri) {
         ContentResolver contentResolver = context.getContentResolver();
         if (UriUtils.fileExists(contentResolver, uri)) {
@@ -121,7 +120,7 @@ public class CodeFileFactory {
         } else {
             Logger.logError("File doesn't exist: " + uri);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @NonNull

@@ -228,7 +228,7 @@ public class DatabaseReferenceWrapper {
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
                             if (databaseError != null) {
-                                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                                Logger.logException("Error in clearAll:addListenerForSingleValueEvent. DatabaseError code " + databaseError.getCode(), databaseError.toException());
                             }
                         }
                     });
@@ -237,7 +237,7 @@ public class DatabaseReferenceWrapper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                Logger.logException("Error in clearAll:addListenerForSingleValueEvent. DatabaseError code " + databaseError.getCode(), databaseError.toException());
             }
         });
 
@@ -253,7 +253,7 @@ public class DatabaseReferenceWrapper {
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             Logger.logInfo("onComplete " + databaseError + databaseReference);
                             if (databaseError != null) {
-                                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                                Logger.logException("Error in clearAll:addListenerForSingleValueEvent. DatabaseError code " + databaseError.getCode(), databaseError.toException());
                             }
                         }
                     });
@@ -262,7 +262,7 @@ public class DatabaseReferenceWrapper {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Logger.logException("Error in clearAll. DatabaseError code " + databaseError.getCode(), databaseError.toException());
+                Logger.logException("Error in clearAll:addListenerForSingleValueEvent. DatabaseError code " + databaseError.getCode(), databaseError.toException());
             }
         });
     }

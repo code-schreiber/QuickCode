@@ -47,9 +47,10 @@ public class PdfToBitmapConverter {
     @NonNull
     private static List<Bitmap> convertPdfUriToBitmaps(ContentResolver contentResolver, Uri uri) {
         List<Bitmap> bitmaps = new ArrayList<>();
+        ParcelFileDescriptor fileDescriptor = null;
         PdfRenderer renderer = null;
         try {
-            ParcelFileDescriptor fileDescriptor = contentResolver.openFileDescriptor(uri, UriUtils.MODE_READ);
+            fileDescriptor = contentResolver.openFileDescriptor(uri, UriUtils.MODE_READ);
             if (fileDescriptor != null) {
                 renderer = new PdfRenderer(fileDescriptor);
                 int pageCount = renderer.getPageCount();
@@ -65,6 +66,13 @@ public class PdfToBitmapConverter {
         } finally {
             if (renderer != null) {
                 renderer.close();
+            }
+            if (fileDescriptor != null) {
+                try {
+                    fileDescriptor.close();
+                } catch (IOException e) {
+                    Logger.logException(e);
+                }
             }
         }
         return bitmaps;

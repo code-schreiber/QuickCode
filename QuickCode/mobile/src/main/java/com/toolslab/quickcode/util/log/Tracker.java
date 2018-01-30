@@ -18,15 +18,15 @@ public class Tracker {
 
     public static void trackOnClick(Context context, String itemName) {
         Bundle bundle = new Bundle();
-        bundle.putString(Param.ITEM_NAME, itemName);
-        logEvent(context, Event.VIEW_ITEM, bundle);
+        bundle.putString(TrackerParam.ITEM_NAME, itemName);
+        logEvent(context, TrackerEvent.VIEW_ITEM, bundle);
     }
 
     public static void trackInstallReferrer(Context context, Intent intent) {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                logEvent(context, Event.FIRST_LAUNCH, bundle);
+                logEvent(context, TrackerEvent.FIRST_LAUNCH, bundle);
             } else {
                 Logger.logError("No bundle for trackInstallReferrer");
             }
@@ -38,10 +38,10 @@ public class Tracker {
     public static void trackInstallReferrer(Context context, ReferrerDetails referrerDetails) {
         if (referrerDetails != null) {
             Bundle bundle = new Bundle();
-            bundle.putString(Param.INSTALL_REFERRER, referrerDetails.getInstallReferrer());
-            bundle.putLong(Param.INSTALL_BEGIN_TIMESTAMP, referrerDetails.getInstallBeginTimestampSeconds());
-            bundle.putLong(Param.REFERRER_CLICK_TIMESTAMP, referrerDetails.getReferrerClickTimestampSeconds());
-            logEvent(context, Event.REFERRER_DETAILS, bundle);
+            bundle.putString(TrackerParam.INSTALL_REFERRER, referrerDetails.getInstallReferrer());
+            bundle.putLong(TrackerParam.INSTALL_BEGIN_TIMESTAMP, referrerDetails.getInstallBeginTimestampSeconds());
+            bundle.putLong(TrackerParam.REFERRER_CLICK_TIMESTAMP, referrerDetails.getReferrerClickTimestampSeconds());
+            logEvent(context, TrackerEvent.REFERRER_DETAILS, bundle);
         } else {
             Logger.logError("No referrerDetails for trackInstallReferrer");
         }
@@ -51,7 +51,7 @@ public class Tracker {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                logEvent(context, Event.INTENT, bundle);
+                logEvent(context, TrackerEvent.INTENT, bundle);
             } else {
                 Logger.logError("No bundle for trackIntent");
             }
@@ -79,13 +79,13 @@ public class Tracker {
     }
 
 
-    private static class Event extends FirebaseAnalytics.Event {
+    private static class TrackerEvent extends FirebaseAnalytics.Event {
         private static final String FIRST_LAUNCH = "first_launch";
         private static final String REFERRER_DETAILS = "referrer_details";
         private static final String INTENT = "intent";
     }
 
-    private static class Param extends FirebaseAnalytics.Param {
+    private static class TrackerParam extends FirebaseAnalytics.Param {
         private static final String INSTALL_REFERRER = "install_referrer";
         private static final String REFERRER_CLICK_TIMESTAMP = "referrer_click_timestamp";
         private static final String INSTALL_BEGIN_TIMESTAMP = "install_begin_timestamp";

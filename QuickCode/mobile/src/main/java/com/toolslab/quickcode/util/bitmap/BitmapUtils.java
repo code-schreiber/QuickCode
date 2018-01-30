@@ -87,8 +87,8 @@ public final class BitmapUtils {
 
     @NonNull
     public static Dimensions getNewDimensions(int scaleSize, int originalWidth, int originalHeight) {
-        int newWidth = -1;
-        int newHeight = -1;
+        int newWidth;
+        int newHeight;
         float ratio;
         if (originalHeight > originalWidth) {
             newHeight = scaleSize;
@@ -98,7 +98,8 @@ public final class BitmapUtils {
             newWidth = scaleSize;
             ratio = (float) originalHeight / (float) originalWidth;
             newHeight = Math.round(newWidth * ratio);
-        } else if (originalHeight == originalWidth) {
+        } else {
+            // originalHeight and originalWidth are equal
             newHeight = scaleSize;
             newWidth = scaleSize;
         }
