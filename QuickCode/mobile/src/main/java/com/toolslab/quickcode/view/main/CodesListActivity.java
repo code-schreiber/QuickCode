@@ -239,9 +239,11 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void showSnack(String m) {
-        logDebug("Showing Snack: " + m);
         if (drawerLayout != null) {
+            logDebug("Showing snack: " + m);
             Snackbar.make(drawerLayout, m, Snackbar.LENGTH_SHORT).show();
+        } else {
+            logError("Unable to show snack: " + m);
         }
     }
 
