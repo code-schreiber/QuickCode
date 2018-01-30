@@ -30,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
+            android:gravity="end"
             android:orientation="vertical">
 
             <TextView
@@ -40,11 +41,12 @@
                 android:gravity="end"
                 android:text="@string/hint_add_code_file"
                 android:textSize="@dimen/font_larger"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
             <android.support.design.widget.FloatingActionButton
-                style="@style/FloatingActionButton"
                 android:id="@+id/app_bar_main_fab"
+                style="@style/FloatingActionButton"
                 android:src="@drawable/ic_add_black_24dp"/>
 
         </LinearLayout>
