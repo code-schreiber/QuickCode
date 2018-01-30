@@ -35,6 +35,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -53,10 +54,8 @@ dependencies {
     //  wearApp project(':wear')
 
     implementation "com.android.support:design:${rootProject.googleSupportLibrary}"
-    implementation "com.android.support:support-v13:${rootProject.googleSupportLibrary}"
     implementation "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
     implementation "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
-    implementation "com.android.support:mediarouter-v7:${rootProject.googleSupportLibrary}"
 
     implementation "com.google.android.gms:play-services-vision:${rootProject.googleServices}"
     implementation "com.google.firebase:firebase-auth:${rootProject.googleServices}"
