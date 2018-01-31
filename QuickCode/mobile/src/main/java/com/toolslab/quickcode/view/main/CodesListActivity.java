@@ -26,6 +26,7 @@ import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
 import com.toolslab.quickcode.util.GooglePlayServicesUtil;
 import com.toolslab.quickcode.util.log.Tracker;
+import com.toolslab.quickcode.view.about.AboutActivity;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.common.view.dialog.FontStatisticDialogFragment;
 
@@ -201,10 +202,11 @@ public class CodesListActivity extends BaseActivity implements
         }
     }
 
-    @Deprecated
     private void onMenuItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.menu_global_import_assets) {
+        int id = item.getItemId();
+        if (id == R.id.menu_global_about) {
+            AboutActivity.start(this);
+        } //else if (id == R.id.menu_global_import_assets) {
 //            importAssets();
 //        } else if (id == R.id.menu_global_show_font_dialog) {
 //            showFontsDialog();

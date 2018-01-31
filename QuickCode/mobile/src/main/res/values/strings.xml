@@ -1,15 +1,20 @@
 <resources>
 
+    <!-- General -->
     <string name="app_name">Quick Code</string>
     <string name="app_name_subtitle">Quick Code</string>
-
     <string name="undo">undo</string>
+
+    <!-- CodesListActivity -->
     <string name="hint_add_code_file">No codes? \uD83D\uDE15\n\nAdd one with the plus \u2795</string>
     <string name="message_copied_to_clipboard">Copied to clipboard</string>
 
+    <!-- Menu -->
+    <string name="menu_about">About</string>
     <string name="menu_debug">Debug</string>
     <string name="menu_debug_reset_app">Reset App and exit</string>
 
+    <!-- CodeFileDetailActivity -->
     <string name="code_file_detail_tags">Tags</string>
     <string name="code_file_detail_original_file">Original file</string>
     <string name="code_file_detail_creation_date">Imported on</string>
@@ -21,6 +26,19 @@
     <string name="code_file_detail_code_display_content">Content</string>
     <string name="code_file_detail_code_raw_content">Raw content</string>
 
+    <!-- AboutActivity -->
+    <string name="about_version">Version</string>
+    <string name="about_feedback_title">Feedback</string>
+    <string name="about_feedback_url">https://quickcode.uservoice.com</string>
+    <string name="about_give_feedback">Share your thoughts and ideas</string>
+    <string name="about_rate">Rate Quick Code</string>
+    <string name="about_early_access">Become an early access tester</string>
+    <string name="about_early_access_url">https://play.google.com/apps/testing/com.toolslab.quickcode</string>
+    <string name="about_author_title">Author</string>
+    <string name="about_author_name">Tools Lab</string>
+    <string name="about_hosted_on">Open source hosted on Github</string>
+
+    <!-- Errors -->
     <string name="error_generic">An internal error has occurred</string>
     <string name="error_not_signed_in">Unable to initialize app for the first time, please check your internet connection.</string>
     <string name="error_barcode_detector_not_operational">Unable to initialize code detector.</string>

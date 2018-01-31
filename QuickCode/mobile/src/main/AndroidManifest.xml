@@ -62,10 +62,18 @@
             android:name=".view.fullscreen.FullscreenImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".view.detail.CodeFileDetailActivity"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/AppTheme.FullscreenActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.detail.CodeFileDetailActivity"/>
+        </activity>
+        <activity
+            android:name=".view.about.AboutActivity"
+            android:parentActivityName=".view.main.CodesListActivity"
+            android:theme="@style/AppTheme.AboutActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.main.CodesListActivity"/>
         </activity>
 
         <receiver
