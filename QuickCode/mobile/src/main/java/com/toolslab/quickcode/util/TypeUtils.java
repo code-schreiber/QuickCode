@@ -3,6 +3,7 @@ package com.toolslab.quickcode.util;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -32,12 +33,12 @@ public class TypeUtils {
     }
 
     @CheckResult
-    public static boolean isValid(String s) {
+    public static boolean isValid(@Nullable String s) {
         return !isEmpty(s) && !s.equals(NULL);
     }
 
     @CheckResult
-    public static boolean isEmpty(String s) {
+    public static boolean isEmpty(@Nullable String s) {
         return s == null || s.length() == 0;
     }
 

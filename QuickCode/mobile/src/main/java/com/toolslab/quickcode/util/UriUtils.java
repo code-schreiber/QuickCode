@@ -11,6 +11,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.webkit.MimeTypeMap;
 
 import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.encode.EncodingUtils;
@@ -234,6 +235,20 @@ public class UriUtils {
             supportedImportFormats.add(getFormatName(supportedImportFormat));
         }
         return TypeUtils.createCommaSeparatedStringFromList(supportedImportFormats);
+    }
+
+    public static String describeFileType(String fileType) {
+        String mimeType = getMimeType(fileType);
+        if (!TypeUtils.isEmpty(mimeType)) {
+            return fileType + " (" + mimeType + ")";
+        }
+        return fileType;
+    }
+
+    @Nullable
+    private static String getMimeType(@Nullable String fileType) {
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(fileType);
     }
 
     @NonNull

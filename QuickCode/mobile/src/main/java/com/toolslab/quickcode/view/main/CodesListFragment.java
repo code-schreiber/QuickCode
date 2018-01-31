@@ -150,15 +150,23 @@ public class CodesListFragment extends BaseFragment
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (Intent.ACTION_VIEW.equals(action)) {
-            handleActionViewIntent(intent, type);
-        } else if (Intent.ACTION_SEND.equals(action)) {
-            handleActionSendIntent(intent, type);
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-            handleActionSendMultipleIntent(intent, type);
-        } else if (!Intent.ACTION_MAIN.equals(action)) {
-            logError("Activity started with unknown action: " + action + ", " + type);
+        if (action != null) {
+            switch (action) {
+                case Intent.ACTION_VIEW:
+                    handleActionViewIntent(intent, type);
+                    return;
+                case Intent.ACTION_SEND:
+                    handleActionSendIntent(intent, type);
+                    return;
+                case Intent.ACTION_SEND_MULTIPLE:
+                    handleActionSendMultipleIntent(intent, type);
+                    return;
+                case Intent.ACTION_MAIN:
+                    // Just an app start
+                    return;
+            }
         }
+        logError("Activity started with unknown action: " + action + ", " + type);
     }
 
     void performFileSearch() {
@@ -208,7 +216,8 @@ public class CodesListFragment extends BaseFragment
 
     private void showUnknownTypeDialog(String type, String action) {
         logError("Activity started with " + action + " has unknown type: " + type);
-        showSimpleError(R.string.error_file_not_added_unsupported_type, type, UriUtils.getSupportedImportFormatsAsString());
+        String fileType = UriUtils.describeFileType(type);
+        showSimpleError(R.string.error_file_not_added_unsupported_type, fileType, UriUtils.getSupportedImportFormatsAsString());
     }
 
     private void handleReferrer() {
@@ -356,7 +365,8 @@ public class CodesListFragment extends BaseFragment
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            showSimpleError(R.string.error_file_not_added_unsupported_type, contentResolver.getType(uri), UriUtils.getSupportedImportFormatsAsString());
+            String fileType = UriUtils.describeFileType(contentResolver.getType(uri));
+            showSimpleError(R.string.error_file_not_added_unsupported_type, fileType, UriUtils.getSupportedImportFormatsAsString());
         }
     }
 

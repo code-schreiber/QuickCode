@@ -10,12 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.google.auto.value.AutoValue;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.util.TypeUtils;
+import com.toolslab.quickcode.util.UriUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -69,11 +69,8 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
     }
 
     public String getOriginalFileType() {
-        String mimeType = getMimeType();
-        if (!TypeUtils.isEmpty(mimeType)) {
-            mimeType = " (" + mimeType + ")";
-        }
-        return codeFile().originalCodeFile().fileType() + mimeType;
+        String fileType = codeFile().originalCodeFile().fileType();
+        return UriUtils.describeFileType(fileType);
     }
 
     public String getCodeType() {
@@ -139,15 +136,6 @@ public abstract class CodeFileViewModel implements Parcelable, Comparable<CodeFi
         String date = DateFormat.getDateFormat(context).format(creationDate);
         String time = DateFormat.getTimeFormat(context).format(creationDate);
         return date + " " + time;
-    }
-
-    private String getMimeType() {
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String mimeType = mime.getExtensionFromMimeType(codeFile().originalCodeFile().fileType());
-        if (mimeType == null) {
-            mimeType = "";
-        }
-        return mimeType;
     }
 
 }
