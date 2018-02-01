@@ -118,7 +118,7 @@ public class CodesListFragment extends BaseFragment
         // TODO [UI nice to have] swipe to delete
         final CodeFile codeFile = item.getCodeFile();
         DatabaseReferenceWrapper.removeCodeFile(codeFile);
-        Tracker.trackOnClick(getActivity(), "onItemLongClicked - removeCodeFile");
+        Tracker.trackOnLongClick(getActivity(), "removeCodeFile");
         return true;
     }
 
@@ -255,7 +255,7 @@ public class CodesListFragment extends BaseFragment
                                     .setAction(R.string.undo, new View.OnClickListener() {
 
                                         @Override
-                                        public void onClick(View v) {
+                                        public void onClick(View view) {
                                             addCodeFileToDatabase(model.getCodeFile());
                                         }
                                     })
