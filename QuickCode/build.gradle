@@ -6,10 +6,10 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'org.ajoberstar:grgit:1.5.0'
-        classpath 'com.google.firebase:firebase-plugins:1.1.4'
+        classpath "com.android.tools.build:gradle:3.0.1"
+        classpath "com.google.gms:google-services:3.0.0"
+        classpath "org.ajoberstar:grgit:1.5.0"
+        classpath "com.google.firebase:firebase-plugins:1.1.4"
     }
 }
 
@@ -21,7 +21,7 @@ allprojects {
     repositories {
         jcenter()
         google()
-        maven { url 'https://jitpack.io' }
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -44,16 +44,28 @@ ext {
 }
 
 task printVersion() {
-    doFirst {
+    doLast {
         println("Version Code: $versionCode")
         println("Version Name: $versionName")
+    }
+}
+
+task generateStatsFromThisVersion() {
+    doLast {
+        def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
+        def methodCount = "sed -n 2p mobile/build/outputs/dexcount/debug.csv".execute().text.trim()
+        def statsFromThisVersion = "$versionName ($versionCode),$apkSize,$methodCount\n"
+
+        def file = new File("$projectDir/../stats/apkStats.csv")
+        file.createNewFile()
+        file.text += statsFromThisVersion
     }
 }
 
 task generateLastCommitsText() {
     // Also useful in command line:
     // git log --pretty=format:"%ar - %B"
-    doFirst {
+    doLast {
         def maxCommits = 50
         def filename = "$projectDir/../fastlane/metadata/android/en-US/changelogs/$versionCode" + ".txt"
         def git = Grgit.open(currentDir: projectDir)
