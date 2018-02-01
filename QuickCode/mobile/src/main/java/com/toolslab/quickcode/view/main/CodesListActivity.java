@@ -1,8 +1,6 @@
 package com.toolslab.quickcode.view.main;
 
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -20,17 +18,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.databinding.ActivityCodesListBinding;
-import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
+import com.toolslab.quickcode.util.ClipboardUtil;
 import com.toolslab.quickcode.util.GooglePlayServicesUtil;
 import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.about.AboutActivity;
 import com.toolslab.quickcode.view.base.BaseActivity;
 import com.toolslab.quickcode.view.common.view.dialog.FontStatisticDialogFragment;
-
-import java.util.Locale;
 
 
 public class CodesListActivity extends BaseActivity implements
@@ -138,16 +133,16 @@ public class CodesListActivity extends BaseActivity implements
 //        NavigationView navigationView = binding.activityCodesListNavView;
 //        navigationView.setNavigationItemSelectedListener(this);
 
-        final String footerText = createNavigationFooterText();
+        final String footerText = AboutActivity.createNavigationFooterTextWithUser();
         binding.activityCodesListNavFooter.navFooterMainText.setText(footerText);
         binding.activityCodesListNavFooter.navFooterMainText.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
-            public boolean onLongClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                if (clipboard != null) {
-                    ClipData clip = ClipData.newPlainText("Navigation Footer Text", footerText);
-                    clipboard.setPrimaryClip(clip);
+            public boolean onLongClick(View view) {
+                Context context = view.getContext();
+                Tracker.trackOnLongClick(context, "Copy navigation Footer Text");
+                boolean copiedToClipboard = ClipboardUtil.copyToClipboard(context, "Navigation Footer Text", footerText);
+                if (copiedToClipboard) {
                     showSnack(getString(R.string.message_copied_to_clipboard));
                     return true;
                 }
@@ -171,6 +166,7 @@ public class CodesListActivity extends BaseActivity implements
         actionButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                Tracker.trackOnLongClick(view.getContext(), "performFileSearchForImages");
                 CodesListFragment fragment = getCodesListFragment();
                 if (fragment != null) {
                     fragment.performFileSearchForImages();
@@ -179,14 +175,6 @@ public class CodesListActivity extends BaseActivity implements
                 return false;
             }
         });
-    }
-
-    private String createNavigationFooterText() {
-        String format = "Version: %1$s (%2$s)%3$s";
-        return String.format(Locale.getDefault(), format,
-                BuildConfig.VERSION_NAME,
-                BuildConfig.VERSION_CODE,
-                DatabaseReferenceWrapper.getUser());
     }
 
     private void handleIntent(Intent intent) {

@@ -22,6 +22,12 @@ public class Tracker {
         logEvent(context, TrackerEvent.VIEW_ITEM, bundle);
     }
 
+    public static void trackOnLongClick(Context context, String itemName) {
+        Bundle bundle = new Bundle();
+        bundle.putString(TrackerParam.ITEM_NAME, itemName);
+        logEvent(context, TrackerEvent.LONG_CLICK, bundle);
+    }
+
     public static void trackInstallReferrer(Context context, Intent intent) {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
@@ -83,6 +89,7 @@ public class Tracker {
         private static final String FIRST_LAUNCH = "first_launch";
         private static final String REFERRER_DETAILS = "referrer_details";
         private static final String INTENT = "intent";
+        private static final String LONG_CLICK = "long_click";
     }
 
     private static class TrackerParam extends FirebaseAnalytics.Param {

@@ -28,15 +28,17 @@
 
     <!-- AboutActivity -->
     <string name="about_version">Version</string>
+    <string name="about_version_long_tap_to_copy">Tap longer to copy</string>
     <string name="about_feedback_title">Feedback</string>
-    <string name="about_feedback_url">https://quickcode.uservoice.com</string>
+    <string name="about_feedback_url">https://quickcode.uservoice.com/?utm_source=app</string>
     <string name="about_give_feedback">Share your thoughts and ideas</string>
     <string name="about_rate">Rate Quick Code</string>
     <string name="about_early_access">Become an early access tester</string>
-    <string name="about_early_access_url">https://play.google.com/apps/testing/com.toolslab.quickcode</string>
+    <string name="about_early_access_url">https://play.google.com/apps/testing/com.toolslab.quickcode/?utm_source=app</string>
     <string name="about_author_title">Author</string>
     <string name="about_author_name">Tools Lab</string>
     <string name="about_hosted_on">Open source hosted on Github</string>
+    <string name="about_hosted_url">https://github.com/code-schreiber/QuickCode/?utm_source=app</string>
 
     <!-- Errors -->
     <string name="error_generic">An internal error has occurred</string>

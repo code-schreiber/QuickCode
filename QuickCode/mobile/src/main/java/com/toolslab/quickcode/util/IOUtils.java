@@ -10,11 +10,13 @@ import android.support.annotation.Nullable;
 
 import com.toolslab.quickcode.util.log.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 
@@ -22,6 +24,9 @@ public final class IOUtils {
 
     public static final String SLASH = "/";
     public static final String FILE_PATH_PREFIX = "file:///";
+
+    private static final String EMPTY_STRING = "";
+    private static final char LINE_BREAK = '\n';
 
     private IOUtils() {
         // Hide utility class constructor
@@ -87,6 +92,24 @@ public final class IOUtils {
                     Logger.logError("Couldn't delete " + file.getAbsolutePath());
                 }
             }
+        }
+    }
+
+    @NonNull
+    public static String inputStreamToString(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        try {
+            StringBuilder content = new StringBuilder(inputStream.available());
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(LINE_BREAK);
+            }
+            reader.close();
+            inputStream.close();
+            return content.toString().trim();
+        } catch (IOException e) {
+            Logger.logException(e);
+            return EMPTY_STRING;
         }
     }
 
