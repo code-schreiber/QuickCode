@@ -53,7 +53,7 @@ task printVersion() {
 task generateStatsFromThisVersion() {
     doLast {
         def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
-        def methodCount = "sed -n 2p mobile/build/outputs/dexcount/debug.csv".execute().text.trim()
+        def methodCount = "sed -n 2p mobile/build/outputs/dexcount/release.csv".execute().text.trim()
         def statsFromThisVersion = "$versionName ($versionCode),$apkSize,$methodCount\n"
 
         def file = new File("$projectDir/../stats/apkStats.csv")
