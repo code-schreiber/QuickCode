@@ -55,6 +55,7 @@ dependencies {
     //  wearApp project(':wear')
 
     implementation "com.android.support:design:${rootProject.googleSupportLibrary}"
+    implementation "com.android.support:cardview-v7:${rootProject.googleSupportLibrary}"
     implementation "com.android.support:appcompat-v7:${rootProject.googleSupportLibrary}"
     implementation "com.android.support:recyclerview-v7:${rootProject.googleSupportLibrary}"
 
@@ -81,6 +82,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
     testImplementation 'junit:junit:4.12'
 }
 
