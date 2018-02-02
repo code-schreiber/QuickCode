@@ -50,16 +50,31 @@ task printVersion() {
     }
 }
 
+task printStatsFromThisVersion() {
+    doLast {
+        def statsFromThisVersion = createStatsFromThisVersion()
+        println("Apk stats: $statsFromThisVersion")
+        statsFromThisVersion =  statsFromThisVersion.replace(",","\t")
+        println("Version\t\t\tSize\tMethods\tFields")
+        println("$statsFromThisVersion")
+    }
+}
+
 task generateStatsFromThisVersion() {
     doLast {
-        def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
-        def methodCount = "sed -n 2p mobile/build/outputs/dexcount/release.csv".execute().text.trim()
-        def statsFromThisVersion = "$versionName ($versionCode),$apkSize,$methodCount\n"
+        def statsFromThisVersion = createStatsFromThisVersion()
 
         def file = new File("$projectDir/../stats/apkStats.csv")
         file.createNewFile()
         file.text += statsFromThisVersion
     }
+}
+
+private createStatsFromThisVersion() {
+    def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
+    def methodCount = "sed -n 2p mobile/build/outputs/dexcount/release.csv".execute().text.trim()
+    def statsFromThisVersion = "$versionName ($versionCode),$apkSize,$methodCount\n"
+    statsFromThisVersion
 }
 
 task generateLastCommitsText() {

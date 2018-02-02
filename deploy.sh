@@ -21,6 +21,8 @@ echo "deploy.sh: Running gradle sonarqube"
 ./gradlew sonarqube
 echo "deploy.sh: mobile/build/outputs/apk/release now contains:"
 ls mobile/build/outputs/apk/release
+echo "deploy.sh: Running gradle printStatsFromThisVersion"
+./gradlew printStatsFromThisVersion
 
 if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
   echo "deploy.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
