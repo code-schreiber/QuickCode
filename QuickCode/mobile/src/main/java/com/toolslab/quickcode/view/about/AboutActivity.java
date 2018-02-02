@@ -63,7 +63,8 @@ public class AboutActivity extends MaterialAboutActivity {
 
     private MaterialAboutCard createAppTitleCard(Context context) {
         return new MaterialAboutCard.Builder()
-                .addItem(ConvenienceBuilder.createAppTitleItem(context))
+                .addItem(ConvenienceBuilder.createAppTitleItem(context)
+                        .setDesc(getString(R.string.about_title_description)))
                 .build();
     }
 

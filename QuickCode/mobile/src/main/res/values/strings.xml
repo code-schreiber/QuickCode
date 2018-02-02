@@ -27,6 +27,7 @@
     <string name="code_file_detail_code_raw_content">Raw content</string>
 
     <!-- AboutActivity -->
+    <string name="about_title_description">by Tools Lab</string>
     <string name="about_version">Version</string>
     <string name="about_version_long_tap_to_copy">Tap longer to copy</string>
     <string name="about_feedback_title">Feedback</string>
