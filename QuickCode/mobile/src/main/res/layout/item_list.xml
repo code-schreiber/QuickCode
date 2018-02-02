@@ -16,70 +16,74 @@
 
     </data>
 
-    <LinearLayout
-        style="@style/ListItemLayout"
+    <android.support.v7.widget.CardView
+        style="@style/ListItemCard"
         android:onClick="@{()->actionListener.onItemClicked(codeFileViewModel)}"
         android:onLongClick="@{()->actionListener.onItemLongClicked(codeFileViewModel)}">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:orientation="vertical">
+        <LinearLayout style="@style/ListItemCardLinearLayout">
 
-            <ImageView
-                android:layout_width="@dimen/button_height_normal"
-                android:layout_height="@dimen/button_height_normal"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                app:imageBitmap="@{codeFileViewModel.getOriginalImageThumbnail()}"
-                tools:src="@drawable/ic_file_black_24dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/button_height_normal"
+                    android:layout_height="@dimen/button_height_normal"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    app:imageBitmap="@{codeFileViewModel.getOriginalImageThumbnail()}"
+                    tools:src="@drawable/ic_file_black_24dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/spacing_small"
+                android:paddingStart="@dimen/spacing_small">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{codeFileViewModel.getDisplayName()}"
+                    android:textSize="@dimen/font_normal"
+                    tools:text="Display name that sometimes can be really long"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{codeFileViewModel.getCreationDateShort(context)}"
+                    android:textSize="@dimen/font_small"
+                    tools:text="12.12.2000 12:12 12.12.2000 12:12 12.12.2000 12:12"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    style="@style/SmallClickableImageView"
+                    android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
+                    app:imageBitmap="@{codeFileViewModel.getCodeImageThumbnail()}"
+                    tools:src="@drawable/ic_file_content_black_24dp"/>
+
+                <ImageView
+                    style="@style/SmallClickableImageView"
+                    android:visibility="invisible"
+                    app:imageResource="@{codeFileViewModel.getIsOnWatchResource()}"
+                    tools:src="@drawable/ic_watch_black_24dp"/>
+            </LinearLayout>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingEnd="@dimen/spacing_small"
-            android:paddingStart="@dimen/spacing_small">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{codeFileViewModel.getDisplayName()}"
-                android:textSize="@dimen/font_normal"
-                tools:text="Display Name"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{codeFileViewModel.getCreationDateShort(context)}"
-                android:textSize="@dimen/font_small"
-                tools:text="12.12.2000 12:12"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                style="@style/SmallClickableImageView"
-                android:onClick="@{()->actionListener.onCodeInItemClicked(codeFileViewModel)}"
-                app:imageBitmap="@{codeFileViewModel.getCodeImageThumbnail()}"
-                tools:src="@drawable/ic_file_content_black_24dp"/>
-
-            <ImageView
-                style="@style/SmallClickableImageView"
-                app:imageResource="@{codeFileViewModel.getIsOnWatchResource()}"
-                tools:src="@drawable/ic_watch_black_24dp"/>
-        </LinearLayout>
-
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 </layout>
