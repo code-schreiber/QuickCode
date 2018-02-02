@@ -70,11 +70,10 @@ task generateStatsFromThisVersion() {
     }
 }
 
-private createStatsFromThisVersion() {
+private static createStatsFromThisVersion() {
     def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
     def methodCount = "sed -n 2p mobile/build/outputs/dexcount/release.csv".execute().text.trim()
-    def statsFromThisVersion = "$versionName ($versionCode),$apkSize,$methodCount\n"
-    statsFromThisVersion
+    return "$versionName ($versionCode),$apkSize,$methodCount\n"
 }
 
 task generateLastCommitsText() {
