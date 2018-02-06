@@ -1,8 +1,10 @@
+<!DOCTYPE resources [<!ENTITY appname "QuickCode">]>
+
 <resources>
 
     <!-- General -->
-    <string name="app_name">Quick Code</string>
-    <string name="app_name_subtitle">Quick Code</string>
+    <string name="app_name">&appname;</string>
+    <string name="app_name_subtitle">&appname;</string>
     <string name="undo">undo</string>
 
     <!-- CodesListActivity -->
@@ -33,7 +35,7 @@
     <string name="about_feedback_title">Feedback</string>
     <string name="about_feedback_url">https://quickcode.uservoice.com/?utm_source=app</string>
     <string name="about_give_feedback">Share your thoughts and ideas</string>
-    <string name="about_rate">Rate Quick Code</string>
+    <string name="about_rate">Rate &appname;</string>
     <string name="about_early_access">Become an early access tester</string>
     <string name="about_early_access_url">https://play.google.com/apps/testing/com.toolslab.quickcode/?utm_source=app</string>
     <string name="about_author_title">Author</string>
