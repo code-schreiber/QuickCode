@@ -23,6 +23,8 @@ import com.toolslab.quickcode.view.base.BaseActivity;
 import java.io.InputStream;
 import java.util.Locale;
 
+import static com.toolslab.quickcode.util.CompatUtil.getDrawableCompat;
+
 public class AboutActivity extends MaterialAboutActivity {
 
     public static void start(BaseActivity context) {
@@ -106,16 +108,16 @@ public class AboutActivity extends MaterialAboutActivity {
         return new MaterialAboutCard.Builder()
                 .title(R.string.about_feedback_title)
                 .addItem(ConvenienceBuilder.createWebsiteActionItem(context,
-                        getResources().getDrawable(R.drawable.ic_comment_black_24dp),
+                        getDrawableCompat(context, R.drawable.ic_comment_black_24dp),
                         getString(R.string.about_give_feedback),
                         false,
                         Uri.parse(getString(R.string.about_feedback_url))))
                 .addItem(ConvenienceBuilder.createRateActionItem(context,
-                        getResources().getDrawable(R.drawable.ic_star_black_24dp),
+                        getDrawableCompat(context, R.drawable.ic_star_black_24dp),
                         getString(R.string.about_rate),
                         null))
                 .addItem(ConvenienceBuilder.createWebsiteActionItem(context,
-                        getResources().getDrawable(R.drawable.ic_early_access_black_24dp),
+                        getDrawableCompat(context, R.drawable.ic_early_access_black_24dp),
                         getString(R.string.about_early_access),
                         false,
                         Uri.parse(getString(R.string.about_early_access_url))))
@@ -142,4 +144,5 @@ public class AboutActivity extends MaterialAboutActivity {
         InputStream inputStream = context.getResources().openRawResource(R.raw.app_description);
         return IOUtils.inputStreamToString(inputStream);
     }
+
 }
