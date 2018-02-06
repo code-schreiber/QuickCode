@@ -28,7 +28,7 @@ public class EncodingUtils {
             originalHeight = tempWidth;
         }
         BitmapUtils.Dimensions dimensions = BitmapUtils.getNewDimensions(WIDTH, originalWidth, originalHeight);
-        return encodeAsBitmap(rawContent, format, dimensions.width, dimensions.height);
+        return encodeAsBitmap(rawContent, format, dimensions.getWidth(), dimensions.getHeight());
     }
 
     @Nullable

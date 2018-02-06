@@ -4,8 +4,6 @@ package com.toolslab.quickcode.util.bitmap;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
@@ -84,7 +82,7 @@ public class PdfToBitmapConverter {
         PdfRenderer.Page page = null;
         try {
             page = renderer.openPage(pageIndex);
-            Bitmap bitmap = createWhiteBitmap(page.getWidth(), page.getHeight());
+            Bitmap bitmap = BitmapUtils.createWhiteBitmap(page.getWidth(), page.getHeight());
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
             return bitmap;
         } catch (Exception e) {
@@ -95,16 +93,6 @@ public class PdfToBitmapConverter {
             }
         }
         return null;
-    }
-
-    @NonNull
-    @CheckResult
-    private static Bitmap createWhiteBitmap(int width, int height) {
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.WHITE);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        return bitmap;
     }
 
 }

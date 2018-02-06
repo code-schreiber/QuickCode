@@ -3,6 +3,9 @@ package com.toolslab.quickcode.util.bitmap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -20,12 +23,22 @@ public final class BitmapUtils {
 
     public static final class Dimensions {
 
-        public final int width;
-        public final int height;
+        private final int width;
+        private final int height;
 
         Dimensions(int width, int height) {
             this.width = width;
             this.height = height;
+        }
+
+        @CheckResult
+        public int getWidth() {
+            return width;
+        }
+
+        @CheckResult
+        public int getHeight() {
+            return height;
         }
     }
 
@@ -33,23 +46,32 @@ public final class BitmapUtils {
         // Hide utility class constructor
     }
 
+    @CheckResult
+    public static boolean isScalingDown500PixelsPossible(Bitmap bitmap) {
+        return isScalingDownPossible(bitmap, PIXELS_500);
+    }
+
     @Nullable
+    @CheckResult
     public static Bitmap scaleDownImage200Pixels(Bitmap bitmap) {
         return scaleDownImage(bitmap, PIXELS_200);
     }
 
     @Nullable
+    @CheckResult
     public static Bitmap scaleDownImage500Pixels(Bitmap bitmap) {
         int scaleSize = Math.max(bitmap.getWidth(), bitmap.getHeight()) - PIXELS_500;
         return scaleDownImage(bitmap, scaleSize);
     }
 
     @Nullable
+    @CheckResult
     public static Bitmap scaleDownImage1000Pixels(Bitmap bitmap) {
         return scaleDownImage(bitmap, PIXELS_1000);
     }
 
     @Nullable
+    @CheckResult
     private static Bitmap scaleDownImage(Bitmap bitmap, int scaleSize) {
         if (bitmap != null) {
             if (scaleSize > 0) {
@@ -71,12 +93,14 @@ public final class BitmapUtils {
     }
 
     @Nullable
+    @CheckResult
     public static Bitmap createBitmapFromBase64EncodedString(String bitmapBase64Encoded) {
         byte[] bitmapBytes = Base64.decode(bitmapBase64Encoded, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
     }
 
     @Nullable
+    @CheckResult
     public static String getBase64encodedBitmap(@Nullable Bitmap originalImage) {
         if (originalImage != null) {
             byte[] bytes = getBytes(originalImage);
@@ -86,6 +110,7 @@ public final class BitmapUtils {
     }
 
     @NonNull
+    @CheckResult
     public static Dimensions getNewDimensions(int scaleSize, int originalWidth, int originalHeight) {
         int newWidth;
         int newHeight;
@@ -112,10 +137,51 @@ public final class BitmapUtils {
         return new Dimensions(newWidth, newHeight);
     }
 
+    @NonNull
+    @CheckResult
+    public static Bitmap createWhiteBitmap(int width, int height) {
+        Bitmap.Config config = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, config);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        return bitmap;
+    }
+
+    @NonNull
+    @CheckResult
+    public static Bitmap putWhiteBackground(Bitmap bitmap) {
+        return putBackground(bitmap, Color.WHITE);
+    }
+
+    @NonNull
+    @CheckResult
+    public static Bitmap putBlackBackground(Bitmap bitmap) {
+        return putBackground(bitmap, Color.BLACK);
+    }
+
+    @NonNull
+    @CheckResult
+    private static Bitmap putBackground(Bitmap bitmap, int color) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Bitmap.Config config = bitmap.getConfig();
+        Bitmap newBitmap = Bitmap.createBitmap(width, height, config);
+        Canvas canvas = new Canvas(newBitmap);
+        canvas.drawColor(color);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        return newBitmap;
+    }
+
     private static byte[] getBytes(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         return outputStream.toByteArray();
+    }
+
+    private static boolean isScalingDownPossible(Bitmap bitmap, int howMuch) {
+        int max = Math.max(bitmap.getWidth(), bitmap.getHeight());
+        return max > howMuch;
     }
 
 }
