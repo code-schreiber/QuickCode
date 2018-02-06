@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -194,8 +195,12 @@ public class CodesListFragment extends BaseFragment
 
     private void handleActionSendIntent(Intent intent, String type) {
         if (UriUtils.isText(type)) {
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            loadSharedTextInBackground(sharedText);
+            @Nullable String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (sharedText == null) {
+                handleFile(intent.getData());
+            } else {
+                loadSharedTextInBackground(sharedText);
+            }
         } else if (UriUtils.isImage(type)) {
             Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             handleFile(imageUri);
@@ -382,7 +387,7 @@ public class CodesListFragment extends BaseFragment
         }).start();
     }
 
-    private void loadSharedTextInBackground(String text) {
+    private void loadSharedTextInBackground(@NonNull String text) {
         if (text.length() > CodeFileFactory.MAX_CHARACTERS) {
             String message = getString(R.string.error_shared_text_too_long);
             logWarning(message + " Length: " + text.length());
