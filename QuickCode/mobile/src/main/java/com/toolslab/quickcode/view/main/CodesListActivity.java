@@ -178,9 +178,7 @@ public class CodesListActivity extends BaseActivity implements
     }
 
     private void handleIntent(Intent intent) {
-        if (intent.getExtras() != null) {
-            Tracker.trackIntent(this, intent);
-        }
+        Tracker.trackIntent(this, intent);
         CodesListFragment fragment = getCodesListFragment();
         if (fragment == null) {
             logError("CodesListFragment is null");

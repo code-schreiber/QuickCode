@@ -237,6 +237,7 @@ public class UriUtils {
         return TypeUtils.createCommaSeparatedStringFromList(supportedImportFormats);
     }
 
+    @Nullable
     public static String describeFileType(String fileType) {
         String mimeType = getMimeType(fileType);
         if (!TypeUtils.isEmpty(mimeType)) {

@@ -4,10 +4,12 @@ package com.toolslab.quickcode.util.log;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.CheckResult;
 
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import javax.annotation.Nonnull;
 
 
 public class Tracker {
@@ -56,10 +58,10 @@ public class Tracker {
     public static void trackIntent(Context context, Intent intent) {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                logEvent(context, TrackerEvent.INTENT, bundle);
+            if (bundle == null) {
+                logEvent(context, TrackerEvent.INTENT_NO_EXTRAS, intentToBundle(intent));
             } else {
-                Logger.logError("No bundle for trackIntent");
+                logEvent(context, TrackerEvent.INTENT_WITH_EXTRAS, bundle);
             }
         } else {
             Logger.logError("No intent for trackIntent");
@@ -71,10 +73,11 @@ public class Tracker {
         FirebaseAnalytics.getInstance(context).logEvent(event, bundle);
     }
 
-    @Nullable
+    @CheckResult
+    @Nonnull
     private static String bundle2string(Bundle bundle) {
         if (bundle == null) {
-            return null;
+            return "Bundle is null";
         }
         StringBuilder string = new StringBuilder("Bundle {");
         for (String key : bundle.keySet()) {
@@ -84,11 +87,32 @@ public class Tracker {
         return string.toString();
     }
 
+    @CheckResult
+    @Nonnull
+    private static Bundle intentToBundle(@Nonnull Intent intent) {
+        Bundle bundle = new Bundle();
+        String[] items = intent.toUri(0).split(";");
+        if (items.length == 0) {
+            bundle.putString("Intent as string", intent.toString());
+        } else {
+            for (String item : items) {
+                if (item.contains("=")) {
+                    String key = item.substring(0, item.indexOf("="));
+                    bundle.putString(key, item.replace(key + "=", ""));
+                } else {
+                    bundle.putString("Item " + item, item);
+                }
+            }
+        }
+        return bundle;
+    }
+
 
     private static class TrackerEvent extends FirebaseAnalytics.Event {
         private static final String FIRST_LAUNCH = "first_launch";
         private static final String REFERRER_DETAILS = "referrer_details";
-        private static final String INTENT = "intent";
+        private static final String INTENT_WITH_EXTRAS = "intent_with_extras";
+        private static final String INTENT_NO_EXTRAS = "intent_no_extras";
         private static final String LONG_CLICK = "long_click";
     }
 
