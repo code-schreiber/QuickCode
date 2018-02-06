@@ -164,6 +164,8 @@ public class CodesListFragment extends BaseFragment
                 case Intent.ACTION_MAIN:
                     // Just an app start
                     return;
+                default:
+                    break;
             }
         }
         logError("Activity started with unknown action: " + action + ", " + type);
@@ -239,44 +241,22 @@ public class CodesListFragment extends BaseFragment
 
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                        if (model != null) {
-                            addCodeFileViewModel(model);
-                        }
+                        addCodeFileViewModel(dataSnapshot);
                     }
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        final CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                        if (model != null) {
-                            removeCodeFileViewModel(model);
-                            // TODO [UI nice to have] make Snackbar implementation more elegant
-                            Snackbar.make(recyclerView, model.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.undo, new View.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(View view) {
-                                            addCodeFileToDatabase(model.getCodeFile());
-                                        }
-                                    })
-                                    .show();
-                        }
+                        removeCodeFileViewModel(dataSnapshot);
                     }
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                        if (model != null) {
-                            addCodeFileViewModel(model);
-                        }
+                        addCodeFileViewModel(dataSnapshot);
                     }
 
                     @Override
                     public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                        CodeFileViewModel model = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
-                        if (model != null) {
-                            addCodeFileViewModel(model);
-                        }
+                        addCodeFileViewModel(dataSnapshot);
                     }
 
                     @Override
@@ -308,14 +288,31 @@ public class CodesListFragment extends BaseFragment
         }
     }
 
-    private void addCodeFileViewModel(CodeFileViewModel codeFileViewModel) {
-        adapter.addCodeFileViewModel(codeFileViewModel);
-        updateFabHint();
+    private void addCodeFileViewModel(DataSnapshot dataSnapshot) {
+        CodeFileViewModel codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+        if (codeFileViewModel != null) {
+            adapter.addCodeFileViewModel(codeFileViewModel);
+            updateFabHint();
+        }
     }
 
-    private void removeCodeFileViewModel(CodeFileViewModel codeFileViewModel) {
-        adapter.removeCodeFileViewModel(codeFileViewModel);
-        updateFabHint();
+    private void removeCodeFileViewModel(DataSnapshot dataSnapshot) {
+        final CodeFileViewModel codeFileViewModel = DatabaseReferenceWrapper.getCodeFileFromDataSnapshot(dataSnapshot);
+        if (codeFileViewModel != null) {
+            adapter.removeCodeFileViewModel(codeFileViewModel);
+            updateFabHint();
+
+            // TODO [UI nice to have] make Snackbar implementation more elegant
+            Snackbar.make(recyclerView, codeFileViewModel.getCodeFile().displayName() + " was deleted", Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View view) {
+                            addCodeFileToDatabase(codeFileViewModel.getCodeFile());
+                        }
+                    })
+                    .show();
+        }
     }
 
     private void updateFabHint() {
