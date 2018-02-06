@@ -1,0 +1,3 @@
+ • Now with material design! 🎈🎈
+ • Better code detection on images with transparency
+ • Improved stability 🐞
