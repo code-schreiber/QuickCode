@@ -33,12 +33,13 @@ public class AboutActivity extends MaterialAboutActivity {
     @NonNull
     @Override
     protected MaterialAboutList getMaterialAboutList(@NonNull Context context) {
+        Context appContext = context.getApplicationContext();
         return new MaterialAboutList.Builder()
-                .addCard(createAppTitleCard(context))
-                .addCard(createAppVersionCard(context))
-                .addCard(createAppDescriptionCard(context))
-                .addCard(createAppFeedbackCard(context))
-                .addCard(createAppAuthorCard(context))
+                .addCard(createAppTitleCard(appContext))
+                .addCard(createAppVersionCard(appContext))
+                .addCard(createAppDescriptionCard(appContext))
+                .addCard(createAppFeedbackCard(appContext))
+                .addCard(createAppAuthorCard(appContext))
                 .build();
     }
 
