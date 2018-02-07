@@ -8,13 +8,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import com.toolslab.quickcode.R;
-import com.toolslab.quickcode.util.TypeUtils;
+import com.toolslab.quickcode.util.log.Logger;
 import com.toolslab.quickcode.view.common.view.dialog.SimpleDialogFragment;
 
-import timber.log.Timber;
 
-
-@SuppressLint("Registered")
+@SuppressLint("Registered") // BaseActivity should not go in the manifest
 public class BaseActivity extends AppCompatActivity {
 
     public void overridePendingTransitionEnter() {
@@ -83,45 +81,27 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void logInfo(String message) {
-        if (isMessageOk(message)) {
-            Timber.i(message);
-        }
+        Logger.logInfo(message);
     }
 
     public void logDebug(String message) {
-        if (isMessageOk(message)) {
-            Timber.d(message);
-        }
+        Logger.logDebug(message);
     }
 
     public void logWarning(String message) {
-        if (isMessageOk(message)) {
-            Timber.w(message);
-        }
+        Logger.logWarning(message);
     }
 
     public void logError(String message) {
-        if (isMessageOk(message)) {
-            Timber.e(message);
-        }
+        Logger.logError(message);
     }
 
     public void logException(String message, Throwable e) {
-        if (isMessageOk(message)) {
-            Timber.e(e, message);
-        }
+        Logger.logException(message, e);
     }
 
     public void logException(Exception e) {
-        logException(e.getMessage(), e);
-    }
-
-    private boolean isMessageOk(String message) {
-        boolean isMessageOk = !TypeUtils.isEmpty(message);
-        if (!isMessageOk) {
-            Timber.e(new Exception(), "No message provided to log! Message: \"" + message + "\"");
-        }
-        return isMessageOk;
+        Logger.logException(e);
     }
 
 }
