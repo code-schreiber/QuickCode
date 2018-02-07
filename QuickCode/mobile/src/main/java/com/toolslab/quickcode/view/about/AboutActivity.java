@@ -18,6 +18,7 @@ import com.toolslab.quickcode.R;
 import com.toolslab.quickcode.db.DatabaseReferenceWrapper;
 import com.toolslab.quickcode.util.ClipboardUtil;
 import com.toolslab.quickcode.util.IOUtils;
+import com.toolslab.quickcode.util.log.Tracker;
 import com.toolslab.quickcode.view.base.BaseActivity;
 
 import java.io.InputStream;
@@ -40,8 +41,8 @@ public class AboutActivity extends MaterialAboutActivity {
                 .addCard(createAppTitleCard(appContext))
                 .addCard(createAppVersionCard(appContext))
                 .addCard(createAppDescriptionCard(appContext))
-                .addCard(createAppFeedbackCard(appContext))
-                .addCard(createAppAuthorCard(appContext))
+                .addCard(createAppFeedbackCard(this))
+                .addCard(createAppAuthorCard(this))
                 .build();
     }
 
@@ -71,7 +72,7 @@ public class AboutActivity extends MaterialAboutActivity {
                 .build();
     }
 
-    private MaterialAboutCard createAppVersionCard(Context context) {
+    private MaterialAboutCard createAppVersionCard(final Context context) {
         final View view = findViewById(com.danielstone.materialaboutlibrary.R.id.mal_recyclerview);
         final MaterialAboutActionItem item = ConvenienceBuilder
                 .createVersionActionItem(context, null, getString(R.string.about_version), true)
@@ -79,12 +80,14 @@ public class AboutActivity extends MaterialAboutActivity {
                 .setOnClickAction(new MaterialAboutItemOnClickAction() {
                     @Override
                     public void onClick() {
+                        Tracker.trackOnClick(context, R.string.about_version_long_tap_to_copy);
                         Snackbar.make(view, R.string.about_version_long_tap_to_copy, Snackbar.LENGTH_SHORT).show();
                     }
                 })
                 .setOnLongClickAction(new MaterialAboutItemOnClickAction() {
                     @Override
                     public void onClick() {
+                        Tracker.trackOnLongClick(context, R.string.message_copied_to_clipboard);
                         if (ClipboardUtil.copyToClipboard(view.getContext(), "Version Text", createNavigationFooterText())) {
                             Snackbar.make(view, R.string.message_copied_to_clipboard, Snackbar.LENGTH_SHORT).show();
                         }

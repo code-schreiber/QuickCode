@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.CheckResult;
+import android.support.annotation.StringRes;
 
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -27,10 +28,18 @@ public class Tracker {
         logEvent(context, TrackerEvent.VIEW_ITEM, bundle);
     }
 
+    public static void trackOnClick(Context context, @StringRes int resId) {
+        trackOnClick(context, context.getString(resId));
+    }
+
     public static void trackOnLongClick(Context context, String itemName) {
         Bundle bundle = new Bundle();
         bundle.putString(TrackerParam.ITEM_NAME, itemName);
         logEvent(context, TrackerEvent.LONG_CLICK, bundle);
+    }
+
+    public static void trackOnLongClick(Context context, @StringRes int resId) {
+        trackOnLongClick(context, context.getString(resId));
     }
 
     public static void trackInstallReferrer(Context context, Intent intent) {
