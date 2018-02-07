@@ -197,7 +197,7 @@ public class CodesListFragment extends BaseFragment
         if (UriUtils.isText(type)) {
             @Nullable String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (sharedText == null) {
-                handleFile(intent.getData());
+                showSimpleError("Unable to handle intent: " + intent.toString() + " with extras " + intent.getExtras());
             } else {
                 loadSharedTextInBackground(sharedText);
             }
