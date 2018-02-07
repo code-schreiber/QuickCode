@@ -14,6 +14,9 @@ import javax.annotation.Nonnull;
 
 public class Tracker {
 
+    private static final String SEMICOLON = ";";
+    private static final String EQUALS = "=";
+
     private Tracker() {
         // Hide utility class constructor
     }
@@ -57,12 +60,7 @@ public class Tracker {
 
     public static void trackIntent(Context context, Intent intent) {
         if (intent != null) {
-            Bundle bundle = intent.getExtras();
-            if (bundle == null) {
-                logEvent(context, TrackerEvent.INTENT_NO_EXTRAS, intentToBundle(intent));
-            } else {
-                logEvent(context, TrackerEvent.INTENT_WITH_EXTRAS, bundle);
-            }
+            logEvent(context, TrackerEvent.INTENT, intentToBundle(intent));
         } else {
             Logger.logError("No intent for trackIntent");
         }
@@ -81,7 +79,7 @@ public class Tracker {
         }
         StringBuilder string = new StringBuilder("Bundle {");
         for (String key : bundle.keySet()) {
-            string.append(" ").append(key).append(" -> ").append(bundle.get(key)).append(";");
+            string.append(" ").append(key).append(EQUALS).append(bundle.get(key)).append(SEMICOLON);
         }
         string.append(" }");
         return string.toString();
@@ -91,18 +89,24 @@ public class Tracker {
     @Nonnull
     private static Bundle intentToBundle(@Nonnull Intent intent) {
         Bundle bundle = new Bundle();
-        String[] items = intent.toUri(0).split(";");
+        String[] items = intent.toUri(0).split(SEMICOLON);
         if (items.length == 0) {
             bundle.putString("Intent as string", intent.toString());
         } else {
             for (String item : items) {
-                if (item.contains("=")) {
-                    String key = item.substring(0, item.indexOf("="));
-                    bundle.putString(key, item.replace(key + "=", ""));
+                if (item.contains(EQUALS)) {
+                    String key = item.substring(0, item.indexOf(EQUALS));
+                    bundle.putString(key, item.replace(key + EQUALS, ""));
                 } else {
                     bundle.putString("Item " + item, item);
                 }
             }
+        }
+        if (intent.getExtras() != null) {
+            bundle.putBoolean("Has extras", true);
+            bundle.putAll(intent.getExtras());
+        } else {
+            bundle.putBoolean("Has extras", false);
         }
         return bundle;
     }
@@ -111,8 +115,7 @@ public class Tracker {
     private static class TrackerEvent extends FirebaseAnalytics.Event {
         private static final String FIRST_LAUNCH = "first_launch";
         private static final String REFERRER_DETAILS = "referrer_details";
-        private static final String INTENT_WITH_EXTRAS = "intent_with_extras";
-        private static final String INTENT_NO_EXTRAS = "intent_no_extras";
+        private static final String INTENT = "intent";
         private static final String LONG_CLICK = "long_click";
     }
 
