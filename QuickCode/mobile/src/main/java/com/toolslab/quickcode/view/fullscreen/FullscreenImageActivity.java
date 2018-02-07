@@ -1,7 +1,6 @@
 package com.toolslab.quickcode.view.fullscreen;
 
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -40,7 +39,7 @@ public class FullscreenImageActivity extends BaseActivity {
     private final Handler mHideHandler = new Handler();
     private View mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
+
         @Override
         public void run() {
             // Delayed removal of status and navigation bar
