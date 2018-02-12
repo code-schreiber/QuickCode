@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -149,18 +148,17 @@ public class CodesListFragment extends BaseFragment
 
     void handleIntent(Intent intent) {
         String action = intent.getAction();
-        String type = intent.getType();
 
         if (action != null) {
             switch (action) {
                 case Intent.ACTION_VIEW:
-                    handleActionViewIntent(intent, type);
+                    handleActionViewIntent(intent);
                     return;
                 case Intent.ACTION_SEND:
-                    handleActionSendIntent(intent, type);
+                    handleActionSendIntent(intent);
                     return;
                 case Intent.ACTION_SEND_MULTIPLE:
-                    handleActionSendMultipleIntent(intent, type);
+                    handleActionSendMultipleIntent(intent);
                     return;
                 case Intent.ACTION_MAIN:
                     // Just an app start
@@ -169,7 +167,7 @@ public class CodesListFragment extends BaseFragment
                     break;
             }
         }
-        logError("Activity started with unknown action: " + action + ", " + type);
+        logError("Activity started with unknown action: " + action + ", " + intent.getType());
     }
 
     void performFileSearch() {
@@ -184,22 +182,24 @@ public class CodesListFragment extends BaseFragment
         performFileSearch(INTENT_TYPE_FILTER_IMAGE);
     }
 
-    private void handleActionViewIntent(Intent intent, String type) {
+    private void handleActionViewIntent(Intent intent) {
         Uri linkData = intent.getData();
         if (linkData != null) {
             handleFile(linkData);
         } else {
-            showUnknownTypeDialog(type, "ACTION_VIEW");
+            showUnknownTypeDialog(intent);
         }
     }
 
-    private void handleActionSendIntent(Intent intent, String type) {
+    private void handleActionSendIntent(Intent intent) {
+        String type = intent.getType();
         if (UriUtils.isText(type)) {
-            @Nullable String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (sharedText == null) {
-                showSimpleError("Unable to handle intent: " + intent.toString() + " with extras " + intent.getExtras());
+            if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+                loadSharedTextInBackground(intent.getStringExtra(Intent.EXTRA_TEXT));
+            } else if (intent.hasExtra(Intent.EXTRA_STREAM)) {
+                handleFile((Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
             } else {
-                loadSharedTextInBackground(sharedText);
+                showUnknownTypeDialog(intent);
             }
         } else if (UriUtils.isImage(type)) {
             Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -208,23 +208,27 @@ public class CodesListFragment extends BaseFragment
             Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             handleFile(pdfUri);
         } else {
-            showUnknownTypeDialog(type, "ACTION_SEND");
+            showUnknownTypeDialog(intent);
         }
     }
 
-    private void handleActionSendMultipleIntent(Intent intent, String type) {
+    private void handleActionSendMultipleIntent(Intent intent) {
+        String type = intent.getType();
         if (UriUtils.isImage(type)) {
             List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             handleFile(imageUris);
         } else {
-            showUnknownTypeDialog(type, "ACTION_SEND_MULTIPLE");
+            showUnknownTypeDialog(intent);
         }
     }
 
-    private void showUnknownTypeDialog(String type, String action) {
-        logError("Activity started with " + action + " has unknown type: " + type);
-        String fileType = UriUtils.describeFileType(type);
-        showSimpleError(R.string.error_file_not_added_unsupported_type, fileType, UriUtils.getSupportedImportFormatsAsString());
+    private void showUnknownTypeDialog(Intent intent) {
+        String type = intent.getType();
+        logError("Unable to handle intent: " + intent.toString() +
+                ", action: " + intent.getAction() +
+                ", type: " + type +
+                ", extras: " + intent.getExtras());
+        showSimpleError(R.string.error_file_not_added_unsupported_type, UriUtils.describeFileType(type), UriUtils.getSupportedImportFormatsAsString());
     }
 
     private void handleReferrer() {
