@@ -124,14 +124,14 @@ public class CodesListActivity extends BaseActivity implements
         getSupportActionBar().setTitle(" " + getString(R.string.app_name));
 
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawerLayout = binding.activityCodesListDrawerLayout;
+        drawerLayout = binding.activityCodesListDrawerLayout;
 //        drawerLayout.addDrawerListener(toggle);
 //        toggle.syncState();
     }
 
     private void initNavigationView(ActivityCodesListBinding binding) {
-//        NavigationView navigationView = binding.activityCodesListNavView;
-//        navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView = binding.activityCodesListNavView;
+        navigationView.setNavigationItemSelectedListener(this);
 
         final String footerText = AboutActivity.createNavigationFooterTextWithUser();
         binding.activityCodesListNavFooter.navFooterMainText.setText(footerText);
