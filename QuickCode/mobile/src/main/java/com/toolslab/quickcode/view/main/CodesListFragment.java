@@ -203,7 +203,7 @@ public class CodesListFragment extends BaseFragment
                 handleFile(intent);
             }
         } else {
-            showUnknownTypeDialog(intent);
+            handleFile(intent, intent.getData());
         }
     }
 
