@@ -91,7 +91,7 @@ public class CodesListFragment extends BaseFragment
             if (requestCode == READ_REQUEST_CODE) {
                 if (resultData != null) {
                     Uri uri = resultData.getData();
-                    handleFile(uri);
+                    handleFile(resultData, uri);
                     return;
                 }
             }
@@ -186,9 +186,9 @@ public class CodesListFragment extends BaseFragment
     }
 
     private void handleActionViewIntent(Intent intent) {
-        Uri linkData = intent.getData();
-        if (linkData != null) {
-            handleFile(linkData);
+        Uri intentData = intent.getData();
+        if (intentData != null) {
+            handleFile(intent, intentData);
         } else {
             showUnknownTypeDialog(intent);
         }
@@ -211,7 +211,7 @@ public class CodesListFragment extends BaseFragment
         String type = intent.getType();
         if (UriUtils.isImage(type)) {
             List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            handleFile(imageUris);
+            handleFile(intent, imageUris);
         } else {
             showUnknownTypeDialog(intent);
         }
@@ -358,25 +358,24 @@ public class CodesListFragment extends BaseFragment
     private void handleFile(Intent intent) {
         if (intent.hasExtra(Intent.EXTRA_STREAM)) {
             Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            handleFile(uri);
+            handleFile(intent, uri);
         } else {
             showUnknownTypeDialog(intent);
         }
     }
 
-    private void handleFile(List<Uri> uris) {
+    private void handleFile(Intent intent, List<Uri> uris) {
         for (Uri uri : uris) {
-            handleFile(uri);
+            handleFile(intent, uri);
         }
     }
 
-    private void handleFile(Uri uri) {
+    private void handleFile(Intent intent, Uri uri) {
         ContentResolver contentResolver = getActivity().getContentResolver();
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            String fileType = UriUtils.describeFileType(contentResolver, uri);
-            showSimpleError(R.string.error_file_not_added_unsupported_type, fileType, UriUtils.getSupportedImportFormatsAsString());
+            showUnknownTypeDialog(intent);
         }
     }
 
