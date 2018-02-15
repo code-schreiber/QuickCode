@@ -100,14 +100,14 @@ public class Tracker {
         Bundle bundle = new Bundle();
         String[] items = intent.toUri(0).split(SEMICOLON);
         if (items.length == 0) {
-            bundle.putString("Intent as string", intent.toString());
+            bundle.putString("intent_as_string", intent.toString());
         } else {
             for (String item : items) {
                 if (item.contains(EQUALS)) {
                     String key = item.substring(0, item.indexOf(EQUALS)).trim().replace(" ", "_");
                     bundle.putString(key, item.replace(key + EQUALS, ""));
                 } else {
-                    bundle.putString("Item " + item, item);
+                    bundle.putString("item_" + item, item);
                 }
             }
         }
