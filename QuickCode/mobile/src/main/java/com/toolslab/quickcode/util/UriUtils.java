@@ -176,7 +176,17 @@ public class UriUtils {
 
     @CheckResult
     public static boolean isSupportedImportFile(ContentResolver contentResolver, Uri uri) {
-        return isPdf(contentResolver, uri) || isImage(contentResolver, uri) || isText(contentResolver, uri);
+        return uri != null && isSupportedImportFile(contentResolver.getType(uri));
+    }
+
+    @CheckResult
+    public static boolean isSupportedImportFile(String type) {
+        for (String supportedFormat : SUPPORTED_IMPORT_FORMATS) {
+            if (supportedFormat.equals(type)) {
+                return true;
+            }
+        }
+        return isImage(type);
     }
 
     @CheckResult

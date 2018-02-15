@@ -8,6 +8,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import static com.toolslab.quickcode.util.UriUtils.TYPE_ABSOLUTE_APPLICATION_PDF;
+import static com.toolslab.quickcode.util.UriUtils.TYPE_ABSOLUTE_TEXT_PLAIN;
+import static com.toolslab.quickcode.util.UriUtils.TYPE_RELATIVE_IMAGE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -29,7 +32,7 @@ public class UriUtilsTest {
 
     @Test
     public void isSupportedImportFilePdf() {
-        when(mockContentResolver.getType(mockUri)).thenReturn(UriUtils.TYPE_ABSOLUTE_APPLICATION_PDF);
+        when(mockContentResolver.getType(mockUri)).thenReturn(TYPE_ABSOLUTE_APPLICATION_PDF);
 
         boolean result = UriUtils.isSupportedImportFile(mockContentResolver, mockUri);
 
@@ -38,7 +41,7 @@ public class UriUtilsTest {
 
     @Test
     public void isSupportedImportFileText() {
-        when(mockContentResolver.getType(mockUri)).thenReturn(UriUtils.TYPE_ABSOLUTE_TEXT_PLAIN);
+        when(mockContentResolver.getType(mockUri)).thenReturn(TYPE_ABSOLUTE_TEXT_PLAIN);
 
         boolean result = UriUtils.isSupportedImportFile(mockContentResolver, mockUri);
 
@@ -47,7 +50,7 @@ public class UriUtilsTest {
 
     @Test
     public void isSupportedImportFileImage() {
-        when(mockContentResolver.getType(mockUri)).thenReturn(UriUtils.TYPE_RELATIVE_IMAGE + "png");
+        when(mockContentResolver.getType(mockUri)).thenReturn(TYPE_RELATIVE_IMAGE + "png");
 
         boolean result = UriUtils.isSupportedImportFile(mockContentResolver, mockUri);
 

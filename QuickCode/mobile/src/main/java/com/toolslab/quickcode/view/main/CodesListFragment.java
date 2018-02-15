@@ -32,6 +32,7 @@ import com.toolslab.quickcode.model.CodeFileCreator;
 import com.toolslab.quickcode.model.CodeFileFactory;
 import com.toolslab.quickcode.model.CodeFileViewModel;
 import com.toolslab.quickcode.util.AssetPathLoader;
+import com.toolslab.quickcode.util.DeviceUtil;
 import com.toolslab.quickcode.util.UriUtils;
 import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.log.Tracker;
@@ -130,7 +131,9 @@ public class CodesListFragment extends BaseFragment
                 handleReferrer();
                 break;
             case InstallReferrerResponse.FEATURE_NOT_SUPPORTED:
-                logWarning("InstallReferrer not supported");
+                if (!DeviceUtil.isEmulator()) {
+                    logWarning("InstallReferrer not supported");
+                }
                 break;
             case InstallReferrerResponse.SERVICE_UNAVAILABLE:
                 logWarning("Unable to connect to the service");
@@ -193,20 +196,12 @@ public class CodesListFragment extends BaseFragment
 
     private void handleActionSendIntent(Intent intent) {
         String type = intent.getType();
-        if (UriUtils.isText(type)) {
-            if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+        if (UriUtils.isSupportedImportFile(type)) {
+            if (UriUtils.isText(type) && (intent.hasExtra(Intent.EXTRA_TEXT))) {
                 loadSharedTextInBackground(intent.getStringExtra(Intent.EXTRA_TEXT));
-            } else if (intent.hasExtra(Intent.EXTRA_STREAM)) {
-                handleFile((Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
             } else {
-                showUnknownTypeDialog(intent);
+                handleFile(intent);
             }
-        } else if (UriUtils.isImage(type)) {
-            Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            handleFile(imageUri);
-        } else if (UriUtils.isPdf(type)) {
-            Uri pdfUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            handleFile(pdfUri);
         } else {
             showUnknownTypeDialog(intent);
         }
@@ -360,6 +355,15 @@ public class CodesListFragment extends BaseFragment
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
+    private void handleFile(Intent intent) {
+        if (intent.hasExtra(Intent.EXTRA_STREAM)) {
+            Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            handleFile(uri);
+        } else {
+            showUnknownTypeDialog(intent);
+        }
+    }
+
     private void handleFile(List<Uri> uris) {
         for (Uri uri : uris) {
             handleFile(uri);
@@ -371,7 +375,7 @@ public class CodesListFragment extends BaseFragment
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
         } else {
-            String fileType = UriUtils.describeFileType(contentResolver.getType(uri));
+            String fileType = UriUtils.describeFileType(contentResolver, uri);
             showSimpleError(R.string.error_file_not_added_unsupported_type, fileType, UriUtils.getSupportedImportFormatsAsString());
         }
     }
