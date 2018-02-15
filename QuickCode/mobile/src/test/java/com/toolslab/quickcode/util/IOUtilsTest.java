@@ -21,4 +21,26 @@ public class IOUtilsTest {
         assertThat(result, is(expected));
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void inputStreamToStringWithNull() {
+        InputStream input = null;
+        String expected = "";
+
+        String result = IOUtils.inputStreamToString(input);
+
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    public void inputStreamToStringWithEmptyString() {
+        String input = "";
+        String expected = "";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+
+        String result = IOUtils.inputStreamToString(inputStream);
+
+        assertThat(result, is(expected));
+    }
+
 }

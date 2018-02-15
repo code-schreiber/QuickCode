@@ -18,14 +18,13 @@ import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
 import com.toolslab.quickcode.util.encode.EncodingUtils;
 import com.toolslab.quickcode.util.log.Logger;
 
-import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 
 public class UriUtils {
@@ -50,40 +49,15 @@ public class UriUtils {
         // Hide utility class constructor
     }
 
-    // FIXME already implemented in ioutils
+    @Nonnull
     @CheckResult
     public static String readTextFromUri(ContentResolver contentResolver, Uri uri) {
-        StringBuilder stringBuilder = new StringBuilder();
-        InputStream inputStream = null;
-        BufferedReader reader = null;
         try {
-            inputStream = contentResolver.openInputStream(uri);
-            if (inputStream != null) {
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-            }
-        } catch (IOException e) {
+            return IOUtils.inputStreamToString(contentResolver.openInputStream(uri));
+        } catch (FileNotFoundException e) {
             Logger.logException(e);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                Logger.logException(e);
-            }
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                Logger.logException(e);
-            }
         }
-        return stringBuilder.toString();
+        return IOUtils.EMPTY_STRING;
     }
 
     @Nullable

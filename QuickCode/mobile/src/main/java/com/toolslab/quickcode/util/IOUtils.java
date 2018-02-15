@@ -25,7 +25,7 @@ public final class IOUtils {
     public static final String SLASH = "/";
     public static final String FILE_PATH_PREFIX = "file:///";
 
-    private static final String EMPTY_STRING = "";
+    static final String EMPTY_STRING = "";
     private static final char LINE_BREAK = '\n';
 
     private IOUtils() {
@@ -97,20 +97,33 @@ public final class IOUtils {
 
     @NonNull
     public static String inputStreamToString(InputStream inputStream) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            StringBuilder content = new StringBuilder(inputStream.available());
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append(LINE_BREAK);
+        if (inputStream != null) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            try {
+                StringBuilder stringBuilder = new StringBuilder(inputStream.available());
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line).append(LINE_BREAK);
+                }
+                reader.close();
+                inputStream.close();
+                return stringBuilder.toString().trim();
+            } catch (IOException e) {
+                Logger.logException(e);
+            } finally {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Logger.logException(e);
+                }
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Logger.logException(e);
+                }
             }
-            reader.close();
-            inputStream.close();
-            return content.toString().trim();
-        } catch (IOException e) {
-            Logger.logException(e);
-            return EMPTY_STRING;
         }
+        return EMPTY_STRING;
     }
 
 }
