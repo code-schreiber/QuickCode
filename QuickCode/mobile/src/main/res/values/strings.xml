@@ -8,7 +8,7 @@
     <string name="undo">undo</string>
 
     <!-- CodesListActivity -->
-    <string name="hint_add_code_file">No codes? \uD83D \uDE15\n\nAdd one with the plus \u2795</string>
+    <string name="hint_add_code_file">No codes? \uD83D\uDE15\n\nAdd one with the plus \u2795</string>
     <string name="message_copied_to_clipboard">Copied to clipboard</string>
 
     <!-- Menu -->
