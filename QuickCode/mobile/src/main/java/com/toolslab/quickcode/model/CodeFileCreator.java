@@ -117,7 +117,7 @@ public class CodeFileCreator {
     }
 
     private static SparseArray<Barcode> detectCodes(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
-        SparseArray<Barcode> detectedCodes = detectCodesScalingDownImage(bitmap, detector);
+        SparseArray<Barcode> detectedCodes = detectCodesScalingDownImageWithBitmapCopy(bitmap, detector);
         if (detectedCodes.size() == 0) {
             detectedCodes = detectCodesPuttingBackground(bitmap, detector);
         }
@@ -125,36 +125,64 @@ public class CodeFileCreator {
         return detectedCodes;
     }
 
-    private static SparseArray<Barcode> detectCodesScalingDownImage(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
-        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-        SparseArray<Barcode> detectedCodes = detector.detect(frame);
-        if (detectedCodes.size() == 0) {
-            // Try again with a smaller image, which works sometimes
-            if (BitmapUtils.isScalingDown500PixelsPossible(bitmap)) {
-                Bitmap smallerBitmap = BitmapUtils.scaleDownImage500Pixels(bitmap);
-                if (smallerBitmap != null && smallerBitmap.getWidth() < bitmap.getWidth()) {
-                    Logger.logDebug("Trying to detect again with a smaller image," +
-                            " this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() +
-                            " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
-                    return detectCodesScalingDownImage(smallerBitmap, detector);
-                }
-            }
-            Logger.logDebug("Trying to detect again with a smaller images did not work.");
-        }
-        return detectedCodes;
-    }
-
     private static SparseArray<Barcode> detectCodesPuttingBackground(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
         Logger.logDebug("Trying to detect again with a white background");
-        SparseArray<Barcode> detectedCodes = detectCodesScalingDownImage(BitmapUtils.putWhiteBackground(bitmap), detector);
+        SparseArray<Barcode> detectedCodes = detectCodesScalingDownImageNoBitmapCopy(BitmapUtils.putWhiteBackground(bitmap), detector);
         if (detectedCodes.size() == 0) {
             Logger.logDebug("Trying to detect again with a black background");
-            detectedCodes = detectCodesScalingDownImage(BitmapUtils.putBlackBackground(bitmap), detector);
+            detectedCodes = detectCodesScalingDownImageNoBitmapCopy(BitmapUtils.putBlackBackground(bitmap), detector);
             if (detectedCodes.size() == 0) {
                 Logger.logDebug("Trying to detect again with a a white or black background did not work.");
             }
         }
         return detectedCodes;
+    }
+
+    private static SparseArray<Barcode> detectCodesScalingDownImageWithBitmapCopy(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
+        return detectCodesScalingDownImage(bitmap, detector, true);
+    }
+
+    private static SparseArray<Barcode> detectCodesScalingDownImageNoBitmapCopy(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
+        return detectCodesScalingDownImage(bitmap, detector, false);
+    }
+
+    private static SparseArray<Barcode> detectCodesScalingDownImage(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector, boolean copyBitmap) {
+        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        SparseArray<Barcode> detectedCodes = detector.detect(frame);
+        if (detectedCodes.size() == 0) {
+            SparseArray<Barcode> detectedCodesFromScalingDown;
+            if (copyBitmap) {
+                // Recursive method recycles the passed bitmap before recursion to not blow up the memory,
+                // so we need to keep a copy of the bitmap before passing it further
+                Bitmap copyOfBitmap = bitmap.copy(bitmap.getConfig(), bitmap.isMutable());
+                detectedCodesFromScalingDown = detectCodesScalingDownImageRecursively(copyOfBitmap, detector);
+            } else {
+                detectedCodesFromScalingDown = detectCodesScalingDownImageRecursively(bitmap, detector);
+            }
+            if (detectedCodesFromScalingDown != null) {
+                return detectedCodesFromScalingDown;
+            } else {
+                Logger.logDebug("Trying to detect again with a smaller images did not work.");
+            }
+        }
+        return detectedCodes;
+    }
+
+    @Nullable
+    private static SparseArray<Barcode> detectCodesScalingDownImageRecursively(@NonNull Bitmap bitmap, @NonNull BarcodeDetector detector) {
+        // Try again with a smaller image, which works sometimes
+        if (BitmapUtils.isScalingDown500PixelsPossible(bitmap)) {
+            Bitmap smallerBitmap = BitmapUtils.scaleDownImage500Pixels(bitmap);
+            if (smallerBitmap != null && smallerBitmap.getWidth() < bitmap.getWidth()) {
+                Logger.logDebug("Trying to detect again with a smaller image," +
+                        " this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() +
+                        " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                // Before recursive call, get rid of the original bitmap so it doesn't occupy memory
+                bitmap.recycle();
+                return detectCodesScalingDownImageRecursively(smallerBitmap, detector);
+            }
+        }
+        return null;
     }
 
     @Nullable
