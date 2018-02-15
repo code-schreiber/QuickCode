@@ -104,7 +104,7 @@ public class Tracker {
         } else {
             for (String item : items) {
                 if (item.contains(EQUALS)) {
-                    String key = item.substring(0, item.indexOf(EQUALS));
+                    String key = item.substring(0, item.indexOf(EQUALS)).trim().replace(" ", "_");
                     bundle.putString(key, item.replace(key + EQUALS, ""));
                 } else {
                     bundle.putString("Item " + item, item);
@@ -112,10 +112,10 @@ public class Tracker {
             }
         }
         if (intent.getExtras() != null) {
-            bundle.putBoolean("Has extras", true);
+            bundle.putBoolean(TrackerParam.HAS_EXTRAS, true);
             bundle.putAll(intent.getExtras());
         } else {
-            bundle.putBoolean("Has extras", false);
+            bundle.putBoolean(TrackerParam.HAS_EXTRAS, false);
         }
         return bundle;
     }
@@ -132,6 +132,7 @@ public class Tracker {
         private static final String INSTALL_REFERRER = "install_referrer";
         private static final String REFERRER_CLICK_TIMESTAMP = "referrer_click_timestamp";
         private static final String INSTALL_BEGIN_TIMESTAMP = "install_begin_timestamp";
+        private static final String HAS_EXTRAS = "has_extras";
     }
 
 }
