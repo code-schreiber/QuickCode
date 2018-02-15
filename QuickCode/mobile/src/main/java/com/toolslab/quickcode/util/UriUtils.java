@@ -11,6 +11,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.webkit.MimeTypeMap;
 
 import com.toolslab.quickcode.util.bitmap.PdfToBitmapConverter;
@@ -30,11 +31,14 @@ import java.util.List;
 public class UriUtils {
 
     public static final String MODE_READ = "r";
-
-    private static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
-    private static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
-    private static final String TYPE_RELATIVE_IMAGE = "image/";
     public static final int SIZE_UNKNOWN = -1;
+
+    @VisibleForTesting
+    static final String TYPE_ABSOLUTE_APPLICATION_PDF = "application/pdf";
+    @VisibleForTesting
+    static final String TYPE_ABSOLUTE_TEXT_PLAIN = "text/plain";
+    @VisibleForTesting
+    static final String TYPE_RELATIVE_IMAGE = "image/";
 
     private static final String[] SUPPORTED_IMPORT_FORMATS = {
             TYPE_ABSOLUTE_APPLICATION_PDF,
@@ -46,6 +50,7 @@ public class UriUtils {
         // Hide utility class constructor
     }
 
+    // FIXME already implemented in ioutils
     @CheckResult
     public static String readTextFromUri(ContentResolver contentResolver, Uri uri) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -195,40 +200,48 @@ public class UriUtils {
         return false;
     }
 
+    @CheckResult
     public static boolean isSupportedImportFile(ContentResolver contentResolver, Uri uri) {
-        String type = contentResolver.getType(uri);
-        return isPdf(type) || isImage(type) || isText(type);
+        return isPdf(contentResolver, uri) || isImage(contentResolver, uri) || isText(contentResolver, uri);
     }
 
+    @CheckResult
     public static boolean isPdf(ContentResolver contentResolver, Uri uri) {
-        return isPdf(contentResolver.getType(uri));
+        return uri != null && isPdf(contentResolver.getType(uri));
     }
 
+    @CheckResult
     public static boolean isPdf(String type) {
         return TYPE_ABSOLUTE_APPLICATION_PDF.equals(type);
     }
 
+    @CheckResult
     public static boolean isImage(ContentResolver contentResolver, Uri uri) {
-        return isImage(contentResolver.getType(uri));
+        return uri != null && isImage(contentResolver.getType(uri));
     }
 
+    @CheckResult
     public static boolean isImage(String type) {
         return !TypeUtils.isEmpty(type) && type.startsWith(TYPE_RELATIVE_IMAGE);
     }
 
+    @CheckResult
     public static boolean isText(ContentResolver contentResolver, Uri uri) {
-        return isText(contentResolver.getType(uri));
+        return uri != null && isText(contentResolver.getType(uri));
     }
 
+    @CheckResult
     public static boolean isText(String type) {
         return TYPE_ABSOLUTE_TEXT_PLAIN.equals(type);
     }
 
+    @CheckResult
     public static String getTextTypeName() {
         return TYPE_ABSOLUTE_TEXT_PLAIN;
     }
 
     @NonNull
+    @CheckResult
     public static String getSupportedImportFormatsAsString() {
         List<String> supportedImportFormats = new ArrayList<>();
         for (String supportedImportFormat : SUPPORTED_IMPORT_FORMATS) {
@@ -238,6 +251,17 @@ public class UriUtils {
     }
 
     @Nullable
+    @CheckResult
+    public static String describeFileType(ContentResolver contentResolver, Uri uri) {
+        if (uri != null) {
+            String fileType = contentResolver.getType(uri);
+            return describeFileType(fileType);
+        }
+        return null;
+    }
+
+    @Nullable
+    @CheckResult
     public static String describeFileType(String fileType) {
         String mimeType = getMimeType(fileType);
         if (!TypeUtils.isEmpty(mimeType)) {
@@ -247,12 +271,14 @@ public class UriUtils {
     }
 
     @Nullable
+    @CheckResult
     private static String getMimeType(@Nullable String fileType) {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(fileType);
     }
 
     @NonNull
+    @CheckResult
     private static String getFormatName(String supportedImportFormat) {
         switch (supportedImportFormat) {
             case TYPE_ABSOLUTE_APPLICATION_PDF:
