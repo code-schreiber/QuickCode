@@ -9,9 +9,9 @@ public class DeviceUtil {
     }
 
     public static boolean isEmulator() {
-        boolean emulatorHardware = Build.HARDWARE != null && (Build.HARDWARE.contains("vbox") || Build.HARDWARE.contains("goldfish"));
-        boolean emulatorFingerprint = Build.FINGERPRINT != null && Build.FINGERPRINT.startsWith("generic");
-        return emulatorHardware || emulatorFingerprint;
+        return Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86");
     }
 
 }
