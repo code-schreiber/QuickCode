@@ -51,8 +51,8 @@ cache:
   directories:
     - '$HOME/.m2'
     - '$HOME/.m2/repository'
-    - '$HOME/.gradle'
     - '$HOME/.sonar/cache'
+    - '$HOME/.gradle'
     - '.gradle'
 
 env:
