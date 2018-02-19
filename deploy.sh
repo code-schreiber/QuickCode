@@ -13,8 +13,7 @@ echo "deploy.sh: TRAVIS_TAG: $TRAVIS_TAG"
 echo "deploy.sh: TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
 
 cd QuickCode
-echo "deploy.sh: Running gradle printVersion"
-./gradlew printVersion
+git tag -l
 echo "deploy.sh: Running gradle build"
 ./gradlew build
 #echo "deploy.sh: Running gradle sonarqube"
@@ -23,6 +22,8 @@ echo "deploy.sh: mobile/build/outputs/apk/release now contains:"
 ls -l mobile/build/outputs/apk/release
 echo "deploy.sh: Running gradle printStatsFromThisVersion"
 ./gradlew printStatsFromThisVersion
+echo "deploy.sh: Running gradle printVersion"
+./gradlew printVersion
 
 if [ "$TRAVIS_REPO_SLUG" != "$EXPECTED_TRAVIS_REPO_SLUG" ]; then
   echo "deploy.sh: Skipping deployment: wrong repository. Expected '$EXPECTED_TRAVIS_REPO_SLUG' but was '$TRAVIS_REPO_SLUG'."
