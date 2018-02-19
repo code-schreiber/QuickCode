@@ -13,7 +13,6 @@ echo "deploy.sh: TRAVIS_TAG: $TRAVIS_TAG"
 echo "deploy.sh: TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST"
 
 cd QuickCode
-git tag -l
 echo "deploy.sh: Running gradle build"
 ./gradlew build
 #echo "deploy.sh: Running gradle sonarqube"

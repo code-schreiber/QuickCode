@@ -4,6 +4,9 @@ install: true
 
 sudo: true
 
+git:
+  depth: false
+
 notifications:
   email: false
   
