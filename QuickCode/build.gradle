@@ -27,20 +27,43 @@ allprojects {
 
 import org.ajoberstar.grgit.Grgit
 
-
 ext {
     def git = Grgit.open(currentDir: projectDir)
-    versionCode = git.tag.list().size()
-    versionName = git.describe()
+
+    toolVersions = [
+            versionCode      : git.tag.list().size(),
+            versionName      : git.describe(),
+            minSdkVersion    : 19,
+            targetSdkVersion : 26,
+            compileSdkVersion: 26,
+            buildToolsVersion: "26.0.2"
+    ]
+
+    versions = [
+            dexcount            : "0.6.4",
+
+            googleSupport       : "27.0.2",
+            multidex            : "1.0.2",
+            installreferrer     : "1.0",
+
+            googleServices      : "11.8.0",
+            zxing               : "3.0.1",
+            autoValue           : "1.5.1",
+
+            autoValueParcel     : "0.2.5",
+            autoValueFirebase   : "1.1.0",
+
+            materialAboutLibrary: "2.2.3-support26.1.0",
+
+            timber              : "4.6.0",
+
+            leakcanary          : "1.5",
+
+            junit               : "4.12",
+            mockito             : "2.9.0"
+    ]
+
     git.close()
-
-    compileSdkVersion = 26
-    buildToolsVersion = "26.0.2"
-    minSdkVersion = 19
-    targetSdkVersion = 26
-
-    googleSupportLibrary = "27.0.2"
-    googleServices = "11.8.0"
 }
 
 task printVersion() {
@@ -54,7 +77,7 @@ task printStatsFromThisVersion() {
     doLast {
         def statsFromThisVersion = createStatsFromThisVersion()
         println("Apk stats: $statsFromThisVersion")
-        statsFromThisVersion =  statsFromThisVersion.replace(",","\t")
+        statsFromThisVersion = statsFromThisVersion.replace(",", "\t")
         println("Version\t\t\tSize\tMethods\tFields")
         println("$statsFromThisVersion")
     }
@@ -70,6 +93,7 @@ task generateStatsFromThisVersion() {
     }
 }
 
+@SuppressWarnings("GrMethodMayBeStatic")
 private createStatsFromThisVersion() {
     def apkSize = "stat -f%z mobile/build/outputs/apk/release/mobile-release.apk".execute().text.trim()
     def methodCount = "sed -n 2p mobile/build/outputs/dexcount/release.csv".execute().text.trim()
