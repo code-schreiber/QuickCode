@@ -2,6 +2,7 @@ package com.toolslab.quickcode.util.log;
 
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.toolslab.quickcode.BuildConfig;
 import com.toolslab.quickcode.util.TypeUtils;
 
 import timber.log.Timber;
@@ -11,33 +12,34 @@ import timber.log.Timber;
 public class Logger {
 
     private Logger() {
-        // Hide utility class constructor
+        // Only use crash reporting on non-debug builds
+        FirebaseCrash.setCrashCollectionEnabled(!BuildConfig.DEBUG);
     }
 
     public static void logInfo(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.log(message);
+            logToCrashLogger(message);
             Timber.i(message);
         }
     }
 
     public static void logDebug(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.log(message);
+            logToCrashLogger(message);
             Timber.d(message);
         }
     }
 
     public static void logWarning(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.report(new Exception("Warning: " + message));
+            reportToCrashLogger(new WarningException(message));
             Timber.w(message);
         }
     }
 
     public static void logError(String message) {
         if (isMessageOk(message)) {
-            FirebaseCrash.report(new Exception("Error: " + message));
+            reportToCrashLogger(new ErrorException(message));
             Timber.e(message);
         }
     }
@@ -48,7 +50,7 @@ public class Logger {
 
     public static void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
-            FirebaseCrash.log(message);
+            logToCrashLogger(message);
             FirebaseCrash.report(e);
             Timber.e(e, message);
         }
@@ -60,6 +62,26 @@ public class Logger {
             logException(new IllegalArgumentException("No message provided to log! Message: \"" + message + "\""));
         }
         return isMessageOk;
+    }
+
+    private static void logToCrashLogger(String message) {
+        FirebaseCrash.log(message);
+    }
+
+    private static void reportToCrashLogger(Throwable throwable) {
+        FirebaseCrash.report(throwable);
+    }
+
+    private static class WarningException extends Throwable {
+        WarningException(String message) {
+            super("Warning: " + message);
+        }
+    }
+
+    private static class ErrorException extends Throwable {
+        ErrorException(String message) {
+            super("Error: " + message);
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import android.support.annotation.StringRes;
 
 import com.android.installreferrer.api.ReferrerDetails;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.toolslab.quickcode.BuildConfig;
 
 import javax.annotation.Nonnull;
 
@@ -77,7 +78,9 @@ public class Tracker {
 
     private static void logEvent(Context context, String event, Bundle bundle) {
         Logger.logDebug("Logging event " + event + ": " + bundle2string(bundle));
-        FirebaseAnalytics.getInstance(context).logEvent(event, bundle);
+        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(context);
+        analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG); // Only use analytics on non-debug builds
+        analytics.logEvent(event, bundle);
     }
 
     @CheckResult
