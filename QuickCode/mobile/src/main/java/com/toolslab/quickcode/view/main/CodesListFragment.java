@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -90,8 +91,7 @@ public class CodesListFragment extends BaseFragment
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == READ_REQUEST_CODE) {
                 if (resultData != null) {
-                    Uri uri = resultData.getData();
-                    handleFile(resultData, uri);
+                    handleIntentWithData(resultData);
                     return;
                 }
             }
@@ -186,12 +186,7 @@ public class CodesListFragment extends BaseFragment
     }
 
     private void handleActionViewIntent(Intent intent) {
-        Uri intentData = intent.getData();
-        if (intentData != null) {
-            handleFile(intent, intentData);
-        } else {
-            showUnknownTypeDialog(intent);
-        }
+        handleIntentWithData(intent);
     }
 
     private void handleActionSendIntent(Intent intent) {
@@ -200,18 +195,26 @@ public class CodesListFragment extends BaseFragment
             if (UriUtils.isText(type) && (intent.hasExtra(Intent.EXTRA_TEXT))) {
                 loadSharedTextInBackground(intent.getStringExtra(Intent.EXTRA_TEXT));
             } else {
-                handleFile(intent);
+                handleIntentWithStreamData(intent);
             }
         } else {
-            handleFile(intent, intent.getData());
+            handleIntentWithData(intent);
         }
+    }
+
+    private void handleIntentWithData(Intent intent) {
+        handleIncomingUri(intent, intent.getData());
+    }
+
+    private void handleIntentWithStreamData(Intent intent) {
+        handleIncomingUri(intent, (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM));
     }
 
     private void handleActionSendMultipleIntent(Intent intent) {
         String type = intent.getType();
         if (UriUtils.isImage(type)) {
             List<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            handleFile(intent, imageUris);
+            handleIncomingUris(intent, imageUris);
         } else {
             showUnknownTypeDialog(intent);
         }
@@ -355,22 +358,13 @@ public class CodesListFragment extends BaseFragment
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
-    private void handleFile(Intent intent) {
-        if (intent.hasExtra(Intent.EXTRA_STREAM)) {
-            Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            handleFile(intent, uri);
-        } else {
-            showUnknownTypeDialog(intent);
-        }
-    }
-
-    private void handleFile(Intent intent, List<Uri> uris) {
+    private void handleIncomingUris(Intent intent, List<Uri> uris) {
         for (Uri uri : uris) {
-            handleFile(intent, uri);
+            handleIncomingUri(intent, uri);
         }
     }
 
-    private void handleFile(Intent intent, Uri uri) {
+    private void handleIncomingUri(Intent intent, @Nullable Uri uri) {
         ContentResolver contentResolver = getActivity().getContentResolver();
         if (UriUtils.isSupportedImportFile(contentResolver, uri)) {
             loadFileInBackground(uri);
