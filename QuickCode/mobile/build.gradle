@@ -29,7 +29,6 @@ android {
         targetSdkVersion toolVersions.targetSdkVersion
         versionCode toolVersions.versionCode
         versionName toolVersions.versionName
-        signingConfig signingConfigs.releaseConfig
         multiDexEnabled true
         resConfigs "en"
     }
@@ -38,6 +37,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.releaseConfig
         }
         debug {
             versionNameSuffix ".dev"
