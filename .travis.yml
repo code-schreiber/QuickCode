@@ -57,6 +57,7 @@ cache:
     - '$HOME/.sonar/cache'
     - '$HOME/.gradle'
     - '.gradle'
+    - 'QuickCode/.gradle'
 
 env:
   global:
