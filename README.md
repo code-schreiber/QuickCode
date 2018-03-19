@@ -39,3 +39,13 @@ and is available on Google Play: https://play.google.com/store/apps/developer?id
 Become an early access tester at https://play.google.com/apps/testing/com.toolslab.quickcode
 
 Share your thoughts and feedback at https://quickcode.uservoice.com
+
+###### Technical details and used technologies
+This project uses
+1. Android Vision for image recognition
+1. Firebase for crash reporting and offline database.
+1. AutoValue to create immutable objects
+1. Data Binding to connect XML views with the data to be shown.
+
+The app is built, tested and deployed to Google Play automatically with the help of Travis and Fastlane Supply.  
+Code quality metrics are measured by SonarCloud.
