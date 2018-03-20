@@ -68,8 +68,8 @@ ext {
 
 task printVersion() {
     doLast {
-        println("Version Code: $versionCode")
-        println("Version Name: $versionName")
+        println("Version Code: $toolVersions.versionCode")
+        println("Version Name: $toolVersions.versionName")
     }
 }
 
