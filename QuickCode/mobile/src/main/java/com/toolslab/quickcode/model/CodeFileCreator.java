@@ -177,11 +177,19 @@ public class CodeFileCreator {
                 Logger.logDebug("Trying to detect again with a smaller image," +
                         " this time " + smallerBitmap.getWidth() + "x" + smallerBitmap.getHeight() +
                         " instead of " + bitmap.getWidth() + "x" + bitmap.getHeight());
-                // Before recursive call, get rid of the original bitmap so it doesn't occupy memory
-                bitmap.recycle();
-                return detectCodesScalingDownImageRecursively(smallerBitmap, detector);
+
+                bitmap.recycle(); // Before recursive call, get rid of the original bitmap so it doesn't occupy memory
+
+                Frame frame = new Frame.Builder().setBitmap(smallerBitmap).build();
+                SparseArray<Barcode> detectedCodes = detector.detect(frame);
+                if (detectedCodes.size() == 0) {
+                    return detectCodesScalingDownImageRecursively(smallerBitmap, detector);
+                } else {
+                    return detectedCodes;
+                }
             }
         }
+        // Scaling down is not possible anymore
         return null;
     }
 
