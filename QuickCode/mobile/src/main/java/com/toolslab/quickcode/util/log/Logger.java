@@ -51,9 +51,11 @@ public class Logger {
     public static void logException(String message, Throwable e) {
         if (isMessageOk(message)) {
             logToCrashLogger(message);
-            FirebaseCrash.report(e);
             Timber.e(e, message);
+        } else {
+            Timber.e(e);
         }
+        FirebaseCrash.report(e);
     }
 
     private static boolean isMessageOk(String message) {
