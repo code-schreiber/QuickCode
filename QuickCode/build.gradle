@@ -55,7 +55,7 @@ ext {
 
             materialAboutLibrary: "2.2.3-support26.1.0",
 
-            timber              : "4.6.0",
+            timber              : "4.7.0",
 
             leakcanary          : "1.5",
 
