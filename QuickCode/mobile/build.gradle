@@ -12,6 +12,8 @@ buildscript {
 
 android {
 
+    buildToolsVersion toolVersions.buildToolsVersion
+
     signingConfigs {
         releaseConfig {
             keyAlias System.getenv(RELEASE_KEY_ALIAS)
